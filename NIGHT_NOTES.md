@@ -74,6 +74,32 @@ Pequeñeces que noté pero no toqué (priorité lo grueso):
 
 Estos son detalles. La app está completamente usable en móvil + dark mode.
 
+## 🔔 Roadmap de notificaciones push (idea para más adelante)
+
+Carlos mencionó que le gustaría recibir notificaciones de ventas/reservas en su Apple Watch + iPhone, viendo en tiempo real movimientos tipo "Reserva en Finca Lérida — $85". Plan recomendado por etapas:
+
+### Etapa 1 — Telegram bot (1 día de trabajo)
+- Crear bot en `@BotFather` (gratis)
+- Cada vez que `triggerMockBooking` o un evento real ocurra, hacer `fetch()` a la API de Telegram con el mensaje
+- El bot envía push a su phone → el Watch hereda automáticamente
+- Sin app store, sin developer account, funciona ya
+- Ideal para validar la experiencia ANTES de invertir en app nativa
+
+### Etapa 2 — PWA con Web Push API
+- Requiere service worker + VAPID keys
+- iOS 16.4+ Safari soporta push **solo después de "Añadir a pantalla de inicio"**
+- Más profesional que Telegram, pero limitado en iOS
+- 3-5 días de trabajo
+
+### Etapa 3 — App nativa iOS con Watch widget
+- Requiere $99/año de Apple Developer
+- Swift + WatchKit
+- App Store review (semanas)
+- Sobreingeniería hasta que tenga tracción real
+
+### Recomendación final
+Cuando llegue el momento, Etapa 1 (Telegram). Es la mejor relación esfuerzo/resultado para validar la mecánica de "ver movimientos en tiempo real" sin sobreinvertir.
+
 ## 🚀 Próximos pasos (cuando estés listo)
 
 Cuando me digas "sigue", el plan original era:

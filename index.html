@@ -1390,17 +1390,29 @@
                 padding: 14px !important;
                 min-width: 0;
             }
+            /* Unified big-number size — matches hotel list "22 habs" (1.85rem) */
             #draggable-stats-container h3,
-            .kpi-grid-4 h3 { font-size: 1.4rem !important; line-height: 1.1; }
+            .kpi-grid-4 h3 {
+                font-size: 1.85rem !important;
+                line-height: 1.1;
+                letter-spacing: -0.04em;
+                font-weight: 800;
+            }
             #draggable-stats-container p,
             .kpi-grid-4 p { font-size: 10px !important; }
-            /* Sparkline shrinks */
+            /* Sparkline shrinks to give room to the bigger number */
             #draggable-stats-container svg,
-            .kpi-grid-4 svg { max-width: 56px !important; height: 28px !important; }
-            /* Growth badge wraps */
+            .kpi-grid-4 svg { max-width: 48px !important; height: 24px !important; }
+            /* Growth badge compact */
             #draggable-stats-container .inline-flex,
             .kpi-grid-4 .inline-flex { font-size: 9px !important; padding: 3px 6px !important; }
             .kpi-grid-3 { grid-template-columns: 1fr !important; }
+
+            /* Very narrow phones (≤340px, iPhone SE 1st gen): hide sparkline so number breathes */
+            @media (max-width: 340px) {
+                #draggable-stats-container svg,
+                .kpi-grid-4 svg { display: none !important; }
+            }
             /* Allow tables to scroll horizontally */
             .table-mobile-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
