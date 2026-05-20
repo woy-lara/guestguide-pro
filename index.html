@@ -1439,6 +1439,26 @@
             /* Demo button tighter */
             #demo-tour-btn span { display: none !important; }
 
+            /* iOS Safari: prevent input zoom when font-size < 16px */
+            input:not([type="checkbox"]):not([type="radio"]),
+            textarea,
+            select { font-size: 16px !important; }
+
+            /* iOS Safari: 100vh = visualViewport quirks */
+            #auth-overlay { min-height: 100vh; min-height: 100dvh; }
+
+            /* Tap targets: minimum 36px for clickable buttons in nav */
+            #sidebar-nav button { min-height: 40px; }
+
+            /* Sticky bottom safe-area for iPhone */
+            .bulk-action-bar { padding-bottom: max(8px, env(safe-area-inset-bottom)) !important; }
+
+            /* Auth role cards: ensure tappable height */
+            .auth-role-card { min-height: 92px !important; }
+
+            /* Hotel/Provider list cards: 1 col on mobile (some grids might still be 2-col) */
+            .grid[class*="lg:grid-cols-3"] { gap: 12px !important; }
+
             /* Auth overlay padding tighter */
             #auth-overlay { padding: 12px !important; }
             .auth-card { padding: 28px 22px !important; border-radius: 22px !important; }
@@ -1451,8 +1471,8 @@
             /* Onboard modal */
             .onboard-card { padding: 24px !important; border-radius: 20px !important; }
 
-            /* Notification panel constrained */
-            #notif-host > div[data-notif-panel] { max-width: calc(100vw - 24px) !important; }
+            /* Notification panel constrained to viewport */
+            #notif-panel { width: calc(100vw - 24px) !important; max-width: 360px !important; right: -10px !important; }
 
             /* WhatsApp simulator slimmer */
             #whatsapp-simulator-popup {
