@@ -1367,7 +1367,8 @@
                 gap: 6px !important;
             }
             #i18n-simulate-role, #role-simulator { display: none !important; }
-            #i18n-env-active { font-size: 9px !important; }
+            /* Hide verbose env text on mobile — green dot conveys "live" */
+            #i18n-env-active { display: none !important; }
             /* Banner items smaller */
             body > div.bg-gradient-to-r:first-of-type button { font-size: 11px !important; }
             body > div.bg-gradient-to-r:first-of-type #demo-tour-btn { padding: 0 8px !important; height: 32px !important; }
@@ -1429,7 +1430,8 @@
             .p-8 { padding: 1.25rem !important; }
 
             /* Map containers shorter on mobile */
-            .leaflet-container { height: 280px !important; }
+            .leaflet-container { height: 320px !important; }
+            #boquete-map, #providers-map { height: 320px !important; border-radius: 18px !important; }
 
             /* Audit table rows wrap nicer */
             .audit-row { flex-wrap: wrap; gap: 8px; }
