@@ -6733,9 +6733,24 @@
                     <button onclick="switchTab('stay_services')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'stay_services' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
                         <i data-lucide="bell-ring" class="w-5 h-5"></i> ${tD('nav_room_requests')} <span class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full">${countReq}</span>
                     </button>
-                    <button onclick="switchTab('modules')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'modules' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
-                        <i data-lucide="grid-3x3" class="w-5 h-5"></i> ${tD('nav_modules')}
-                    </button>
+                    <div class="nav-group">
+                        <button onclick="switchTab('modules')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'modules' || activeTab === 'restaurant_menu' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
+                            <i data-lucide="grid-3x3" class="w-5 h-5"></i> ${tD('nav_modules')}
+                            <i data-lucide="chevron-right" class="w-3.5 h-3.5 chevron"></i>
+                        </button>
+                        <div class="nav-submenu ${activeTab === 'modules' || activeTab === 'restaurant_menu' ? 'is-open' : ''}">
+                            <button onclick="switchTab('modules')" class="${activeTab === 'modules' ? 'is-current' : ''}">
+                                <span class="dot"></span> ${tD('mod_section_active')}
+                                <span class="ml-auto text-[10px] font-mono opacity-60">${(DATABASE.hotels.find(h => h.id === currentRole)?.enabledModules || []).length}</span>
+                            </button>
+                            ${(DATABASE.hotels.find(h => h.id === currentRole)?.enabledModules || []).includes('restaurant') ? `
+                                <button onclick="switchTab('restaurant_menu')" class="${activeTab === 'restaurant_menu' ? 'is-current' : ''}">
+                                    <span class="dot" style="background:#d05050;"></span> ${tD('rm_page_title')}
+                                    <span class="ml-auto text-[10px] font-mono opacity-60">${(DATABASE.hotels.find(h => h.id === currentRole)?.restaurantMenu || []).length}</span>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
                     <button onclick="switchTab('finances')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'finances' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
                         <i data-lucide="receipt" class="w-5 h-5"></i> ${tD('nav_room_charges')}
                     </button>
@@ -9134,12 +9149,19 @@
                 </div>
 
                 <!-- Quick actions -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-7">
+                <div class="grid grid-cols-2 md:grid-cols-${(hotel.enabledModules || []).includes('restaurant') ? '5' : '4'} gap-3 mb-7">
                     <button onclick="switchTab('stay_services')" class="bg-white p-4 rounded-2xl border shadow-sm hover:shadow-md transition text-left active:scale-[0.98] relative">
                         <div class="w-9 h-9 rounded-xl flex items-center justify-center mb-2" style="background:rgba(192,120,32,0.14); color:var(--amber);"><i data-lucide="bell" class="w-5 h-5"></i></div>
                         <p class="text-xs font-bold text-slate-800">${tD('hov_action_requests')}</p>
                         ${reqs > 0 ? `<span class="absolute top-3 right-3 inline-flex items-center justify-center min-w-[20px] h-5 rounded-full text-[10px] font-bold px-1.5" style="background:var(--amber); color:white;">${reqs}</span>` : ''}
                     </button>
+                    ${(hotel.enabledModules || []).includes('restaurant') ? `
+                        <button onclick="switchTab('restaurant_menu')" class="bg-white p-4 rounded-2xl border shadow-sm hover:shadow-md transition text-left active:scale-[0.98] relative">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center mb-2" style="background:rgba(208,80,80,0.14); color:#d05050;"><i data-lucide="chef-hat" class="w-5 h-5"></i></div>
+                            <p class="text-xs font-bold text-slate-800">${tD('rm_page_title')}</p>
+                            <span class="absolute top-3 right-3 text-[10px] font-mono opacity-60">${(hotel.restaurantMenu || []).length}</span>
+                        </button>
+                    ` : ''}
                     <button onclick="openHotelBuilder('${escAttr(hotelId)}')" class="bg-white p-4 rounded-2xl border shadow-sm hover:shadow-md transition text-left active:scale-[0.98]">
                         <div class="w-9 h-9 rounded-xl flex items-center justify-center mb-2" style="background:rgba(112,96,200,0.14); color:var(--violet);"><i data-lucide="edit-3" class="w-5 h-5"></i></div>
                         <p class="text-xs font-bold text-slate-800">${tD('hov_action_edit')}</p>
