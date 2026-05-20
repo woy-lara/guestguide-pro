@@ -1378,8 +1378,28 @@
             #main-content-wrapper { padding: 12px !important; }
             #dynamic-view-container { gap: 16px !important; }
 
-            /* Grids: force 2 cols max for kpi grids that were 4 */
-            .kpi-grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
+            /* KPI grids: force 2 cols on mobile for both SaaS and Hotel overview */
+            #draggable-stats-container,
+            .kpi-grid-4 {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 10px !important;
+            }
+            /* KPI card content tighter at half-width */
+            #draggable-stats-container > *,
+            .kpi-grid-4 > * {
+                padding: 14px !important;
+                min-width: 0;
+            }
+            #draggable-stats-container h3,
+            .kpi-grid-4 h3 { font-size: 1.4rem !important; line-height: 1.1; }
+            #draggable-stats-container p,
+            .kpi-grid-4 p { font-size: 10px !important; }
+            /* Sparkline shrinks */
+            #draggable-stats-container svg,
+            .kpi-grid-4 svg { max-width: 56px !important; height: 28px !important; }
+            /* Growth badge wraps */
+            #draggable-stats-container .inline-flex,
+            .kpi-grid-4 .inline-flex { font-size: 9px !important; padding: 3px 6px !important; }
             .kpi-grid-3 { grid-template-columns: 1fr !important; }
             /* Allow tables to scroll horizontally */
             .table-mobile-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -8114,17 +8134,19 @@
                         </div>
                         <span class="text-xs text-slate-400 font-mono">${tD('records_count', DATABASE.vouchers.length)}</span>
                     </header>
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50 text-slate-500"><tr>
-                            <th class="p-4">${tD('col_code')}</th><th class="p-4">${tD('col_tourist')}</th><th class="p-4">${tD('col_hotel')}</th><th class="p-4">${tD('col_service')}</th><th class="p-4">${tD('col_amount')}</th><th class="p-4">${tD('col_status')}</th>
-                        </tr></thead>
-                        <tbody class="divide-y">
-                            ${DATABASE.vouchers.map(v => {
-                                const hotelName = DATABASE.hotels.find(h => h.id === v.hotelId)?.name || tD('unknown');
-                                return `<tr><td class="p-4 font-mono font-bold text-blue-600">${esc(v.code)}</td><td class="p-4 font-semibold">${esc(v.tourist)}</td><td class="p-4">${esc(hotelName)}</td><td class="p-4">${esc(v.service)}</td><td class="p-4 font-bold">$${v.amount.toFixed(2)}</td><td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${voucherStatusClass(v.status)}">${esc(v.status)}</span></td></tr>`
-                            }).join('')}
-                        </tbody>
-                    </table>
+                    <div class="responsive-table">
+                        <table class="w-full text-left text-sm" style="min-width:680px;">
+                            <thead class="bg-slate-50 text-slate-500"><tr>
+                                <th class="p-4 whitespace-nowrap">${tD('col_code')}</th><th class="p-4 whitespace-nowrap">${tD('col_tourist')}</th><th class="p-4 whitespace-nowrap">${tD('col_hotel')}</th><th class="p-4 whitespace-nowrap">${tD('col_service')}</th><th class="p-4 whitespace-nowrap">${tD('col_amount')}</th><th class="p-4 whitespace-nowrap">${tD('col_status')}</th>
+                            </tr></thead>
+                            <tbody class="divide-y">
+                                ${DATABASE.vouchers.map(v => {
+                                    const hotelName = DATABASE.hotels.find(h => h.id === v.hotelId)?.name || tD('unknown');
+                                    return `<tr><td class="p-4 font-mono font-bold text-blue-600 whitespace-nowrap">${esc(v.code)}</td><td class="p-4 font-semibold whitespace-nowrap">${esc(v.tourist)}</td><td class="p-4 whitespace-nowrap">${esc(hotelName)}</td><td class="p-4 whitespace-nowrap">${esc(v.service)}</td><td class="p-4 font-bold whitespace-nowrap">$${v.amount.toFixed(2)}</td><td class="p-4 whitespace-nowrap"><span class="px-2 py-1 rounded text-xs font-bold ${voucherStatusClass(v.status)}">${esc(v.status)}</span></td></tr>`
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
                 </section>
             `;
         }
@@ -8602,9 +8624,11 @@
                 </div>
                 <div class="bg-white rounded-3xl shadow-sm border overflow-hidden mt-6">
                     <div class="p-6 border-b flex justify-between"><h3 class="font-bold">${tD('hov_charges_title')}</h3></div>
-                    <table class="w-full text-left text-sm"><thead class="bg-slate-50 text-slate-500"><tr><th class="p-4">${tD('col_voucher')}</th><th class="p-4">${tD('col_guest')}</th><th class="p-4">${tD('col_service')}</th><th class="p-4">${tD('col_amount')}</th><th class="p-4">${tD('col_status')}</th></tr></thead><tbody class="divide-y">
-                        ${DATABASE.vouchers.filter(v => v.hotelId === hotelId).map(v => `<tr><td class="p-4 font-mono font-bold text-blue-600">${esc(v.code)}</td><td class="p-4 font-semibold">${esc(v.tourist)}</td><td class="p-4">${esc(v.service)}</td><td class="p-4 font-bold">$${v.amount.toFixed(2)}</td><td class="p-4"><span class="px-2 py-1 rounded text-xs font-bold ${voucherStatusClass(v.status)}">${esc(v.status)}</span></td></tr>`).join('')}
-                    </tbody></table>
+                    <div class="responsive-table">
+                        <table class="w-full text-left text-sm" style="min-width:620px;"><thead class="bg-slate-50 text-slate-500"><tr><th class="p-4 whitespace-nowrap">${tD('col_voucher')}</th><th class="p-4 whitespace-nowrap">${tD('col_guest')}</th><th class="p-4 whitespace-nowrap">${tD('col_service')}</th><th class="p-4 whitespace-nowrap">${tD('col_amount')}</th><th class="p-4 whitespace-nowrap">${tD('col_status')}</th></tr></thead><tbody class="divide-y">
+                            ${DATABASE.vouchers.filter(v => v.hotelId === hotelId).map(v => `<tr><td class="p-4 font-mono font-bold text-blue-600 whitespace-nowrap">${esc(v.code)}</td><td class="p-4 font-semibold whitespace-nowrap">${esc(v.tourist)}</td><td class="p-4 whitespace-nowrap">${esc(v.service)}</td><td class="p-4 font-bold whitespace-nowrap">$${v.amount.toFixed(2)}</td><td class="p-4 whitespace-nowrap"><span class="px-2 py-1 rounded text-xs font-bold ${voucherStatusClass(v.status)}">${esc(v.status)}</span></td></tr>`).join('')}
+                        </tbody></table>
+                    </div>
                 </div>
             `;
         }
@@ -8856,17 +8880,18 @@
                             `).join('')}
                         </div>
                     </header>
-                    <table class="w-full text-left text-sm">
+                    <div class="responsive-table">
+                    <table class="w-full text-left text-sm" style="min-width:760px;">
                         <thead class="bg-slate-50/50 text-slate-500">
                             <tr>
-                                <th class="px-6 py-3 text-[10px] uppercase tracking-wider font-bold">${tD('col_invoice')}</th>
-                                <th class="py-3 text-[10px] uppercase tracking-wider font-bold">${tD('col_hotel')}</th>
-                                <th class="py-3 text-[10px] uppercase tracking-wider font-bold">${tD('col_period')}</th>
-                                <th class="py-3 text-[10px] uppercase tracking-wider font-bold text-right">${tD('col_volume')}</th>
-                                <th class="py-3 text-[10px] uppercase tracking-wider font-bold text-right">${tD('col_commission')}</th>
-                                <th class="py-3 text-[10px] uppercase tracking-wider font-bold text-right">${tD('fin_total')}</th>
-                                <th class="py-3 text-[10px] uppercase tracking-wider font-bold">${tD('col_status')}</th>
-                                <th class="py-3 pr-6 text-[10px] uppercase tracking-wider font-bold text-right">${tD('col_actions')}</th>
+                                <th class="px-6 py-3 text-[10px] uppercase tracking-wider font-bold whitespace-nowrap">${tD('col_invoice')}</th>
+                                <th class="py-3 text-[10px] uppercase tracking-wider font-bold whitespace-nowrap">${tD('col_hotel')}</th>
+                                <th class="py-3 text-[10px] uppercase tracking-wider font-bold whitespace-nowrap">${tD('col_period')}</th>
+                                <th class="py-3 text-[10px] uppercase tracking-wider font-bold text-right whitespace-nowrap">${tD('col_volume')}</th>
+                                <th class="py-3 text-[10px] uppercase tracking-wider font-bold text-right whitespace-nowrap">${tD('col_commission')}</th>
+                                <th class="py-3 text-[10px] uppercase tracking-wider font-bold text-right whitespace-nowrap">${tD('fin_total')}</th>
+                                <th class="py-3 text-[10px] uppercase tracking-wider font-bold whitespace-nowrap">${tD('col_status')}</th>
+                                <th class="py-3 pr-6 text-[10px] uppercase tracking-wider font-bold text-right whitespace-nowrap">${tD('col_actions')}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y">
@@ -8895,6 +8920,7 @@
                             }).join('')}
                         </tbody>
                     </table>
+                    </div>
                 </section>
 
                 ${openInvoiceId ? renderInvoiceModal() : ''}
@@ -8961,14 +8987,15 @@
                             </div>
 
                             <!-- Tabla de items -->
-                            <table class="w-full text-sm mb-6">
+                            <div class="responsive-table">
+                            <table class="w-full text-sm mb-6" style="min-width:560px;">
                                 <thead>
                                     <tr style="border-bottom:2px solid rgba(80,100,55,0.15);">
-                                        <th class="text-left pb-3 text-[10px] uppercase tracking-wider font-bold text-slate-400">${tD('inv_col_date')}</th>
-                                        <th class="text-left pb-3 text-[10px] uppercase tracking-wider font-bold text-slate-400">${tD('col_voucher')}</th>
-                                        <th class="text-left pb-3 text-[10px] uppercase tracking-wider font-bold text-slate-400">${tD('col_guest')}</th>
-                                        <th class="text-left pb-3 text-[10px] uppercase tracking-wider font-bold text-slate-400">${tD('col_service')}</th>
-                                        <th class="text-right pb-3 text-[10px] uppercase tracking-wider font-bold text-slate-400">${tD('col_amount')}</th>
+                                        <th class="text-left pb-3 text-[10px] uppercase tracking-wider font-bold text-slate-400 whitespace-nowrap">${tD('inv_col_date')}</th>
+                                        <th class="text-left pb-3 text-[10px] uppercase tracking-wider font-bold text-slate-400 whitespace-nowrap">${tD('col_voucher')}</th>
+                                        <th class="text-left pb-3 text-[10px] uppercase tracking-wider font-bold text-slate-400 whitespace-nowrap">${tD('col_guest')}</th>
+                                        <th class="text-left pb-3 text-[10px] uppercase tracking-wider font-bold text-slate-400 whitespace-nowrap">${tD('col_service')}</th>
+                                        <th class="text-right pb-3 text-[10px] uppercase tracking-wider font-bold text-slate-400 whitespace-nowrap">${tD('col_amount')}</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y" style="border-color:rgba(80,100,55,0.08);">
@@ -8983,6 +9010,7 @@
                                     `).join('')}
                                 </tbody>
                             </table>
+                            </div>
 
                             <!-- Totales -->
                             <div class="flex justify-end">
@@ -9100,13 +9128,15 @@
                     <p class="text-slate-500 text-sm mt-2">${tD('pov_subtitle')}</p>
                 </header>
                 <div class="bg-white rounded-3xl shadow-sm border overflow-hidden">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50 text-slate-500"><tr><th class="px-7 py-4">${tD('col_code')}</th><th class="p-4">${tD('col_amount')}</th><th class="p-4">${tD('col_status')}</th></tr></thead>
+                    <div class="responsive-table">
+                    <table class="w-full text-left text-sm" style="min-width:420px;">
+                        <thead class="bg-slate-50 text-slate-500"><tr><th class="px-7 py-4 whitespace-nowrap">${tD('col_code')}</th><th class="p-4 whitespace-nowrap">${tD('col_amount')}</th><th class="p-4 whitespace-nowrap">${tD('col_status')}</th></tr></thead>
                         <tbody class="divide-y">
                             ${v.length === 0 ? `<tr><td colspan="3" class="p-8 text-center text-slate-400">${tD('pov_no_history')}</td></tr>` :
-                            v.map(x=>`<tr class="hover:bg-slate-50 transition"><td class="px-7 py-4 font-mono font-bold text-blue-600">${esc(x.code)}</td><td class="p-4 font-bold">$${x.amount.toFixed(2)}</td><td class="p-4"><span class="px-3 py-1 rounded-full text-xs font-bold ${voucherStatusClass(x.status)}">${esc(x.status)}</span></td></tr>`).join('')}
+                            v.map(x=>`<tr class="hover:bg-slate-50 transition"><td class="px-7 py-4 font-mono font-bold text-blue-600 whitespace-nowrap">${esc(x.code)}</td><td class="p-4 font-bold whitespace-nowrap">$${x.amount.toFixed(2)}</td><td class="p-4 whitespace-nowrap"><span class="px-3 py-1 rounded-full text-xs font-bold ${voucherStatusClass(x.status)}">${esc(x.status)}</span></td></tr>`).join('')}
                         </tbody>
                     </table>
+                    </div>
                 </div>
             `;
         }
