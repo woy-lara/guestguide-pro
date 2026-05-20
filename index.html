@@ -1255,7 +1255,58 @@
             .table-mobile-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
             /* Hide mobile preview panel on actual mobile devices — redundant */
-            .mobile-preview-aside { display: none !important; }
+            .mobile-preview-aside, .provider-preview-aside { display: none !important; }
+
+            /* Builder tabs: don't shrink, allow horizontal scroll on mobile */
+            .builder-tabs-scroll > button { flex-shrink: 0; }
+            .builder-tabs-scroll {
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-type: x proximity;
+            }
+            .builder-tabs-scroll::-webkit-scrollbar { display: none; }
+
+            /* Responsive table wrapper allows horizontal scroll */
+            .responsive-table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                max-width: 100%;
+            }
+
+            /* Big headlines shrink */
+            h2.text-2xl, h2.text-3xl, h2.text-4xl { font-size: 1.35rem !important; line-height: 1.25; letter-spacing:-0.02em; }
+            h3.text-xl, h3.text-2xl { font-size: 1.1rem !important; }
+
+            /* Headers that justify-between need to wrap on mobile */
+            .header-stack-mobile { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
+            .header-stack-mobile > * { width: 100%; }
+            header.flex.justify-between, header.flex.justify-between.items-center, header.flex.justify-between.items-start {
+                flex-wrap: wrap !important;
+                gap: 10px;
+            }
+
+            /* Cards inside main content shouldn't have border-radius too big */
+            .rounded-3xl { border-radius: 18px !important; }
+
+            /* Big numeric values in widgets shrink */
+            .text-6xl { font-size: 2.5rem !important; }
+            .text-5xl { font-size: 2rem !important; }
+            .text-4xl { font-size: 1.7rem !important; }
+
+            /* Padding for cards tighter */
+            .p-7 { padding: 1rem !important; }
+            .p-8 { padding: 1.25rem !important; }
+
+            /* Map containers shorter on mobile */
+            .leaflet-container { height: 280px !important; }
+
+            /* Audit table rows wrap nicer */
+            .audit-row { flex-wrap: wrap; gap: 8px; }
+
+            /* Demo button tighter */
+            #demo-tour-btn span { display: none !important; }
 
             /* Auth overlay padding tighter */
             #auth-overlay { padding: 12px !important; }
@@ -7174,7 +7225,7 @@
                         ${isHotel ? `
                         <div>
                             <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 block">${tD('qe_location_type')}</label>
-                            <div class="grid grid-cols-3 gap-2">
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                 ${locOptions.map(l => `
                                     <button onclick="qrDraft.locationType='${l.id}'; renderQrEditorModal();"
                                             class="p-2.5 rounded-xl border-2 text-center transition ${qrDraft.locationType===l.id?'border-emerald-500 bg-emerald-50':'border-slate-100 hover:border-slate-200'}">
@@ -8132,7 +8183,7 @@
 
                 const filterBar = `
                     <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-                        <div class="flex flex-wrap gap-1.5 bg-white p-1.5 rounded-2xl border shadow-sm">
+                        <div class="flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-x-visible gap-1.5 bg-white p-1.5 rounded-2xl border shadow-sm builder-tabs-scroll">
                             ${[['all',tD('hl_filter_all'),DATABASE.hotels.length],['active',tD('hl_filter_active'),DATABASE.hotels.filter(x=>x.active).length],['paused',tD('hl_filter_paused'),DATABASE.hotels.filter(x=>!x.active).length]].map(([id,label,count]) => `
                                 <button onclick="setHotelsFilter('${id}')" class="px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2 transition ${hotelsListFilter===id?'text-white':'text-slate-500 hover:text-slate-800'}" ${hotelsListFilter===id?'style="background:var(--sidebar-bg);color:#f0f5e0;"':''}>
                                     ${label} <span class="px-1.5 py-0.5 rounded-md text-[10px] font-bold ${hotelsListFilter===id?'bg-white/15':'bg-slate-100 text-slate-600'}">${count}</span>
@@ -9821,7 +9872,7 @@
 
                 <div class="flex flex-col lg:flex-row gap-8">
                     <div class="flex-1 space-y-5 min-w-0">
-                        <div class="flex flex-wrap gap-1.5 bg-white p-1.5 rounded-2xl border shadow-sm">
+                        <div class="flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-x-visible gap-1.5 bg-white p-1.5 rounded-2xl border shadow-sm builder-tabs-scroll">
                             <button onclick="switchEditorTab('basic')"       id="tab-btn-basic"      class="py-2.5 px-3.5 text-xs font-bold rounded-full"><i data-lucide="info" class="w-3.5 h-3.5"></i> ${tD('hb_tab_basic')}</button>
                             <button onclick="switchEditorTab('contact')"     id="tab-btn-contact"    class="py-2.5 px-3.5 text-xs font-bold rounded-full"><i data-lucide="at-sign" class="w-3.5 h-3.5"></i> ${tD('hb_tab_contact')}</button>
                             <button onclick="switchEditorTab('team')"        id="tab-btn-team"       class="py-2.5 px-3.5 text-xs font-bold rounded-full"><i data-lucide="users" class="w-3.5 h-3.5"></i> ${tD('hb_tab_team')}${T.team && T.team.length ? ` <span class="px-1.5 py-0.5 rounded-md text-[9px] font-mono opacity-70">${T.team.length}</span>` : ''}</button>
@@ -9837,7 +9888,7 @@
                         </div>
                         <div id="editor-tab-content" class="bg-white p-7 rounded-3xl border shadow-sm min-h-[500px]"></div>
                     </div>
-                    <div class="w-[330px] shrink-0 mx-auto">
+                    <div class="w-[330px] shrink-0 mx-auto mobile-preview-aside">
                         <div class="sticky top-4">
                             <div class="flex items-center justify-between mb-3 px-1">
                                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${tD('hb_guest_view')}</p>
@@ -10044,7 +10095,7 @@
 
                 const filterBar = `
                     <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-                        <div class="flex flex-wrap gap-1.5 bg-white p-1.5 rounded-2xl border shadow-sm">
+                        <div class="flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-x-visible gap-1.5 bg-white p-1.5 rounded-2xl border shadow-sm builder-tabs-scroll">
                             ${[['all',tD('hl_filter_all'),DATABASE.providers.length],['active',tD('hl_filter_active'),DATABASE.providers.filter(x=>x.active).length],['paused',tD('hl_filter_paused'),DATABASE.providers.filter(x=>!x.active).length]].map(([id,label,count]) => `
                                 <button onclick="setProvidersFilter('${id}')" class="px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2 transition ${providersListFilter===id?'text-white':'text-slate-500 hover:text-slate-800'}" ${providersListFilter===id?'style="background:#1a1f17;color:#f0f5e0;"':''}>
                                     ${label} <span class="px-1.5 py-0.5 rounded-md text-[10px] font-bold ${providersListFilter===id?'bg-white/15':'bg-slate-100 text-slate-600'}">${count}</span>
@@ -10444,7 +10495,7 @@
                             <i data-lucide="chevron-down" class="ff-chevron w-4 h-4"></i>
                         </div>
                     </div>
-                    <div class="grid grid-cols-3 gap-3">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         <div class="ff"><label>${tD('pbt_label_child_min_age')}</label><input type="number" oninput="updateTempProviderField('childAgeMin', parseInt(this.value)||0)" value="${T.childAgeMin||3}"></div>
                         <div class="ff"><label>${tD('pbt_label_child_max_age')}</label><input type="number" oninput="updateTempProviderField('childAgeMax', parseInt(this.value)||12)" value="${T.childAgeMax||12}"></div>
                         <div class="ff">
@@ -10783,7 +10834,7 @@
                     </div>
                 </header>
 
-                <div class="flex flex-wrap gap-1.5 bg-white p-1.5 rounded-2xl border shadow-sm mb-7 inline-flex">
+                <div class="flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-x-visible gap-1.5 bg-white p-1.5 rounded-2xl border shadow-sm mb-7 builder-tabs-scroll">
                     ${tabBtn('info',tD('pb_tab_info'),'info')}
                     ${tabBtn('prices',tD('pb_tab_prices'),'dollar-sign')}
                     ${tabBtn('inclusions',tD('pb_tab_inclusions'),'check-circle')}
