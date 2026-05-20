@@ -2786,7 +2786,52 @@
                 mreq_status_in_review: 'En revisión',
                 mreq_status_in_progress: 'En progreso',
                 mreq_status_done: 'Completada',
-                mreq_status_rejected: 'Rechazada'
+                mreq_status_rejected: 'Rechazada',
+                // ── Restaurant menu module ──
+                mod_btn_configure: 'Configurar',
+                rm_page_title: 'Menú del Restaurante',
+                rm_page_sub: 'Gestiona los platos visibles en la app del huésped',
+                rm_back_to_modules: '← Volver a Módulos',
+                rm_add_item: 'Añadir plato',
+                rm_filter_all: 'Todos',
+                rm_filter_breakfast: 'Desayuno',
+                rm_filter_lunch: 'Almuerzo',
+                rm_filter_dinner: 'Cena',
+                rm_filter_drinks: 'Bebidas',
+                rm_filter_dessert: 'Postres',
+                rm_empty_title: 'Aún no hay platos en tu menú',
+                rm_empty_sub: 'Añade tu primer plato para que los huéspedes puedan ordenar desde su habitación.',
+                rm_empty_cta: 'Añadir mi primer plato',
+                rm_modal_new: 'Nuevo plato',
+                rm_modal_edit: 'Editar plato',
+                rm_modal_name: 'Nombre del plato',
+                rm_modal_name_ph: 'Ej. Bistec a la parrilla',
+                rm_modal_category: 'Categoría',
+                rm_modal_price: 'Precio (USD)',
+                rm_modal_desc: 'Descripción',
+                rm_modal_desc_ph: 'Cuéntale al huésped qué hace especial este plato...',
+                rm_modal_photo: 'URL de foto',
+                rm_modal_photo_ph: 'https://images.unsplash.com/...',
+                rm_modal_photo_hint: 'Tip: usa Unsplash o Pexels para fotos profesionales gratuitas.',
+                rm_modal_available: 'Disponible ahora',
+                rm_modal_unavailable: 'No disponible',
+                rm_modal_save: 'Guardar',
+                rm_modal_delete: 'Eliminar',
+                rm_modal_cancel: 'Cancelar',
+                rm_confirm_delete: '¿Eliminar este plato del menú?',
+                rm_toast_added: 'Plato añadido al menú',
+                rm_toast_updated: 'Plato actualizado',
+                rm_toast_deleted: 'Plato eliminado',
+                rm_toast_toggled: (name, available) => `${name} ${available ? 'ahora está disponible' : 'marcado como no disponible'}`,
+                rm_count_items: (n) => n === 1 ? '1 plato' : `${n} platos`,
+                rm_count_available: (n) => `${n} disponibles ahora`,
+                // Mobile preview
+                mob_restaurant_title: 'Menú del Restaurante',
+                mob_restaurant_sub: 'Ordena a tu habitación',
+                mob_order_now: 'Ordenar',
+                mob_unavailable_short: 'No disp.',
+                mob_no_menu_title: 'Menú próximamente',
+                mob_no_menu_sub: 'El hotel está preparando su menú.'
             },
             en: {
                 env_active: 'Multitenant Simulation Environment Active',
@@ -3562,7 +3607,52 @@
                 mreq_status_in_review: 'In review',
                 mreq_status_in_progress: 'In progress',
                 mreq_status_done: 'Completed',
-                mreq_status_rejected: 'Rejected'
+                mreq_status_rejected: 'Rejected',
+                // ── Restaurant menu module ──
+                mod_btn_configure: 'Configure',
+                rm_page_title: 'Restaurant Menu',
+                rm_page_sub: 'Manage dishes visible in the guest app',
+                rm_back_to_modules: '← Back to Modules',
+                rm_add_item: 'Add dish',
+                rm_filter_all: 'All',
+                rm_filter_breakfast: 'Breakfast',
+                rm_filter_lunch: 'Lunch',
+                rm_filter_dinner: 'Dinner',
+                rm_filter_drinks: 'Drinks',
+                rm_filter_dessert: 'Desserts',
+                rm_empty_title: 'No dishes in your menu yet',
+                rm_empty_sub: 'Add your first dish so guests can order from their room.',
+                rm_empty_cta: 'Add my first dish',
+                rm_modal_new: 'New dish',
+                rm_modal_edit: 'Edit dish',
+                rm_modal_name: 'Dish name',
+                rm_modal_name_ph: 'Ex. Grilled steak',
+                rm_modal_category: 'Category',
+                rm_modal_price: 'Price (USD)',
+                rm_modal_desc: 'Description',
+                rm_modal_desc_ph: 'Tell the guest what makes this dish special...',
+                rm_modal_photo: 'Photo URL',
+                rm_modal_photo_ph: 'https://images.unsplash.com/...',
+                rm_modal_photo_hint: 'Tip: use Unsplash or Pexels for free professional photos.',
+                rm_modal_available: 'Available now',
+                rm_modal_unavailable: 'Not available',
+                rm_modal_save: 'Save',
+                rm_modal_delete: 'Delete',
+                rm_modal_cancel: 'Cancel',
+                rm_confirm_delete: 'Remove this dish from the menu?',
+                rm_toast_added: 'Dish added to menu',
+                rm_toast_updated: 'Dish updated',
+                rm_toast_deleted: 'Dish removed',
+                rm_toast_toggled: (name, available) => `${name} ${available ? 'is now available' : 'marked as not available'}`,
+                rm_count_items: (n) => n === 1 ? '1 dish' : `${n} dishes`,
+                rm_count_available: (n) => `${n} available now`,
+                // Mobile preview
+                mob_restaurant_title: 'Restaurant Menu',
+                mob_restaurant_sub: 'Order to your room',
+                mob_order_now: 'Order',
+                mob_unavailable_short: 'N/A',
+                mob_no_menu_title: 'Menu coming soon',
+                mob_no_menu_sub: 'The hotel is preparing its menu.'
             }
         };
         function tD(key, ...args) {
@@ -3846,7 +3936,7 @@
             { id: 'maintenance',   i18nKey: 'mod_maintenance',   icon: 'wrench',     color: '#7060c8', available: true },
             { id: 'amenities',     i18nKey: 'mod_amenities',     icon: 'gift',       color: '#2e9e6a', available: true },
             // ── Próximamente / Solicitar integración ──
-            { id: 'restaurant',    i18nKey: 'mod_restaurant',    icon: 'chef-hat',   color: '#d05050', available: false, featured: true },
+            { id: 'restaurant',    i18nKey: 'mod_restaurant',    icon: 'chef-hat',   color: '#d05050', available: true,  featured: true, configurable: true },
             { id: 'spa_booking',   i18nKey: 'mod_spa_booking',   icon: 'flower-2',   color: '#3878b8', available: false },
             { id: 'transport',     i18nKey: 'mod_transport',     icon: 'car',        color: '#6aaa1e', available: false },
             { id: 'laundry',       i18nKey: 'mod_laundry',       icon: 'shirt',      color: '#7d8c70', available: false },
@@ -4493,6 +4583,43 @@
             DATABASE.hotels.forEach(h => {
                 if (!h.enabledModules) {
                     h.enabledModules = ['room_service', 'maintenance', 'amenities'];
+                }
+            });
+        }
+
+        // Seed inicial de menús de restaurante por hotel
+        function ensureRestaurantMenus() {
+            const seeds = {
+                hotel_1: [
+                    { id:'rm1_1', category:'breakfast', name:'Desayuno Boquete',        price:14, description:'Huevos al gusto, gallo pinto, plátano maduro, café Geisha de la finca.',                   photo:'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=400&q=70', available:true },
+                    { id:'rm1_2', category:'breakfast', name:'Pancakes de Quetzal',     price:11, description:'Pancakes con miel local, frutas de temporada y crema chantilly.',                            photo:'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&q=70', available:true },
+                    { id:'rm1_3', category:'lunch',     name:'Trucha del Río Caldera',  price:22, description:'Trucha local a la parrilla con vegetales asados y arroz pilaf.',                            photo:'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&q=70', available:true },
+                    { id:'rm1_4', category:'dinner',    name:'Bistec Premium 8oz',      price:28, description:'Corte angus a la parrilla, papa rústica y mantequilla de hierbas.',                         photo:'https://images.unsplash.com/photo-1546964124-0cce460f38ef?w=400&q=70', available:true },
+                    { id:'rm1_5', category:'dinner',    name:'Pasta del Chef',          price:19, description:'Pasta fresca con setas locales y crema de café.',                                            photo:'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400&q=70', available:false },
+                    { id:'rm1_6', category:'drinks',    name:'Café Geisha Lérida',      price:8,  description:'Nuestro café estrella, preparado por barista. Notas florales únicas.',                       photo:'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&q=70', available:true },
+                    { id:'rm1_7', category:'drinks',    name:'Smoothie Tropical',       price:7,  description:'Mango, piña, maracuyá y un toque de jengibre.',                                              photo:'https://images.unsplash.com/photo-1502741224143-90386d7f8c82?w=400&q=70', available:true },
+                    { id:'rm1_8', category:'dessert',   name:'Brownie de café',         price:9,  description:'Brownie tibio con helado de vainilla y salsa de café Geisha.',                              photo:'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&q=70', available:true }
+                ],
+                hotel_2: [
+                    { id:'rm2_1', category:'breakfast', name:'Continental Panamonte',   price:13, description:'Pan artesanal, mermeladas, frutas, jugo y café.',                                            photo:'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=70', available:true },
+                    { id:'rm2_2', category:'lunch',     name:'Ceviche de Corvina',      price:16, description:'Ceviche tradicional panameño con cebolla morada y aguacate.',                               photo:'https://images.unsplash.com/photo-1559847844-d05050d3b3b3?w=400&q=70', available:true },
+                    { id:'rm2_3', category:'dinner',    name:'Risotto de Hongos',       price:24, description:'Risotto cremoso con setas locales y queso parmesano.',                                      photo:'https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=400&q=70', available:true },
+                    { id:'rm2_4', category:'dinner',    name:'Cordero Boquete',         price:32, description:'Cordero asado a fuego lento con puré de yuca y reducción de vino tinto.',                  photo:'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&q=70', available:true },
+                    { id:'rm2_5', category:'drinks',    name:'Vino Tinto Reserva',      price:12, description:'Copa de Malbec argentino, perfecto con carnes rojas.',                                      photo:'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&q=70', available:true },
+                    { id:'rm2_6', category:'dessert',   name:'Tres Leches',             price:8,  description:'Postre clásico panameño con un toque de canela.',                                            photo:'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&q=70', available:true }
+                ],
+                hotel_3: [
+                    { id:'rm3_1', category:'breakfast', name:'Bowl Energético',         price:12, description:'Açaí, granola, banana, miel y semillas de chía.',                                           photo:'https://images.unsplash.com/photo-1626074353765-517a681e40be?w=400&q=70', available:true },
+                    { id:'rm3_2', category:'lunch',     name:'Ensalada del Valle',      price:14, description:'Mix de hojas frescas, quinoa, aguacate, almendras y vinagreta de cítricos.',                photo:'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=70', available:true },
+                    { id:'rm3_3', category:'lunch',     name:'Wrap de Pollo',           price:13, description:'Pollo grillado con tomate, lechuga y salsa de yogurt.',                                     photo:'https://images.unsplash.com/photo-1539252554453-80ab65ce3586?w=400&q=70', available:true },
+                    { id:'rm3_4', category:'dinner',    name:'Salmón al Vapor',         price:26, description:'Filete de salmón con vegetales al vapor y arroz integral.',                                photo:'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=70', available:true },
+                    { id:'rm3_5', category:'drinks',    name:'Té Verde Premium',        price:6,  description:'Té matcha ceremonial con leche de almendra.',                                                photo:'https://images.unsplash.com/photo-1571934811356-5cc061b6821f?w=400&q=70', available:true },
+                    { id:'rm3_6', category:'dessert',   name:'Frutas de Temporada',     price:7,  description:'Frutas frescas locales con miel de abeja boquetena.',                                       photo:'https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=400&q=70', available:true }
+                ]
+            };
+            DATABASE.hotels.forEach(h => {
+                if (!h.restaurantMenu) {
+                    h.restaurantMenu = seeds[h.id] ? JSON.parse(JSON.stringify(seeds[h.id])) : [];
                 }
             });
         }
@@ -6272,6 +6399,31 @@
                         </div>
                     </div>`;
 
+                // Restaurant menu CTA block (only if module enabled + has items)
+                const restaurantEnabled = (tempHotel.enabledModules || ['room_service','maintenance','amenities']).includes('restaurant');
+                const menuItems = tempHotel.restaurantMenu || [];
+                const availableMenuItems = menuItems.filter(x => x.available);
+                const rBlock = (restaurantEnabled && availableMenuItems.length > 0) ? `
+                    <div class="mb-5">
+                        <div class="flex items-center justify-between mb-3 px-1">
+                            <h5 class="text-[13px] font-extrabold text-slate-900 tracking-tight">${tM('mob_restaurant_title') !== 'mob_restaurant_title' ? tM('mob_restaurant_title') : (mobileLang==='en'?'Restaurant Menu':'Menú del Restaurante')}</h5>
+                            <span class="text-[10px] font-bold" style="color:${hc};">${availableMenuItems.length}</span>
+                        </div>
+                        <button class="w-full rounded-3xl overflow-hidden shadow-sm active:scale-[0.98] transition relative" style="background:linear-gradient(135deg,#d05050,#a83333); min-height:96px;">
+                            ${availableMenuItems[0]?.photo ? `<img src="${escAttr(availableMenuItems[0].photo)}" class="absolute inset-0 w-full h-full object-cover opacity-30">` : ''}
+                            <div class="relative p-3 flex items-center gap-3 text-white">
+                                <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="chef-hat" class="w-6 h-6"></i>
+                                </div>
+                                <div class="text-left flex-1 min-w-0">
+                                    <p class="font-extrabold text-[13px] leading-tight">${mobileLang==='en'?'Order to your room':'Ordena a tu habitación'}</p>
+                                    <p class="text-[10px] opacity-90 mt-0.5">${availableMenuItems.length} ${mobileLang==='en'?'dishes available':'platos disponibles'}</p>
+                                </div>
+                                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                            </div>
+                        </button>
+                    </div>`: '';
+
                 const eBlock = `
                     <div class="mb-5">
                         <div class="flex items-center justify-between mb-3 px-1">
@@ -6340,6 +6492,7 @@
                                 </div>
                             </div>
 
+                            ${rBlock}
                             ${tempHotel.layoutOrder==='services_first' ? sBlock+eBlock : eBlock+sBlock}
 
                             ${(() => {
@@ -6680,6 +6833,7 @@
                 if (activeTab === 'overview') renderHotelOverview(container, currentRole);
                 else if (activeTab === 'stay_services') renderStayServicesPanel(container, currentRole);
                 else if (activeTab === 'modules') renderHotelModules(container, currentRole);
+                else if (activeTab === 'restaurant_menu') renderRestaurantMenu(container, currentRole);
                 else if (activeTab === 'finances') renderHotelCharges(container, currentRole);
                 else if (activeTab === 'ai_assistant') renderAIAssistantHub(container);
                 else if (activeTab === 'analytics') renderAnalyticsForOwner(container, 'hotel', currentRole);
@@ -9206,9 +9360,18 @@
                 const tinted = `background:${mod.color}1a; color:${mod.color};`;
                 const enabledNow = enabled.includes(mod.id);
                 if (mod.available) {
-                    // Active module card with toggle
+                    // Active module card with toggle (and optional Configurar button if configurable + enabled)
+                    const itemsCountForRestaurant = mod.id === 'restaurant' ? (hotel.restaurantMenu || []).length : null;
+                    const displayCount = itemsCountForRestaurant != null ? tD('rm_count_items', itemsCountForRestaurant) : (count != null ? count + ' pedidos' : '');
+                    const configurableBtn = (mod.configurable && enabledNow && mod.id === 'restaurant') ? `
+                        <button onclick="switchTab('restaurant_menu')" class="mt-3 w-full px-3 py-2 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 text-white shadow-sm hover:shadow active:scale-95 transition" style="background:${mod.color};">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
+                            ${tD('mod_btn_configure')}
+                        </button>
+                    ` : '';
                     return `
-                        <div class="bg-white rounded-3xl border shadow-sm p-5 transition hover:shadow-md ${enabledNow ? '' : 'opacity-60'}">
+                        <div class="bg-white rounded-3xl border shadow-sm p-5 transition hover:shadow-md ${enabledNow ? '' : 'opacity-60'} ${mod.featured ? 'relative' : ''}">
+                            ${mod.featured ? `<span class="absolute -top-2 left-4 px-2 py-0.5 rounded-full text-[9px] font-bold" style="background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#3a2200;">${tD('mod_featured_badge')}</span>` : ''}
                             <div class="flex items-start justify-between gap-3 mb-3">
                                 <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style="${tinted}">
                                     <i data-lucide="${mod.icon}" class="w-6 h-6"></i>
@@ -9224,8 +9387,9 @@
                             <p class="text-xs text-slate-500 leading-relaxed mb-3">${tD(mod.i18nKey + '_desc')}</p>
                             <div class="flex items-center justify-between text-[11px] pt-3 border-t" style="border-color:rgba(80,100,55,0.08);">
                                 <span class="font-semibold ${enabledNow ? 'text-emerald-700' : 'text-slate-400'}">${enabledNow ? '● ' + tD('mod_status_active') : '○ ' + tD('mod_status_disabled')}</span>
-                                <span class="text-slate-400 font-mono">${count != null ? count + ' pedidos' : ''}</span>
+                                <span class="text-slate-400 font-mono">${displayCount}</span>
                             </div>
+                            ${configurableBtn}
                         </div>
                     `;
                 } else {
@@ -9314,6 +9478,278 @@
                         </div>
                     </section>
                 ` : ''}
+            `;
+        }
+
+        // ═══════════════════════════════════════════════
+        //  RESTAURANT MENU MODULE
+        // ═══════════════════════════════════════════════
+        let restaurantMenuFilter = 'all'; // category filter
+        let rmItemDraft = null; // { id?, category, name, price, description, photo, available } | null = closed
+
+        const RM_CATEGORIES = [
+            { id: 'breakfast', icon: 'sunrise',  color: '#c07820' },
+            { id: 'lunch',     icon: 'sun',      color: '#6aaa1e' },
+            { id: 'dinner',    icon: 'moon',     color: '#7060c8' },
+            { id: 'drinks',    icon: 'wine',     color: '#3878b8' },
+            { id: 'dessert',   icon: 'cake',     color: '#d05050' }
+        ];
+
+        function setRestaurantMenuFilter(f) {
+            restaurantMenuFilter = f;
+            renderApp();
+        }
+
+        function openRmItemModal(itemId = null) {
+            const hotel = DATABASE.hotels.find(h => h.id === currentRole);
+            if (!hotel) return;
+            if (itemId) {
+                const it = (hotel.restaurantMenu || []).find(x => x.id === itemId);
+                if (it) rmItemDraft = { ...it };
+            } else {
+                rmItemDraft = { id:null, category:'breakfast', name:'', price:0, description:'', photo:'', available:true };
+            }
+            renderRmItemModal();
+        }
+        function closeRmItemModal() {
+            rmItemDraft = null;
+            const host = document.getElementById('rm-item-modal-host');
+            if (host) host.innerHTML = '';
+        }
+        function updateRmField(field, v) {
+            if (!rmItemDraft) return;
+            rmItemDraft[field] = field === 'price' ? parseFloat(v) || 0 : v;
+            if (field === 'category' || field === 'available') renderRmItemModal();
+        }
+        function saveRmItem() {
+            if (!rmItemDraft) return;
+            const hotel = DATABASE.hotels.find(h => h.id === currentRole);
+            if (!hotel) return;
+            if (!hotel.restaurantMenu) hotel.restaurantMenu = [];
+            const draft = rmItemDraft;
+            if (!draft.name || !draft.name.trim()) {
+                showToast(tD('toast_error'), tD('toast_action_msg'), 'error');
+                return;
+            }
+            if (draft.id) {
+                const idx = hotel.restaurantMenu.findIndex(x => x.id === draft.id);
+                if (idx >= 0) {
+                    hotel.restaurantMenu[idx] = { ...draft };
+                    showToastT('rm_toast_updated', draft.name, 'success');
+                }
+            } else {
+                const newItem = { ...draft, id: 'rm_' + Date.now() };
+                hotel.restaurantMenu.unshift(newItem);
+                showToastT('rm_toast_added', newItem.name, 'success');
+            }
+            logAudit('restaurant.menu_update', { type:'hotel', id: hotel.id, name: hotel.name }, { item: draft.name });
+            closeRmItemModal();
+            renderApp();
+        }
+        function deleteRmItem(itemId) {
+            if (!confirm(tD('rm_confirm_delete'))) return;
+            const hotel = DATABASE.hotels.find(h => h.id === currentRole);
+            if (!hotel || !hotel.restaurantMenu) return;
+            const it = hotel.restaurantMenu.find(x => x.id === itemId);
+            hotel.restaurantMenu = hotel.restaurantMenu.filter(x => x.id !== itemId);
+            if (it) showToastT('rm_toast_deleted', it.name, 'info');
+            closeRmItemModal();
+            renderApp();
+        }
+        function toggleRmItemAvailable(itemId) {
+            const hotel = DATABASE.hotels.find(h => h.id === currentRole);
+            if (!hotel) return;
+            const it = (hotel.restaurantMenu || []).find(x => x.id === itemId);
+            if (!it) return;
+            it.available = !it.available;
+            showToastT('toast_action_done', tD('rm_toast_toggled', it.name, it.available), it.available ? 'success' : 'info');
+            renderApp();
+        }
+
+        function renderRmItemModal() {
+            let host = document.getElementById('rm-item-modal-host');
+            if (!host) {
+                host = document.createElement('div');
+                host.id = 'rm-item-modal-host';
+                document.body.appendChild(host);
+            }
+            if (!rmItemDraft) { host.innerHTML = ''; return; }
+            const isEdit = !!rmItemDraft.id;
+            host.innerHTML = `
+                <div class="invoice-modal-overlay" onclick="if(event.target===this) closeRmItemModal()">
+                    <div class="bg-white rounded-3xl shadow-2xl w-full" style="max-width:540px; margin-top:60px;">
+                        <header class="px-6 py-5 border-b flex items-center justify-between" style="border-color:rgba(80,100,55,0.1);">
+                            <div class="flex items-center gap-3">
+                                <div class="w-11 h-11 rounded-2xl flex items-center justify-center" style="background:rgba(208,80,80,0.14); color:#d05050;">
+                                    <i data-lucide="chef-hat" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-lg text-slate-800">${isEdit ? tD('rm_modal_edit') : tD('rm_modal_new')}</h3>
+                                </div>
+                            </div>
+                            <button onclick="closeRmItemModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 transition flex items-center justify-center text-slate-400">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </header>
+                        <div class="p-6 space-y-4">
+                            <!-- Photo preview -->
+                            ${rmItemDraft.photo ? `
+                                <div class="rounded-2xl overflow-hidden border" style="border-color:rgba(80,100,55,0.15);">
+                                    <img src="${escAttr(rmItemDraft.photo)}" class="w-full h-44 object-cover" onerror="this.style.display='none';">
+                                </div>
+                            ` : ''}
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('rm_modal_name')}</label>
+                                    <input type="text" oninput="updateRmField('name', this.value)" value="${escAttr(rmItemDraft.name)}" placeholder="${escAttr(tD('rm_modal_name_ph'))}" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:bg-white" style="border-color:rgba(80,100,55,0.15);">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('rm_modal_price')}</label>
+                                    <input type="number" step="0.01" oninput="updateRmField('price', this.value)" value="${rmItemDraft.price || ''}" placeholder="0.00" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:bg-white" style="border-color:rgba(80,100,55,0.15);">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('rm_modal_category')}</label>
+                                <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
+                                    ${RM_CATEGORIES.map(c => `
+                                        <button onclick="updateRmField('category', '${c.id}')" class="px-2 py-2 rounded-xl border-2 text-center transition flex flex-col items-center gap-1 ${rmItemDraft.category===c.id ? '' : 'opacity-60 hover:opacity-100'}" style="border-color:${rmItemDraft.category===c.id ? c.color : 'rgba(80,100,55,0.12)'}; ${rmItemDraft.category===c.id ? `background:${c.color}1a;` : 'background:#fff;'}">
+                                            <i data-lucide="${c.icon}" class="w-4 h-4" style="color:${c.color};"></i>
+                                            <span class="text-[10px] font-bold" style="color:${rmItemDraft.category===c.id ? c.color : 'var(--text-2)'};">${tD('rm_filter_' + c.id)}</span>
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('rm_modal_desc')}</label>
+                                <textarea oninput="updateRmField('description', this.value)" rows="3" placeholder="${escAttr(tD('rm_modal_desc_ph'))}" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:bg-white" style="border-color:rgba(80,100,55,0.15); resize:vertical;">${esc(rmItemDraft.description || '')}</textarea>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('rm_modal_photo')}</label>
+                                <input type="url" oninput="updateRmField('photo', this.value)" value="${escAttr(rmItemDraft.photo || '')}" placeholder="${escAttr(tD('rm_modal_photo_ph'))}" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:bg-white" style="border-color:rgba(80,100,55,0.15);">
+                                <p class="text-[10px] text-slate-400 mt-1">${tD('rm_modal_photo_hint')}</p>
+                            </div>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <div class="relative">
+                                    <input type="checkbox" ${rmItemDraft.available ? 'checked' : ''} onchange="updateRmField('available', this.checked)" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-200 peer-checked:bg-emerald-500 rounded-full transition relative">
+                                        <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full" style="transition:transform 0.2s ease; transform:${rmItemDraft.available ? 'translateX(20px)' : 'translateX(0)'};"></span>
+                                    </div>
+                                </div>
+                                <span class="text-sm font-semibold ${rmItemDraft.available ? 'text-emerald-700' : 'text-slate-500'}">${rmItemDraft.available ? tD('rm_modal_available') : tD('rm_modal_unavailable')}</span>
+                            </label>
+                        </div>
+                        <footer class="px-6 py-4 border-t flex gap-2 justify-between" style="border-color:rgba(80,100,55,0.1);">
+                            <div>
+                                ${isEdit ? `<button onclick="deleteRmItem('${escAttr(rmItemDraft.id)}')" class="px-4 py-2.5 rounded-full text-sm font-bold text-rose-600 hover:bg-rose-50 transition flex items-center gap-1.5"><i data-lucide="trash-2" class="w-4 h-4"></i>${tD('rm_modal_delete')}</button>` : ''}
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="closeRmItemModal()" class="px-4 py-2.5 rounded-full text-sm font-semibold text-slate-600 hover:bg-slate-100 transition">${tD('rm_modal_cancel')}</button>
+                                <button onclick="saveRmItem()" class="px-5 py-2.5 rounded-full text-sm font-bold text-white shadow-md hover:shadow-lg active:scale-95 transition flex items-center gap-2" style="background:linear-gradient(135deg,#d05050,#a83333);">
+                                    <i data-lucide="save" class="w-4 h-4"></i>
+                                    ${tD('rm_modal_save')}
+                                </button>
+                            </div>
+                        </footer>
+                    </div>
+                </div>
+            `;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function renderRestaurantMenu(target, hotelId) {
+            const hotel = DATABASE.hotels.find(h => h.id === hotelId);
+            if (!hotel) { target.innerHTML = ''; return; }
+            if (!hotel.restaurantMenu) hotel.restaurantMenu = [];
+            const items = hotel.restaurantMenu;
+            const filtered = restaurantMenuFilter === 'all' ? items : items.filter(i => i.category === restaurantMenuFilter);
+            const totalItems = items.length;
+            const availableNow = items.filter(i => i.available).length;
+
+            const filterPill = (key, label, color) => {
+                const isActive = restaurantMenuFilter === key;
+                const count = key === 'all' ? items.length : items.filter(i => i.category === key).length;
+                return `
+                    <button onclick="setRestaurantMenuFilter('${key}')" class="px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 flex-shrink-0 ${isActive ? 'text-white shadow-md' : 'bg-white text-slate-600 border hover:border-slate-300'}" style="${isActive ? `background:${color || 'var(--sidebar-bg)'}; color:white;` : ''}">
+                        ${label}
+                        <span class="px-1.5 py-0.5 rounded-md text-[10px] font-mono ${isActive ? 'bg-white/20' : 'bg-slate-100 text-slate-500'}">${count}</span>
+                    </button>
+                `;
+            };
+
+            target.innerHTML = `
+                <header class="mb-6 flex flex-wrap items-start justify-between gap-3">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-semibold mb-1" style="color:var(--text-3);">${esc(hotel.name)}</p>
+                        <h2 class="text-2xl md:text-3xl font-bold flex items-center gap-2" style="letter-spacing:-0.03em;">
+                            <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(208,80,80,0.14); color:#d05050;"><i data-lucide="chef-hat" class="w-5 h-5"></i></span>
+                            ${tD('rm_page_title')}
+                        </h2>
+                        <p class="text-slate-500 text-sm mt-1">${tD('rm_page_sub')} · <span class="font-semibold">${tD('rm_count_items', totalItems)}</span> · ${tD('rm_count_available', availableNow)}</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="switchTab('modules')" class="bg-white border text-slate-700 px-4 py-2.5 rounded-full text-sm font-semibold shadow-sm hover:shadow active:scale-95 transition flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i>${tD('rm_back_to_modules')}</button>
+                        <button onclick="openRmItemModal()" class="text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-md hover:shadow-lg active:scale-95 transition flex items-center gap-2" style="background:linear-gradient(135deg,#d05050,#a83333);"><i data-lucide="plus" class="w-4 h-4"></i>${tD('rm_add_item')}</button>
+                    </div>
+                </header>
+
+                <!-- Category filters -->
+                <div class="flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-x-visible gap-2 mb-6 pb-1">
+                    ${filterPill('all', tD('rm_filter_all'))}
+                    ${RM_CATEGORIES.map(c => filterPill(c.id, tD('rm_filter_' + c.id), c.color)).join('')}
+                </div>
+
+                <!-- Items grid / empty state -->
+                ${items.length === 0 ? `
+                    <div class="bg-white rounded-3xl border shadow-sm p-12 text-center">
+                        <div class="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center" style="background:rgba(208,80,80,0.1);">
+                            <i data-lucide="utensils-crossed" class="w-9 h-9" style="color:#d05050;"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-1">${tD('rm_empty_title')}</h3>
+                        <p class="text-sm text-slate-500 mb-5 max-w-md mx-auto">${tD('rm_empty_sub')}</p>
+                        <button onclick="openRmItemModal()" class="text-white px-6 py-3 rounded-full text-sm font-bold shadow-md hover:shadow-lg active:scale-95 transition inline-flex items-center gap-2" style="background:linear-gradient(135deg,#d05050,#a83333);">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                            ${tD('rm_empty_cta')}
+                        </button>
+                    </div>
+                ` : `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        ${filtered.map(item => {
+                            const cat = RM_CATEGORIES.find(c => c.id === item.category) || RM_CATEGORIES[0];
+                            return `
+                                <div class="bg-white rounded-3xl border shadow-sm overflow-hidden hover:shadow-md transition ${item.available ? '' : 'opacity-70'}">
+                                    <div class="relative h-40 bg-slate-100">
+                                        ${item.photo ? `<img src="${escAttr(item.photo)}" class="w-full h-full object-cover" onerror="this.style.display='none';">` : `<div class="w-full h-full flex items-center justify-center"><i data-lucide="image" class="w-10 h-10 text-slate-300"></i></div>`}
+                                        <!-- Category badge -->
+                                        <span class="absolute top-3 left-3 inline-flex items-center gap-1 px-2 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider" style="background:${cat.color}; color:white;">
+                                            <i data-lucide="${cat.icon}" class="w-3 h-3"></i>
+                                            ${tD('rm_filter_' + cat.id)}
+                                        </span>
+                                        ${!item.available ? `<span class="absolute top-3 right-3 px-2 py-1 rounded-full text-[9px] font-bold uppercase" style="background:rgba(208,80,80,0.95); color:white;">${tD('mob_unavailable_short')}</span>` : ''}
+                                    </div>
+                                    <div class="p-4">
+                                        <div class="flex items-start justify-between gap-2 mb-2">
+                                            <h4 class="font-bold text-slate-800 text-sm leading-tight">${esc(item.name)}</h4>
+                                            <span class="font-bold text-base whitespace-nowrap" style="color:#d05050;">$${(item.price || 0).toFixed(2)}</span>
+                                        </div>
+                                        <p class="text-xs text-slate-500 line-clamp-2 mb-3 min-h-[32px]">${esc(item.description || '')}</p>
+                                        <div class="flex items-center justify-between gap-2 pt-3 border-t" style="border-color:rgba(80,100,55,0.08);">
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="checkbox" ${item.available ? 'checked' : ''} onchange="toggleRmItemAvailable('${escAttr(item.id)}')" class="sr-only peer">
+                                                <div class="w-9 h-5 bg-slate-200 peer-checked:bg-emerald-500 rounded-full transition relative">
+                                                    <span class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full" style="transition:transform 0.2s ease; transform:${item.available ? 'translateX(16px)' : 'translateX(0)'};"></span>
+                                                </div>
+                                                <span class="text-[10px] font-semibold ${item.available ? 'text-emerald-700' : 'text-slate-400'}">${item.available ? tD('rm_modal_available') : tD('rm_modal_unavailable')}</span>
+                                            </label>
+                                            <button onclick="openRmItemModal('${escAttr(item.id)}')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition active:scale-95">
+                                                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `}
             `;
         }
 
@@ -11904,7 +12340,7 @@
         ];
 
         function exportDatabaseJSON() {
-            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed();
+            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus();
             const payload = {
                 app: BACKUP_APP,
                 version: BACKUP_VERSION,
@@ -11978,7 +12414,7 @@
             const stats = importPreview.stats || {};
             importPreview = null;
             // re-bootstrap arrays defensivamente
-            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed();
+            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus();
             logAudit('backup.restore', { type:'system', id:'backup', name:'Backup restaurado' }, { before, after: stats });
             renderApp();
             showToast(tD('toast_backup_restored'), `${stats.hotels||0} ${dashLang==='en'?'hotels':'hoteles'}, ${stats.providers||0} ${dashLang==='en'?'providers applied':'proveedores aplicados'}`, 'success');
@@ -12545,7 +12981,7 @@
         // Inicialización
         window.onload = function() {
             applyTheme();   // set data-theme on html before anything renders
-            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed();
+            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus();
             const isAuthed = initAuthFlow();   // returns true if already logged in
             if (isAuthed) {
                 renderApp();
