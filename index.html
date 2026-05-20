@@ -713,7 +713,13 @@
             z-index: 200;
             backdrop-filter: blur(8px);
             padding-top: 12vh;
+            padding-left: 16px;
+            padding-right: 16px;
             animation: fadeInModal 0.15s ease;
+        }
+        @media (max-width: 767px) {
+            .cmdk-overlay { padding-top: 6vh !important; padding-left: 12px; padding-right: 12px; }
+            .cmdk-panel { max-height: 80vh !important; }
         }
         .cmdk-panel {
             background: #fff;
@@ -839,6 +845,14 @@
             animation: fadeInModal 0.18s ease;
         }
         @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+        @media (max-width: 767px) {
+            .invoice-modal-overlay { padding: 12px 8px !important; }
+            .invoice-modal-overlay > div { border-radius: 16px !important; }
+            .invoice-modal-overlay #invoice-print-area { padding: 18px !important; }
+            .invoice-modal-overlay .no-print { flex-wrap: wrap !important; gap: 8px !important; padding: 12px !important; }
+            .invoice-modal-overlay .no-print > div { width: 100%; }
+            .qr-scan-modal-card { max-height: 95vh !important; border-radius: 18px !important; }
+        }
 
         /* ─────────────────────────────────────────
            GLOBAL BACK BUTTON — Modern trending pill
@@ -6937,9 +6951,9 @@
             modal.style.backdropFilter = 'blur(4px)';
             modal.onclick = (e) => { if (e.target === modal) { restoreMobileState(); closeQrScanModal(); } };
             modal.innerHTML = `
-                <div class="bg-white rounded-3xl shadow-2xl flex overflow-hidden" style="max-width:920px;width:100%;max-height:90vh;">
-                    <!-- Phone preview column -->
-                    <div class="flex-shrink-0 p-6 flex flex-col items-center justify-center" style="background:linear-gradient(135deg,#f5f1e8,#ede7d8);">
+                <div class="bg-white rounded-3xl shadow-2xl flex flex-col md:flex-row overflow-hidden qr-scan-modal-card" style="max-width:920px;width:100%;max-height:90vh;">
+                    <!-- Phone preview column (hidden on mobile to save space) -->
+                    <div class="flex-shrink-0 p-6 flex flex-col items-center justify-center hidden md:flex" style="background:linear-gradient(135deg,#f5f1e8,#ede7d8);">
                         <div class="mb-3 text-center">
                             <p class="text-[10px] font-bold tracking-wider uppercase" style="color:#6e7f60;">Simulación en vivo</p>
                             <p class="text-[11px] text-slate-500 mt-0.5">Lo que ve el huésped al escanear</p>
@@ -6948,7 +6962,7 @@
                     </div>
 
                     <!-- Context panel -->
-                    <div class="flex-1 p-7 flex flex-col overflow-y-auto" style="min-width:380px;">
+                    <div class="flex-1 p-5 md:p-7 flex flex-col overflow-y-auto qr-scan-context">
                         <div class="flex items-start justify-between mb-5">
                             <div class="flex items-center gap-2.5">
                                 <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
