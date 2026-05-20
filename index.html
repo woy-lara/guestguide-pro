@@ -2760,7 +2760,33 @@
                 modtoggle_enabled_title: 'Módulo activado',
                 modtoggle_enabled_msg: (name) => `${name} ya está disponible en la app del huésped.`,
                 modtoggle_disabled_title: 'Módulo desactivado',
-                modtoggle_disabled_msg: (name) => `${name} dejará de mostrarse en la app del huésped.`
+                modtoggle_disabled_msg: (name) => `${name} dejará de mostrarse en la app del huésped.`,
+                // ── SaaS Admin: Module Requests view ──
+                nav_module_requests: 'Solicitudes de Módulos',
+                mreq_title: 'Solicitudes de Integración',
+                mreq_subtitle: 'Lo que tus hoteles piden — prioriza tu roadmap con datos reales',
+                mreq_total: 'Total',
+                mreq_pending: 'Pendientes',
+                mreq_in_review: 'En revisión',
+                mreq_in_progress: 'En progreso',
+                mreq_done: 'Completadas',
+                mreq_rejected: 'Rechazadas',
+                mreq_filter_all: 'Todas',
+                mreq_no_requests_title: 'Sin solicitudes por ahora',
+                mreq_no_requests_sub: 'Cuando un hotel pida un módulo, aparecerá aquí.',
+                mreq_demand_signal: 'Más demandados',
+                mreq_demand_sub: 'Los hoteles han solicitado:',
+                mreq_action_review: 'Revisar',
+                mreq_action_start: 'Empezar',
+                mreq_action_finish: 'Completar',
+                mreq_action_reject: 'Rechazar',
+                mreq_action_contact: 'Contactar hotel',
+                mreq_advanced_to: (status) => `Estado cambiado a "${status}"`,
+                mreq_status_pending: 'Pendiente',
+                mreq_status_in_review: 'En revisión',
+                mreq_status_in_progress: 'En progreso',
+                mreq_status_done: 'Completada',
+                mreq_status_rejected: 'Rechazada'
             },
             en: {
                 env_active: 'Multitenant Simulation Environment Active',
@@ -3510,7 +3536,33 @@
                 modtoggle_enabled_title: 'Module enabled',
                 modtoggle_enabled_msg: (name) => `${name} is now available in the guest app.`,
                 modtoggle_disabled_title: 'Module disabled',
-                modtoggle_disabled_msg: (name) => `${name} will no longer appear in the guest app.`
+                modtoggle_disabled_msg: (name) => `${name} will no longer appear in the guest app.`,
+                // ── SaaS Admin: Module Requests view ──
+                nav_module_requests: 'Module Requests',
+                mreq_title: 'Integration Requests',
+                mreq_subtitle: 'What your hotels are asking for — prioritize your roadmap with real data',
+                mreq_total: 'Total',
+                mreq_pending: 'Pending',
+                mreq_in_review: 'In review',
+                mreq_in_progress: 'In progress',
+                mreq_done: 'Completed',
+                mreq_rejected: 'Rejected',
+                mreq_filter_all: 'All',
+                mreq_no_requests_title: 'No requests yet',
+                mreq_no_requests_sub: 'When a hotel requests a module, it will show up here.',
+                mreq_demand_signal: 'Most requested',
+                mreq_demand_sub: 'Hotels have asked for:',
+                mreq_action_review: 'Review',
+                mreq_action_start: 'Start',
+                mreq_action_finish: 'Complete',
+                mreq_action_reject: 'Reject',
+                mreq_action_contact: 'Contact hotel',
+                mreq_advanced_to: (status) => `Status changed to "${status}"`,
+                mreq_status_pending: 'Pending',
+                mreq_status_in_review: 'In review',
+                mreq_status_in_progress: 'In progress',
+                mreq_status_done: 'Completed',
+                mreq_status_rejected: 'Rejected'
             }
         };
         function tD(key, ...args) {
@@ -4443,6 +4495,42 @@
                     h.enabledModules = ['room_service', 'maintenance', 'amenities'];
                 }
             });
+        }
+
+        // Seed inicial de solicitudes de módulos para demo del SaaS Admin
+        function ensureModuleRequestsSeed() {
+            if (DATABASE.moduleRequests.length > 0) return;
+            const now = Date.now();
+            const day = 86400000;
+            DATABASE.moduleRequests = [
+                { id:'modreq_seed_1', hotelId:'hotel_1', moduleId:'restaurant',  notes:'Tenemos un restaurante con 25 platos y los huéspedes piden poder ordenar desde la habitación.', timestamp:new Date(now - 2*day).toISOString(), status:'pending' },
+                { id:'modreq_seed_2', hotelId:'hotel_2', moduleId:'spa_booking', notes:'Tenemos spa propio y queremos que reserven con un click desde su teléfono.',                  timestamp:new Date(now - 5*day).toISOString(), status:'in_review' },
+                { id:'modreq_seed_3', hotelId:'hotel_3', moduleId:'restaurant',  notes:'Nuestro chef hace menús degustación. Queremos mostrar fotos en alta resolución.',           timestamp:new Date(now - 7*day).toISOString(), status:'pending' },
+                { id:'modreq_seed_4', hotelId:'hotel_1', moduleId:'transport',   notes:'Coordinamos shuttle al aeropuerto. Sería ideal que el huésped vea el horario y reserve.', timestamp:new Date(now - 10*day).toISOString(), status:'in_progress' }
+            ];
+        }
+
+        // Avanza el estado de una solicitud
+        function advanceModuleRequest(reqId, newStatus) {
+            const req = DATABASE.moduleRequests.find(r => r.id === reqId);
+            if (!req) return;
+            req.status = newStatus;
+            const statusLabel = tD('mreq_status_' + newStatus);
+            const hotel = DATABASE.hotels.find(h => h.id === req.hotelId);
+            const mod = MODULES_CATALOG.find(m => m.id === req.moduleId);
+            logAudit('module.request_status', { type:'hotel', id: req.hotelId, name: hotel?.name }, { module: req.moduleId, status: newStatus });
+            showToastT('toast_action_done', tD('mreq_advanced_to', statusLabel), 'success');
+            renderApp();
+        }
+
+        function contactHotelAboutRequest(reqId) {
+            const req = DATABASE.moduleRequests.find(r => r.id === reqId);
+            if (!req) return;
+            const hotel = DATABASE.hotels.find(h => h.id === req.hotelId);
+            const mod = MODULES_CATALOG.find(m => m.id === req.moduleId);
+            const phone = hotel?.whatsappStaffPhone || '+50762000000';
+            const msg = `Hola ${hotel?.name || ''}, somos GuestGuide Pro. Vimos tu solicitud de "${mod ? tD(mod.i18nKey) : req.moduleId}" — queremos coordinar la integración.`;
+            showWhatsAppSimulation(msg, phone);
         }
 
         function ensureQrCodes() {
@@ -6467,6 +6555,9 @@
                     <button onclick="switchTab('audit')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'audit' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
                         <i data-lucide="history" class="w-5 h-5"></i> ${tD('nav_activity')}
                     </button>
+                    <button onclick="switchTab('module_requests')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'module_requests' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
+                        <i data-lucide="inbox" class="w-5 h-5"></i> ${tD('nav_module_requests')} ${DATABASE.moduleRequests.filter(r => r.status === 'pending').length > 0 ? `<span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">${DATABASE.moduleRequests.filter(r => r.status === 'pending').length}</span>` : ''}
+                    </button>
                     <button onclick="switchTab('backup')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'backup' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
                         <i data-lucide="database-backup" class="w-5 h-5"></i> ${tD('nav_backup')}
                     </button>
@@ -6583,6 +6674,7 @@
                 else if (activeTab === 'provider_builder') renderProviderBuilder(container);
                 else if (activeTab === 'analytics') renderAnalyticsGlobal(container);
                 else if (activeTab === 'audit') renderAuditView(container, null);
+                else if (activeTab === 'module_requests') renderModuleRequestsView(container);
                 else if (activeTab === 'backup') renderBackupView(container);
             } else if (currentRole.startsWith('hotel_')) {
                 if (activeTab === 'overview') renderHotelOverview(container, currentRole);
@@ -11812,7 +11904,7 @@
         ];
 
         function exportDatabaseJSON() {
-            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules();
+            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed();
             const payload = {
                 app: BACKUP_APP,
                 version: BACKUP_VERSION,
@@ -11886,7 +11978,7 @@
             const stats = importPreview.stats || {};
             importPreview = null;
             // re-bootstrap arrays defensivamente
-            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules();
+            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed();
             logAudit('backup.restore', { type:'system', id:'backup', name:'Backup restaurado' }, { before, after: stats });
             renderApp();
             showToast(tD('toast_backup_restored'), `${stats.hotels||0} ${dashLang==='en'?'hotels':'hoteles'}, ${stats.providers||0} ${dashLang==='en'?'providers applied':'proveedores aplicados'}`, 'success');
@@ -11901,6 +11993,153 @@
             if (!confirm(tD('confirm_reset_demo'))) return;
             logAudit('backup.reset', { type:'system', id:'backup', name:'Reset a datos demo' }, {});
             location.reload();
+        }
+
+        // ═══════════════════════════════════════════════
+        //  SAAS ADMIN — Vista de Solicitudes de Módulos
+        // ═══════════════════════════════════════════════
+        let moduleRequestsFilter = 'all'; // 'all' | 'pending' | 'in_review' | 'in_progress' | 'done' | 'rejected'
+
+        function setModuleRequestsFilter(f) {
+            moduleRequestsFilter = f;
+            renderApp();
+        }
+
+        function renderModuleRequestsView(target) {
+            const allReqs = DATABASE.moduleRequests.slice().sort((a,b) => b.timestamp.localeCompare(a.timestamp));
+            const counts = {
+                all: allReqs.length,
+                pending: allReqs.filter(r => r.status === 'pending').length,
+                in_review: allReqs.filter(r => r.status === 'in_review').length,
+                in_progress: allReqs.filter(r => r.status === 'in_progress').length,
+                done: allReqs.filter(r => r.status === 'done').length,
+                rejected: allReqs.filter(r => r.status === 'rejected').length
+            };
+            const filtered = moduleRequestsFilter === 'all' ? allReqs : allReqs.filter(r => r.status === moduleRequestsFilter);
+
+            // Demand signal: count by module
+            const demand = {};
+            allReqs.forEach(r => { demand[r.moduleId] = (demand[r.moduleId] || 0) + 1; });
+            const topDemand = Object.entries(demand).sort((a,b) => b[1] - a[1]).slice(0, 3);
+
+            const statusStyle = {
+                pending:     { bg:'rgba(192,120,32,0.14)',  fg:'#a86015', dot:'#c07820' },
+                in_review:   { bg:'rgba(56,120,184,0.14)',  fg:'#2a6699', dot:'#3878b8' },
+                in_progress: { bg:'rgba(112,96,200,0.14)',  fg:'#5444a0', dot:'#7060c8' },
+                done:        { bg:'rgba(46,158,106,0.14)',  fg:'#1f7849', dot:'#2e9e6a' },
+                rejected:    { bg:'rgba(208,80,80,0.14)',   fg:'#a83333', dot:'#d05050' }
+            };
+
+            const filterPill = (key, label) => `
+                <button onclick="setModuleRequestsFilter('${key}')" class="px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 ${moduleRequestsFilter===key?'text-white shadow-md':'bg-white text-slate-600 border hover:border-slate-300'}" style="${moduleRequestsFilter===key?`background:var(--sidebar-bg); color:#f0f5e0;`:''}">
+                    ${label}
+                    <span class="px-1.5 py-0.5 rounded-md text-[10px] font-mono ${moduleRequestsFilter===key?'bg-white/15':'bg-slate-100 text-slate-500'}">${counts[key]}</span>
+                </button>
+            `;
+
+            target.innerHTML = `
+                <header class="mb-6">
+                    <h2 class="text-2xl md:text-3xl font-bold" style="letter-spacing:-0.03em;">${tD('mreq_title')}</h2>
+                    <p class="text-slate-500 text-sm mt-1">${tD('mreq_subtitle')}</p>
+                </header>
+
+                <!-- Demand signal banner -->
+                ${topDemand.length > 0 ? `
+                    <div class="rounded-3xl p-5 mb-6 border" style="background:linear-gradient(135deg, rgba(112,96,200,0.07), rgba(56,120,184,0.05)); border-color:rgba(112,96,200,0.2);">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i data-lucide="trending-up" class="w-4 h-4" style="color:var(--violet);"></i>
+                            <p class="text-xs font-bold uppercase tracking-wider" style="color:var(--text-2);">${tD('mreq_demand_signal')}</p>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-3">${tD('mreq_demand_sub')}</p>
+                        <div class="flex flex-wrap gap-2">
+                            ${topDemand.map(([modId, count]) => {
+                                const m = MODULES_CATALOG.find(x => x.id === modId);
+                                if (!m) return '';
+                                return `
+                                    <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold" style="background:${m.color}1a; color:${m.color};">
+                                        <i data-lucide="${m.icon}" class="w-3.5 h-3.5"></i>
+                                        ${tD(m.i18nKey)}
+                                        <span class="px-1.5 py-0.5 rounded-md font-mono text-[10px]" style="background:${m.color}33;">${count}</span>
+                                    </span>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                <!-- Filters -->
+                <div class="flex flex-wrap gap-2 mb-6 overflow-x-auto">
+                    ${filterPill('all', tD('mreq_filter_all'))}
+                    ${filterPill('pending', tD('mreq_pending'))}
+                    ${filterPill('in_review', tD('mreq_in_review'))}
+                    ${filterPill('in_progress', tD('mreq_in_progress'))}
+                    ${filterPill('done', tD('mreq_done'))}
+                    ${filterPill('rejected', tD('mreq_rejected'))}
+                </div>
+
+                <!-- Requests list -->
+                ${filtered.length === 0 ? `
+                    <div class="bg-white rounded-3xl border shadow-sm p-12 text-center">
+                        <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style="background:rgba(106,170,30,0.1);">
+                            <i data-lucide="inbox" class="w-7 h-7" style="color:var(--accent);"></i>
+                        </div>
+                        <p class="text-base font-bold text-slate-700">${tD('mreq_no_requests_title')}</p>
+                        <p class="text-sm text-slate-500 mt-1">${tD('mreq_no_requests_sub')}</p>
+                    </div>
+                ` : `
+                    <div class="space-y-3">
+                        ${filtered.map(r => {
+                            const m = MODULES_CATALOG.find(x => x.id === r.moduleId);
+                            const hotel = DATABASE.hotels.find(h => h.id === r.hotelId);
+                            const ss = statusStyle[r.status] || statusStyle.pending;
+                            const date = new Date(r.timestamp).toLocaleDateString();
+                            const timeAgo = (() => {
+                                const diff = Date.now() - new Date(r.timestamp).getTime();
+                                const days = Math.floor(diff / 86400000);
+                                if (days === 0) return dashLang==='en' ? 'today' : 'hoy';
+                                if (days === 1) return dashLang==='en' ? '1 day ago' : 'hace 1 día';
+                                return dashLang==='en' ? `${days} days ago` : `hace ${days} días`;
+                            })();
+                            return `
+                                <div class="bg-white rounded-3xl border shadow-sm p-5 hover:shadow-md transition">
+                                    <div class="flex items-start gap-4">
+                                        <!-- Module icon -->
+                                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:${m?.color || '#6aaa1e'}1a; color:${m?.color || '#6aaa1e'};">
+                                            <i data-lucide="${m?.icon || 'package'}" class="w-7 h-7"></i>
+                                        </div>
+                                        <!-- Content -->
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex flex-wrap items-center gap-2 mb-1">
+                                                <h4 class="font-bold text-slate-800 text-base">${m ? tD(m.i18nKey) : esc(r.moduleId)}</h4>
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider" style="background:${ss.bg}; color:${ss.fg};">
+                                                    <span class="w-1.5 h-1.5 rounded-full" style="background:${ss.dot};"></span>
+                                                    ${tD('mreq_status_' + r.status)}
+                                                </span>
+                                            </div>
+                                            <p class="text-xs text-slate-500 mb-2">
+                                                <span class="font-semibold text-slate-700">${esc(hotel?.name || tD('unknown'))}</span> · ${esc(timeAgo)}
+                                            </p>
+                                            ${r.notes ? `
+                                                <div class="rounded-xl p-3 mt-2" style="background:rgba(80,100,55,0.04);">
+                                                    <p class="text-sm text-slate-700 italic">"${esc(r.notes)}"</p>
+                                                </div>
+                                            ` : ''}
+                                            <!-- Actions -->
+                                            <div class="flex flex-wrap gap-2 mt-3">
+                                                ${r.status === 'pending' ? `<button onclick="advanceModuleRequest('${escAttr(r.id)}','in_review')" class="px-3 py-1.5 rounded-full text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 transition flex items-center gap-1.5"><i data-lucide="eye" class="w-3.5 h-3.5"></i>${tD('mreq_action_review')}</button>` : ''}
+                                                ${r.status === 'in_review' ? `<button onclick="advanceModuleRequest('${escAttr(r.id)}','in_progress')" class="px-3 py-1.5 rounded-full text-xs font-bold bg-violet-50 text-violet-700 hover:bg-violet-100 transition flex items-center gap-1.5"><i data-lucide="play" class="w-3.5 h-3.5"></i>${tD('mreq_action_start')}</button>` : ''}
+                                                ${r.status === 'in_progress' ? `<button onclick="advanceModuleRequest('${escAttr(r.id)}','done')" class="px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition flex items-center gap-1.5"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>${tD('mreq_action_finish')}</button>` : ''}
+                                                ${(r.status === 'pending' || r.status === 'in_review') ? `<button onclick="advanceModuleRequest('${escAttr(r.id)}','rejected')" class="px-3 py-1.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 hover:bg-rose-100 transition flex items-center gap-1.5"><i data-lucide="x" class="w-3.5 h-3.5"></i>${tD('mreq_action_reject')}</button>` : ''}
+                                                <button onclick="contactHotelAboutRequest('${escAttr(r.id)}')" class="px-3 py-1.5 rounded-full text-xs font-bold bg-slate-50 text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5"><i data-lucide="phone" class="w-3.5 h-3.5"></i>${tD('mreq_action_contact')}</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `}
+            `;
         }
 
         function renderBackupView(target) {
@@ -12306,7 +12545,7 @@
         // Inicialización
         window.onload = function() {
             applyTheme();   // set data-theme on html before anything renders
-            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules();
+            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed();
             const isAuthed = initAuthFlow();   // returns true if already logged in
             if (isAuthed) {
                 renderApp();
