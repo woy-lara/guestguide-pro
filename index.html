@@ -1865,7 +1865,12 @@
             // ─── Audit Log (Historial de cambios) ───
             // Cada acción significativa queda registrada con actor, timestamp, target, detalles.
             // { id, ts, actor, actorRole, action, targetType, targetId, targetName, severity, details }
-            auditLog: []
+            auditLog: [],
+
+            // ─── Module Requests (Solicitudes de integración) ───
+            // Cuando un hotel pide un módulo nuevo (ej. menú restaurante).
+            // { id, hotelId, moduleId, notes, timestamp, status: 'pending'|'in_review'|'in_progress'|'rejected' }
+            moduleRequests: []
         };
 
         let currentRole = "saas_admin";
@@ -2706,7 +2711,56 @@
                 pov_no_upcoming_sub: 'Cuando un hotel venda tu tour, aparecerá aquí.',
                 pov_in_days: (n) => n === 1 ? `Mañana` : `En ${n} días`,
                 pov_recent_title: 'Historial reciente',
-                pov_recent_sub: 'Todas tus transacciones'
+                pov_recent_sub: 'Todas tus transacciones',
+                // ── Sidebar nav ──
+                nav_modules: 'Módulos',
+                // ── Hotel modules page ──
+                mod_page_title: 'Módulos y Servicios',
+                mod_page_sub: 'Activa los servicios que ofreces a tus huéspedes vía la app',
+                mod_section_active: 'Módulos activos',
+                mod_section_available: 'Disponibles para integrar',
+                mod_section_requested: 'Solicitudes enviadas',
+                mod_status_active: 'Activo',
+                mod_status_disabled: 'Desactivado',
+                mod_btn_request: 'Solicitar integración',
+                mod_btn_requested: 'Solicitado',
+                mod_btn_disable: 'Desactivar',
+                mod_btn_enable: 'Activar',
+                mod_featured_badge: '⭐ Destacado',
+                // ── Module entries (id → name + desc) ──
+                mod_room_service: 'Room Service',
+                mod_room_service_desc: 'Huéspedes piden comida y bebida a su habitación desde la app.',
+                mod_maintenance: 'Mantenimiento',
+                mod_maintenance_desc: 'Reporte de fallos y reparaciones (bombillos, A/C, plomería).',
+                mod_amenities: 'Amenidades',
+                mod_amenities_desc: 'Toallas extras, almohadas, kits de cortesía bajo demanda.',
+                mod_restaurant: 'Menú del Restaurante',
+                mod_restaurant_desc: 'Catálogo de platos con fotos, precios y disponibilidad en tiempo real.',
+                mod_spa_booking: 'Reservas de Spa',
+                mod_spa_booking_desc: 'Horarios disponibles, tipos de masaje, pago directo desde la app.',
+                mod_transport: 'Transporte',
+                mod_transport_desc: 'Solicitud de shuttle, taxi al aeropuerto, tours privados.',
+                mod_laundry: 'Lavandería',
+                mod_laundry_desc: 'Recogida y entrega de ropa con tarifas y tiempos claros.',
+                mod_wake_up: 'Wake-Up Calls',
+                mod_wake_up_desc: 'Llamadas y notificaciones programadas para los huéspedes.',
+                mod_concierge: 'Concierge Premium',
+                mod_concierge_desc: 'Asistente humano dedicado vía chat para huéspedes VIP.',
+                // ── Request integration modal ──
+                modreq_title: 'Solicitar integración',
+                modreq_subtitle: 'Cuéntanos por qué necesitas este módulo y lo priorizaremos.',
+                modreq_module: 'Módulo solicitado',
+                modreq_notes_label: '¿Cómo lo usarías? (opcional)',
+                modreq_notes_placeholder: 'Ej. Tenemos 4 mesas y un menú con 25 platos. Queremos que los huéspedes pidan desde la habitación...',
+                modreq_send: 'Enviar solicitud',
+                modreq_cancel: 'Cancelar',
+                modreq_success_title: '¡Solicitud recibida! ✨',
+                modreq_success_msg: 'Nuestro equipo te contactará en 24h para coordinar la integración.',
+                // ── Toggle confirmation ──
+                modtoggle_enabled_title: 'Módulo activado',
+                modtoggle_enabled_msg: (name) => `${name} ya está disponible en la app del huésped.`,
+                modtoggle_disabled_title: 'Módulo desactivado',
+                modtoggle_disabled_msg: (name) => `${name} dejará de mostrarse en la app del huésped.`
             },
             en: {
                 env_active: 'Multitenant Simulation Environment Active',
@@ -3407,7 +3461,56 @@
                 pov_no_upcoming_sub: 'When a hotel sells your tour, it will show up here.',
                 pov_in_days: (n) => n === 1 ? `Tomorrow` : `In ${n} days`,
                 pov_recent_title: 'Recent history',
-                pov_recent_sub: 'All your transactions'
+                pov_recent_sub: 'All your transactions',
+                // ── Sidebar nav ──
+                nav_modules: 'Modules',
+                // ── Hotel modules page ──
+                mod_page_title: 'Modules and Services',
+                mod_page_sub: 'Enable the services you offer your guests through the app',
+                mod_section_active: 'Active modules',
+                mod_section_available: 'Available to integrate',
+                mod_section_requested: 'Requests sent',
+                mod_status_active: 'Active',
+                mod_status_disabled: 'Disabled',
+                mod_btn_request: 'Request integration',
+                mod_btn_requested: 'Requested',
+                mod_btn_disable: 'Disable',
+                mod_btn_enable: 'Enable',
+                mod_featured_badge: '⭐ Featured',
+                // ── Module entries ──
+                mod_room_service: 'Room Service',
+                mod_room_service_desc: 'Guests order food and drinks to their room from the app.',
+                mod_maintenance: 'Maintenance',
+                mod_maintenance_desc: 'Issue reports and repairs (bulbs, A/C, plumbing).',
+                mod_amenities: 'Amenities',
+                mod_amenities_desc: 'Extra towels, pillows, courtesy kits on demand.',
+                mod_restaurant: 'Restaurant Menu',
+                mod_restaurant_desc: 'Dish catalog with photos, prices and real-time availability.',
+                mod_spa_booking: 'Spa Bookings',
+                mod_spa_booking_desc: 'Available time slots, massage types, in-app payment.',
+                mod_transport: 'Transport',
+                mod_transport_desc: 'Shuttle requests, airport taxi, private tours.',
+                mod_laundry: 'Laundry',
+                mod_laundry_desc: 'Pickup and delivery with clear rates and turnaround times.',
+                mod_wake_up: 'Wake-Up Calls',
+                mod_wake_up_desc: 'Scheduled calls and notifications for guests.',
+                mod_concierge: 'Premium Concierge',
+                mod_concierge_desc: 'Dedicated human assistant via chat for VIP guests.',
+                // ── Request integration modal ──
+                modreq_title: 'Request integration',
+                modreq_subtitle: 'Tell us why you need this module and we will prioritize it.',
+                modreq_module: 'Requested module',
+                modreq_notes_label: 'How would you use it? (optional)',
+                modreq_notes_placeholder: 'Ex. We have 4 tables and a 25-dish menu. We want guests to order from their room...',
+                modreq_send: 'Send request',
+                modreq_cancel: 'Cancel',
+                modreq_success_title: 'Request received! ✨',
+                modreq_success_msg: 'Our team will reach out within 24h to coordinate the integration.',
+                // ── Toggle confirmation ──
+                modtoggle_enabled_title: 'Module enabled',
+                modtoggle_enabled_msg: (name) => `${name} is now available in the guest app.`,
+                modtoggle_disabled_title: 'Module disabled',
+                modtoggle_disabled_msg: (name) => `${name} will no longer appear in the guest app.`
             }
         };
         function tD(key, ...args) {
@@ -3679,6 +3782,25 @@
         let providersMapInstance = null;
 
         const PROVIDER_ICONS = ['mountain','coffee','utensils','car','heart','flower-2','book-open','waves','compass','package','camera','music','palette','home','tent'];
+
+        // ═══════════════════════════════════════════════
+        //  CATÁLOGO DE MÓDULOS (Add-ons del hotelero)
+        // ═══════════════════════════════════════════════
+        // Cada hotel puede activar/desactivar módulos.
+        // Módulos con `available:false` muestran botón "Solicitar integración".
+        const MODULES_CATALOG = [
+            // ── Módulos disponibles (default activos) ──
+            { id: 'room_service',  i18nKey: 'mod_room_service',  icon: 'utensils',   color: '#c07820', available: true },
+            { id: 'maintenance',   i18nKey: 'mod_maintenance',   icon: 'wrench',     color: '#7060c8', available: true },
+            { id: 'amenities',     i18nKey: 'mod_amenities',     icon: 'gift',       color: '#2e9e6a', available: true },
+            // ── Próximamente / Solicitar integración ──
+            { id: 'restaurant',    i18nKey: 'mod_restaurant',    icon: 'chef-hat',   color: '#d05050', available: false, featured: true },
+            { id: 'spa_booking',   i18nKey: 'mod_spa_booking',   icon: 'flower-2',   color: '#3878b8', available: false },
+            { id: 'transport',     i18nKey: 'mod_transport',     icon: 'car',        color: '#6aaa1e', available: false },
+            { id: 'laundry',       i18nKey: 'mod_laundry',       icon: 'shirt',      color: '#7d8c70', available: false },
+            { id: 'wake_up',       i18nKey: 'mod_wake_up',       icon: 'sun',        color: '#c07820', available: false },
+            { id: 'concierge',     i18nKey: 'mod_concierge',     icon: 'phone-call', color: '#3878b8', available: false }
+        ];
 
         // ── Catálogo de Inclusiones para Proveedores ──
         const INCLUSION_OPTIONS = [
@@ -4314,6 +4436,15 @@
         const ANALYTICS_ACTIONS = ['scan', 'view_tour', 'voucher_generated', 'voucher_validated'];
 
         // ── Genera QRs seed para todos los hoteles y proveedores ──
+        // Inicializa enabledModules en cada hotel (default: 3 módulos básicos)
+        function ensureHotelModules() {
+            DATABASE.hotels.forEach(h => {
+                if (!h.enabledModules) {
+                    h.enabledModules = ['room_service', 'maintenance', 'amenities'];
+                }
+            });
+        }
+
         function ensureQrCodes() {
             if (DATABASE.qrCodes.length > 0) return;
             // Hoteles: 3 QRs base por hotel (lobby, room, restaurant)
@@ -4912,7 +5043,10 @@
             'backup.reset':       { label:'Reset a datos demo',    icon:'refresh-cw',     severity:'warning' },
             'tour.start':         { label:'Demo guiada iniciada',  icon:'play-circle',    severity:'info' },
             'tour.complete':      { label:'Demo guiada completada',icon:'check-circle',   severity:'success' },
-            'tour.skip':          { label:'Demo guiada abandonada',icon:'log-out',        severity:'warning' }
+            'tour.skip':          { label:'Demo guiada abandonada',icon:'log-out',        severity:'warning' },
+            'module.enable':      { label:'Módulo activado',       icon:'toggle-right',   severity:'success' },
+            'module.disable':     { label:'Módulo desactivado',    icon:'toggle-left',    severity:'warning' },
+            'module.request':     { label:'Solicitud de integración', icon:'zap',         severity:'info' }
         };
 
         // Resuelve el label del evento de audit usando i18n; cae al label hardcoded si no existe.
@@ -6355,6 +6489,9 @@
                     <button onclick="switchTab('stay_services')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'stay_services' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
                         <i data-lucide="bell-ring" class="w-5 h-5"></i> ${tD('nav_room_requests')} <span class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full">${countReq}</span>
                     </button>
+                    <button onclick="switchTab('modules')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'modules' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
+                        <i data-lucide="grid-3x3" class="w-5 h-5"></i> ${tD('nav_modules')}
+                    </button>
                     <button onclick="switchTab('finances')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'finances' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
                         <i data-lucide="receipt" class="w-5 h-5"></i> ${tD('nav_room_charges')}
                     </button>
@@ -6450,6 +6587,7 @@
             } else if (currentRole.startsWith('hotel_')) {
                 if (activeTab === 'overview') renderHotelOverview(container, currentRole);
                 else if (activeTab === 'stay_services') renderStayServicesPanel(container, currentRole);
+                else if (activeTab === 'modules') renderHotelModules(container, currentRole);
                 else if (activeTab === 'finances') renderHotelCharges(container, currentRole);
                 else if (activeTab === 'ai_assistant') renderAIAssistantHub(container);
                 else if (activeTab === 'analytics') renderAnalyticsForOwner(container, 'hotel', currentRole);
@@ -8825,6 +8963,265 @@
                         </tbody></table>
                     </div>
                 </div>
+            `;
+        }
+
+        // ═══════════════════════════════════════════════
+        //  HOTEL MODULES / ADD-ON MARKETPLACE
+        // ═══════════════════════════════════════════════
+        function getEnabledModulesForHotel(hotel) {
+            if (!hotel) return [];
+            if (!hotel.enabledModules) hotel.enabledModules = ['room_service', 'maintenance', 'amenities'];
+            return hotel.enabledModules;
+        }
+
+        function isModuleRequested(hotelId, moduleId) {
+            return DATABASE.moduleRequests.some(r => r.hotelId === hotelId && r.moduleId === moduleId);
+        }
+
+        function toggleModule(moduleId) {
+            const hotel = DATABASE.hotels.find(h => h.id === currentRole);
+            if (!hotel) return;
+            const enabled = getEnabledModulesForHotel(hotel);
+            const mod = MODULES_CATALOG.find(m => m.id === moduleId);
+            const modName = mod ? tD(mod.i18nKey) : moduleId;
+            if (enabled.includes(moduleId)) {
+                hotel.enabledModules = enabled.filter(x => x !== moduleId);
+                logAudit('module.disable', { type:'hotel', id: hotel.id, name: hotel.name }, { module: moduleId });
+                showToastT('modtoggle_disabled_title', tD('modtoggle_disabled_msg', modName), 'info');
+            } else {
+                hotel.enabledModules = [...enabled, moduleId];
+                logAudit('module.enable', { type:'hotel', id: hotel.id, name: hotel.name }, { module: moduleId });
+                showToastT('modtoggle_enabled_title', tD('modtoggle_enabled_msg', modName), 'success');
+            }
+            renderApp();
+        }
+
+        // ── Request Integration modal ──
+        let moduleRequestDraft = null; // { moduleId, notes }
+
+        function openModuleRequestModal(moduleId) {
+            const mod = MODULES_CATALOG.find(m => m.id === moduleId);
+            if (!mod) return;
+            moduleRequestDraft = { moduleId, notes: '' };
+            renderModuleRequestModal();
+        }
+
+        function closeModuleRequestModal() {
+            moduleRequestDraft = null;
+            const host = document.getElementById('module-request-host');
+            if (host) host.innerHTML = '';
+        }
+
+        function updateModuleRequestNotes(v) {
+            if (moduleRequestDraft) moduleRequestDraft.notes = v;
+        }
+
+        function submitModuleRequest() {
+            if (!moduleRequestDraft) return;
+            const mod = MODULES_CATALOG.find(m => m.id === moduleRequestDraft.moduleId);
+            if (!mod) return;
+            const hotel = DATABASE.hotels.find(h => h.id === currentRole);
+            DATABASE.moduleRequests.push({
+                id: 'modreq_' + Date.now(),
+                hotelId: currentRole,
+                moduleId: mod.id,
+                notes: moduleRequestDraft.notes || '',
+                timestamp: new Date().toISOString(),
+                status: 'pending'
+            });
+            logAudit('module.request', { type:'hotel', id: hotel?.id, name: hotel?.name }, { module: mod.id, notes: moduleRequestDraft.notes });
+            showToastT('modreq_success_title', tD('modreq_success_msg'), 'success');
+            closeModuleRequestModal();
+            renderApp();
+        }
+
+        function renderModuleRequestModal() {
+            let host = document.getElementById('module-request-host');
+            if (!host) {
+                host = document.createElement('div');
+                host.id = 'module-request-host';
+                document.body.appendChild(host);
+            }
+            if (!moduleRequestDraft) { host.innerHTML = ''; return; }
+            const mod = MODULES_CATALOG.find(m => m.id === moduleRequestDraft.moduleId);
+            if (!mod) { host.innerHTML = ''; return; }
+
+            host.innerHTML = `
+                <div class="invoice-modal-overlay" onclick="if(event.target===this) closeModuleRequestModal()">
+                    <div class="bg-white rounded-3xl shadow-2xl w-full" style="max-width:520px; margin-top:60px;">
+                        <header class="px-6 py-5 border-b flex items-start justify-between" style="border-color:rgba(80,100,55,0.1);">
+                            <div class="flex items-start gap-3 flex-1 min-w-0">
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:${mod.color}1a; color:${mod.color};">
+                                    <i data-lucide="${mod.icon}" class="w-6 h-6"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <h3 class="font-bold text-lg text-slate-800">${tD('modreq_title')}</h3>
+                                    <p class="text-xs text-slate-500 mt-0.5">${tD('modreq_subtitle')}</p>
+                                </div>
+                            </div>
+                            <button onclick="closeModuleRequestModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 transition flex items-center justify-center text-slate-400 flex-shrink-0">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </header>
+                        <div class="p-6 space-y-4">
+                            <div>
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('modreq_module')}</p>
+                                <div class="px-4 py-3 rounded-2xl border flex items-center gap-3" style="background:${mod.color}0a; border-color:${mod.color}33;">
+                                    <i data-lucide="${mod.icon}" class="w-5 h-5" style="color:${mod.color};"></i>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="font-bold text-slate-800 text-sm">${tD(mod.i18nKey)}</p>
+                                        <p class="text-xs text-slate-500 truncate">${tD(mod.i18nKey + '_desc')}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('modreq_notes_label')}</label>
+                                <textarea oninput="updateModuleRequestNotes(this.value)" rows="4" placeholder="${escAttr(tD('modreq_notes_placeholder'))}" class="w-full px-4 py-3 rounded-2xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:bg-white transition" style="border-color:rgba(80,100,55,0.15); resize:vertical; min-height:96px;"></textarea>
+                            </div>
+                        </div>
+                        <footer class="px-6 py-4 border-t flex gap-2 justify-end" style="border-color:rgba(80,100,55,0.1);">
+                            <button onclick="closeModuleRequestModal()" class="px-5 py-2.5 rounded-full text-sm font-semibold text-slate-600 hover:bg-slate-100 transition">${tD('modreq_cancel')}</button>
+                            <button onclick="submitModuleRequest()" class="px-5 py-2.5 rounded-full text-sm font-bold text-white shadow-md hover:shadow-lg active:scale-95 transition flex items-center gap-2" style="background:linear-gradient(135deg, var(--accent-hi), var(--accent));">
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                                ${tD('modreq_send')}
+                            </button>
+                        </footer>
+                    </div>
+                </div>
+            `;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function renderHotelModules(target, hotelId) {
+            const hotel = DATABASE.hotels.find(h => h.id === hotelId);
+            if (!hotel) { target.innerHTML = ''; return; }
+            const enabled = getEnabledModulesForHotel(hotel);
+            const requests = DATABASE.moduleRequests.filter(r => r.hotelId === hotelId);
+
+            const activeModules = MODULES_CATALOG.filter(m => m.available);
+            const availableModules = MODULES_CATALOG.filter(m => !m.available);
+
+            // Count items per module (real demand signal)
+            const moduleCounts = {
+                room_service: DATABASE.guestRequests.filter(r => r.hotelId === hotelId && r.type === 'Room Service').length,
+                maintenance: DATABASE.guestRequests.filter(r => r.hotelId === hotelId && r.type === 'Mantenimiento').length,
+                amenities: DATABASE.guestRequests.filter(r => r.hotelId === hotelId && r.type === 'Amenidades').length
+            };
+
+            const renderModuleCard = (mod, opts = {}) => {
+                const { isActive, isRequested, count } = opts;
+                const tinted = `background:${mod.color}1a; color:${mod.color};`;
+                const enabledNow = enabled.includes(mod.id);
+                if (mod.available) {
+                    // Active module card with toggle
+                    return `
+                        <div class="bg-white rounded-3xl border shadow-sm p-5 transition hover:shadow-md ${enabledNow ? '' : 'opacity-60'}">
+                            <div class="flex items-start justify-between gap-3 mb-3">
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style="${tinted}">
+                                    <i data-lucide="${mod.icon}" class="w-6 h-6"></i>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+                                    <input type="checkbox" ${enabledNow ? 'checked' : ''} onchange="toggleModule('${mod.id}')" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-200 peer-checked:bg-emerald-500 rounded-full peer transition relative">
+                                        <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition peer-checked:translate-x-5" style="transition:transform 0.2s ease; transform:${enabledNow ? 'translateX(20px)' : 'translateX(0)'};"></span>
+                                    </div>
+                                </label>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-sm mb-1">${tD(mod.i18nKey)}</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed mb-3">${tD(mod.i18nKey + '_desc')}</p>
+                            <div class="flex items-center justify-between text-[11px] pt-3 border-t" style="border-color:rgba(80,100,55,0.08);">
+                                <span class="font-semibold ${enabledNow ? 'text-emerald-700' : 'text-slate-400'}">${enabledNow ? '● ' + tD('mod_status_active') : '○ ' + tD('mod_status_disabled')}</span>
+                                <span class="text-slate-400 font-mono">${count != null ? count + ' pedidos' : ''}</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Coming soon module with "Solicitar" button
+                    return `
+                        <div class="bg-white rounded-3xl border-2 border-dashed p-5 transition hover:shadow-md relative" style="border-color:rgba(80,100,55,0.18);">
+                            ${mod.featured ? `<span class="absolute -top-2 left-4 px-2 py-0.5 rounded-full text-[9px] font-bold" style="background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#3a2200;">${tD('mod_featured_badge')}</span>` : ''}
+                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-3" style="${tinted}">
+                                <i data-lucide="${mod.icon}" class="w-6 h-6"></i>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-sm mb-1">${tD(mod.i18nKey)}</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed mb-4 min-h-[48px]">${tD(mod.i18nKey + '_desc')}</p>
+                            ${isRequested ? `
+                                <button disabled class="w-full px-3 py-2.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 cursor-not-allowed" style="background:rgba(46,158,106,0.12); color:var(--emerald);">
+                                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+                                    ${tD('mod_btn_requested')}
+                                </button>
+                            ` : `
+                                <button onclick="openModuleRequestModal('${mod.id}')" class="w-full px-3 py-2.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 text-white shadow-sm hover:shadow active:scale-95 transition" style="background:${mod.color};">
+                                    <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                                    ${tD('mod_btn_request')}
+                                </button>
+                            `}
+                        </div>
+                    `;
+                }
+            };
+
+            target.innerHTML = `
+                <header class="mb-6">
+                    <h2 class="text-2xl md:text-3xl font-bold" style="letter-spacing:-0.03em;">${tD('mod_page_title')}</h2>
+                    <p class="text-slate-500 text-sm mt-1">${tD('mod_page_sub')}</p>
+                </header>
+
+                <!-- Activos -->
+                <section class="mb-8">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="w-2 h-2 rounded-full" style="background:var(--accent);"></span>
+                        <h3 class="text-xs font-bold uppercase tracking-wider" style="color:var(--text-2);">${tD('mod_section_active')}</h3>
+                        <span class="text-xs font-mono opacity-50">(${activeModules.filter(m => enabled.includes(m.id)).length}/${activeModules.length})</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        ${activeModules.map(m => renderModuleCard(m, { count: moduleCounts[m.id] || 0 })).join('')}
+                    </div>
+                </section>
+
+                <!-- Disponibles para integrar -->
+                <section class="mb-8">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5" style="color:var(--violet);"></i>
+                        <h3 class="text-xs font-bold uppercase tracking-wider" style="color:var(--text-2);">${tD('mod_section_available')}</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        ${availableModules.map(m => renderModuleCard(m, { isRequested: isModuleRequested(hotelId, m.id) })).join('')}
+                    </div>
+                </section>
+
+                ${requests.length > 0 ? `
+                    <section>
+                        <div class="flex items-center gap-2 mb-4">
+                            <i data-lucide="clock" class="w-3.5 h-3.5" style="color:var(--blue);"></i>
+                            <h3 class="text-xs font-bold uppercase tracking-wider" style="color:var(--text-2);">${tD('mod_section_requested')}</h3>
+                            <span class="text-xs font-mono opacity-50">(${requests.length})</span>
+                        </div>
+                        <div class="bg-white rounded-3xl border shadow-sm overflow-hidden">
+                            ${requests.map(r => {
+                                const m = MODULES_CATALOG.find(x => x.id === r.moduleId);
+                                if (!m) return '';
+                                const date = new Date(r.timestamp).toLocaleDateString();
+                                return `
+                                    <div class="p-4 flex items-start gap-3 border-b last:border-b-0" style="border-color:rgba(80,100,55,0.08);">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:${m.color}1a; color:${m.color};">
+                                            <i data-lucide="${m.icon}" class="w-5 h-5"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-center gap-2 mb-0.5">
+                                                <p class="font-bold text-sm text-slate-800">${tD(m.i18nKey)}</p>
+                                                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase" style="background:rgba(56,120,184,0.14); color:var(--blue);">${esc(r.status)}</span>
+                                            </div>
+                                            ${r.notes ? `<p class="text-xs text-slate-500 mt-1 line-clamp-2">${esc(r.notes)}</p>` : ''}
+                                            <p class="text-[10px] text-slate-400 mt-1 font-mono">${esc(date)}</p>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </section>
+                ` : ''}
             `;
         }
 
@@ -11415,7 +11812,7 @@
         ];
 
         function exportDatabaseJSON() {
-            ensureQrCodes(); ensureAnalytics(); ensureAuditLog();
+            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules();
             const payload = {
                 app: BACKUP_APP,
                 version: BACKUP_VERSION,
@@ -11489,7 +11886,7 @@
             const stats = importPreview.stats || {};
             importPreview = null;
             // re-bootstrap arrays defensivamente
-            ensureQrCodes(); ensureAnalytics(); ensureAuditLog();
+            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules();
             logAudit('backup.restore', { type:'system', id:'backup', name:'Backup restaurado' }, { before, after: stats });
             renderApp();
             showToast(tD('toast_backup_restored'), `${stats.hotels||0} ${dashLang==='en'?'hotels':'hoteles'}, ${stats.providers||0} ${dashLang==='en'?'providers applied':'proveedores aplicados'}`, 'success');
@@ -11909,7 +12306,7 @@
         // Inicialización
         window.onload = function() {
             applyTheme();   // set data-theme on html before anything renders
-            ensureQrCodes(); ensureAnalytics(); ensureAuditLog();
+            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules();
             const isAuthed = initAuthFlow();   // returns true if already logged in
             if (isAuthed) {
                 renderApp();
