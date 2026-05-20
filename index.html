@@ -1052,9 +1052,207 @@
             font-weight: 400 !important;
         }
         .leaflet-popup-close-button:hover { color: var(--text) !important; }
+
+        /* ─────────────────────────────────────────
+           AUTH OVERLAY — login, magic link, role select
+        ───────────────────────────────────────── */
+        #auth-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background:
+                radial-gradient(circle at 20% 10%, rgba(106,170,30,0.12) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(56,120,184,0.08) 0%, transparent 50%),
+                linear-gradient(135deg, #1e2a18 0%, #283520 50%, #1a2214 100%);
+            color: #e4ead8;
+            overflow-y: auto;
+            padding: 24px;
+        }
+        #auth-overlay.hidden { display: none; }
+        .auth-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(200,220,180,0.12);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 40px 36px;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+            animation: authFadeIn 0.4s ease-out;
+        }
+        .auth-card.wide { max-width: 880px; }
+        @keyframes authFadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .auth-brand {
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px; font-size: 22px; font-weight: 800;
+            letter-spacing: -0.02em; margin-bottom: 8px;
+            color: #ffffff;
+        }
+        .auth-brand i { color: #82cc28; }
+        .auth-tagline { text-align: center; font-size: 13px; color: #95a882; margin-bottom: 36px; font-weight: 500; }
+        .auth-title { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 6px; color: #ffffff; }
+        .auth-sub { font-size: 14px; color: #95a882; margin-bottom: 28px; }
+        .auth-label { display: block; font-size: 12px; font-weight: 600; color: #c8d4b8; margin-bottom: 8px; letter-spacing: 0.02em; }
+        .auth-input {
+            width: 100%; padding: 14px 16px;
+            background: rgba(0,0,0,0.25); border: 1px solid rgba(200,220,180,0.18);
+            border-radius: 14px; color: #ffffff; font-size: 15px;
+            transition: all 0.2s;
+        }
+        .auth-input:focus {
+            outline: none; border-color: #82cc28;
+            background: rgba(0,0,0,0.35);
+            box-shadow: 0 0 0 4px rgba(130,204,40,0.12);
+        }
+        .auth-input::placeholder { color: #6e7f60; }
+        .auth-btn-primary {
+            width: 100%; padding: 14px 20px;
+            background: linear-gradient(135deg, #82cc28 0%, #6aaa1e 100%);
+            color: #1a2214; font-weight: 700; font-size: 15px;
+            border: none; border-radius: 14px; cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 6px 20px rgba(130,204,40,0.25);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .auth-btn-primary:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 26px rgba(130,204,40,0.35);
+        }
+        .auth-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+        .auth-btn-ghost {
+            background: transparent; color: #c8d4b8;
+            border: none; padding: 10px 16px; font-size: 13px;
+            font-weight: 600; cursor: pointer; border-radius: 10px;
+            transition: all 0.2s;
+        }
+        .auth-btn-ghost:hover { background: rgba(255,255,255,0.05); color: #ffffff; }
+        .auth-demo-note {
+            margin-top: 18px; text-align: center;
+            font-size: 11px; color: #6e7f60; letter-spacing: 0.02em;
+        }
+        .auth-magic-icon {
+            width: 64px; height: 64px; border-radius: 18px;
+            background: linear-gradient(135deg, rgba(130,204,40,0.2), rgba(106,170,30,0.1));
+            border: 1px solid rgba(130,204,40,0.3);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+        }
+        .auth-magic-icon i { color: #82cc28; width: 28px; height: 28px; }
+        .auth-role-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 14px; margin-top: 24px;
+        }
+        .auth-role-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(200,220,180,0.12);
+            border-radius: 18px; padding: 22px;
+            cursor: pointer; transition: all 0.25s;
+            text-align: left; display: flex; flex-direction: column; gap: 8px;
+            min-height: 180px;
+        }
+        .auth-role-card:hover {
+            background: rgba(255,255,255,0.07);
+            border-color: rgba(130,204,40,0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+        }
+        .auth-role-card .role-icon {
+            width: 44px; height: 44px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 6px;
+        }
+        .auth-role-card .role-name {
+            font-size: 16px; font-weight: 700; color: #ffffff;
+        }
+        .auth-role-card .role-sub {
+            font-size: 11px; font-weight: 600; color: #82cc28;
+            text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .auth-role-card .role-desc {
+            font-size: 12px; color: #95a882; line-height: 1.5;
+            flex: 1;
+        }
+        .auth-lang-toggle {
+            position: absolute; top: 24px; right: 24px;
+            display: inline-flex; background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 999px; padding: 3px;
+        }
+        .auth-lang-toggle button {
+            padding: 5px 12px; border-radius: 999px;
+            font-size: 11px; font-weight: 700; cursor: pointer;
+            border: none; background: transparent; color: rgba(255,255,255,0.6);
+            transition: all 0.2s;
+        }
+        .auth-lang-toggle button.active {
+            background: #ffffff; color: #1a2214;
+        }
+
+        /* ─── Onboarding modal ─── */
+        #onboard-modal {
+            position: fixed; inset: 0; z-index: 90;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(20,28,16,0.75);
+            backdrop-filter: blur(8px);
+            padding: 24px;
+        }
+        #onboard-modal.hidden { display: none; }
+        .onboard-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px; padding: 36px;
+            max-width: 460px; width: 100%;
+            text-align: center;
+            animation: authFadeIn 0.4s ease-out;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+        }
+        .onboard-icon {
+            width: 72px; height: 72px; border-radius: 20px;
+            background: linear-gradient(135deg, #82cc28, #6aaa1e);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+        }
     </style>
 </head>
 <body class="overflow-hidden h-screen flex flex-col">
+
+    <!-- ═══════════════════════════════════════════════
+         AUTH OVERLAY (login → magic link → role select)
+         Sits on top of everything until user is authenticated.
+    ═══════════════════════════════════════════════ -->
+    <div id="auth-overlay" class="hidden">
+        <!-- Language toggle (independent of banner) -->
+        <div class="auth-lang-toggle">
+            <button data-auth-lang-btn="es" onclick="setDashLang('es')">ES</button>
+            <button data-auth-lang-btn="en" onclick="setDashLang('en')">EN</button>
+        </div>
+        <div id="auth-screen-host"></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         ONBOARDING MODAL (first time after login)
+    ═══════════════════════════════════════════════ -->
+    <div id="onboard-modal" class="hidden">
+        <div class="onboard-card">
+            <div class="onboard-icon">
+                <i data-lucide="sparkles" class="w-8 h-8"></i>
+            </div>
+            <h2 class="text-2xl font-bold mb-2" id="onboard-title">¡Bienvenido a GuestGuide Pro!</h2>
+            <p class="text-sm text-slate-500 mb-6" id="onboard-msg">Tu cuenta está lista. ¿Quieres un tour guiado?</p>
+            <div class="flex flex-col gap-2">
+                <button onclick="closeOnboarding(true)" class="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold text-sm hover:opacity-90 transition" id="onboard-start-btn">Empezar tour guiado</button>
+                <button onclick="closeOnboarding(false)" class="w-full py-2.5 text-slate-500 font-semibold text-sm hover:bg-slate-100 rounded-xl transition" id="onboard-explore-btn">Explorar por mi cuenta</button>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-4" id="onboard-again-note">Puedes activar el tour después con el botón Demo de arriba.</p>
+        </div>
+    </div>
 
     <!-- Top Simulation Controller Banner -->
     <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-900 text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 shadow-md relative z-50">
@@ -2091,7 +2289,38 @@
                 bk_import_btn: 'Seleccionar archivo JSON',
                 bk_reset_h: 'Resetear a datos demo',
                 bk_reset_sub: 'Recarga la página y vuelve al seed inicial del prototipo. Se pierden todos los cambios no respaldados.',
-                bk_reset_btn: 'Resetear todo'
+                bk_reset_btn: 'Resetear todo',
+                // ── Auth screens ──
+                auth_brand: 'GuestGuide Pro',
+                auth_tagline: 'Plataforma SaaS de conserjería para hoteles boutique',
+                auth_welcome_title: 'Bienvenido',
+                auth_welcome_sub: 'Ingresa tu correo para acceder a la plataforma',
+                auth_email_label: 'Correo electrónico',
+                auth_email_placeholder: 'tu@hotel.com',
+                auth_send_link: 'Enviar enlace de acceso',
+                auth_sending: 'Enviando...',
+                auth_demo_note: '🔒 Esto es una simulación — no se envía email real',
+                auth_link_sent_title: 'Revisa tu correo',
+                auth_link_sent_msg: (email) => `Te enviamos un enlace mágico a <strong>${email}</strong>. Click en él para entrar.`,
+                auth_simulate_click: 'Simular click en el enlace →',
+                auth_back: '← Volver',
+                auth_role_title: '¿Cómo quieres entrar hoy?',
+                auth_role_sub: 'Selecciona el perfil con el que vas a explorar la plataforma',
+                auth_role_saas_title: 'Administrador SaaS',
+                auth_role_saas_desc: 'Vista completa de la red — hoteles, proveedores, métricas globales, facturación.',
+                auth_role_hotel_title: 'Hotelero',
+                auth_role_hotel_desc: 'Gestiona tu propiedad, QRs, servicios, peticiones de huéspedes.',
+                auth_role_prov_title: 'Proveedor turístico',
+                auth_role_prov_desc: 'Recibe vouchers validados, gestiona tu ficha y disponibilidad.',
+                auth_role_enter: 'Entrar como',
+                auth_logout: 'Cerrar sesión',
+                auth_logout_confirm: '¿Cerrar sesión y volver al login?',
+                // ── Onboarding modal ──
+                onboard_title: '¡Bienvenido a GuestGuide Pro!',
+                onboard_msg: 'Tu cuenta está lista. ¿Quieres un tour guiado de 90 segundos para conocer lo esencial?',
+                onboard_start_tour: 'Empezar tour guiado',
+                onboard_explore: 'Explorar por mi cuenta',
+                onboard_again_note: 'Puedes activar el tour después con el botón Demo de arriba.'
             },
             en: {
                 env_active: 'Multitenant Simulation Environment Active',
@@ -2721,7 +2950,38 @@
                 bk_import_btn: 'Select JSON file',
                 bk_reset_h: 'Reset to demo data',
                 bk_reset_sub: 'Reload the page and return to the initial prototype seed. All unsaved changes will be lost.',
-                bk_reset_btn: 'Reset everything'
+                bk_reset_btn: 'Reset everything',
+                // ── Auth screens ──
+                auth_brand: 'GuestGuide Pro',
+                auth_tagline: 'Concierge SaaS platform for boutique hotels',
+                auth_welcome_title: 'Welcome',
+                auth_welcome_sub: 'Enter your email to access the platform',
+                auth_email_label: 'Email address',
+                auth_email_placeholder: 'you@hotel.com',
+                auth_send_link: 'Send sign-in link',
+                auth_sending: 'Sending...',
+                auth_demo_note: '🔒 This is a simulation — no real email is sent',
+                auth_link_sent_title: 'Check your inbox',
+                auth_link_sent_msg: (email) => `We sent a magic link to <strong>${email}</strong>. Click it to sign in.`,
+                auth_simulate_click: 'Simulate clicking the link →',
+                auth_back: '← Back',
+                auth_role_title: 'How do you want to sign in today?',
+                auth_role_sub: 'Pick the profile you want to explore the platform with',
+                auth_role_saas_title: 'SaaS Administrator',
+                auth_role_saas_desc: 'Full view of the network — hotels, providers, global metrics, billing.',
+                auth_role_hotel_title: 'Hotelier',
+                auth_role_hotel_desc: 'Manage your property, QRs, services, and guest requests.',
+                auth_role_prov_title: 'Tourism provider',
+                auth_role_prov_desc: 'Receive validated vouchers, manage your listing and availability.',
+                auth_role_enter: 'Sign in as',
+                auth_logout: 'Sign out',
+                auth_logout_confirm: 'Sign out and return to login?',
+                // ── Onboarding modal ──
+                onboard_title: 'Welcome to GuestGuide Pro!',
+                onboard_msg: 'Your account is ready. Want a 90-second guided tour of the essentials?',
+                onboard_start_tour: 'Start guided tour',
+                onboard_explore: "I'll explore on my own",
+                onboard_again_note: 'You can launch the tour later with the Demo button above.'
             }
         };
         function tD(key, ...args) {
@@ -2736,7 +2996,14 @@
             try { localStorage.setItem('gg_dashLang', dashLang); } catch(e) {}
             // Actualizar strings estáticos del banner (fuera del renderApp)
             applyStaticI18n();
-            renderApp();
+            // Si el overlay de auth está visible, re-renderizarlo
+            const ov = document.getElementById('auth-overlay');
+            if (ov && !ov.classList.contains('hidden')) {
+                renderAuthScreen();
+                syncAuthLangToggle();
+            } else {
+                renderApp();
+            }
         }
         function applyStaticI18n() {
             // Banner
@@ -2752,11 +3019,231 @@
                 const opt = roleSel.querySelector('option[value="saas_admin"]');
                 if (opt) opt.textContent = tD('role_saas_admin');
             }
-            // Toggle buttons
+            // Toggle buttons (banner)
             document.querySelectorAll('[data-dash-lang-btn]').forEach(btn => {
                 const isActive = btn.getAttribute('data-dash-lang-btn') === dashLang;
                 btn.className = `px-2.5 py-1 rounded-full text-[10px] font-bold transition ${isActive?'bg-white text-slate-900':'text-white/70 hover:text-white'}`;
             });
+            // Auth lang toggle (independent)
+            syncAuthLangToggle();
+        }
+
+        // ═══════════════════════════════════════════════
+        //  AUTH FLOW — login / magic link / role select
+        // ═══════════════════════════════════════════════
+        let authState = 'login';   // 'login' | 'magic_sent' | 'role_select' | 'authenticated'
+        let authEmail = '';
+
+        function initAuthFlow() {
+            try {
+                const isAuth = localStorage.getItem('gg_authenticated') === 'true';
+                const savedRole = localStorage.getItem('gg_authenticated_role');
+                const savedEmail = localStorage.getItem('gg_auth_email');
+                if (isAuth && savedRole && DATABASE.roles[savedRole]) {
+                    currentRole = savedRole;
+                    authEmail = savedEmail || '';
+                    authState = 'authenticated';
+                    hideAuthOverlay();
+                    return true;
+                }
+            } catch(e) {}
+            authState = 'login';
+            // Restore last email for convenience
+            try { authEmail = localStorage.getItem('gg_auth_email') || ''; } catch(e) {}
+            showAuthOverlay();
+            return false;
+        }
+
+        function showAuthOverlay() {
+            const ov = document.getElementById('auth-overlay');
+            if (ov) ov.classList.remove('hidden');
+            renderAuthScreen();
+        }
+
+        function hideAuthOverlay() {
+            const ov = document.getElementById('auth-overlay');
+            if (ov) ov.classList.add('hidden');
+        }
+
+        function syncAuthLangToggle() {
+            document.querySelectorAll('[data-auth-lang-btn]').forEach(btn => {
+                const isActive = btn.getAttribute('data-auth-lang-btn') === dashLang;
+                btn.classList.toggle('active', isActive);
+            });
+        }
+
+        function setAuthState(newState) {
+            authState = newState;
+            renderAuthScreen();
+        }
+
+        function renderAuthScreen() {
+            const host = document.getElementById('auth-screen-host');
+            if (!host) return;
+
+            if (authState === 'login') {
+                host.innerHTML = `
+                    <div class="auth-card">
+                        <div class="auth-brand">
+                            <i data-lucide="sparkles" class="w-6 h-6"></i>
+                            ${tD('auth_brand')}
+                        </div>
+                        <div class="auth-tagline">${tD('auth_tagline')}</div>
+                        <h2 class="auth-title">${tD('auth_welcome_title')}</h2>
+                        <p class="auth-sub">${tD('auth_welcome_sub')}</p>
+                        <form onsubmit="submitLoginEmail(event); return false;">
+                            <label class="auth-label">${tD('auth_email_label')}</label>
+                            <input type="email" id="auth-email-input" class="auth-input" required value="${escAttr(authEmail)}" placeholder="${escAttr(tD('auth_email_placeholder'))}" autocomplete="email" autofocus>
+                            <button type="submit" class="auth-btn-primary" style="margin-top:18px;" id="auth-submit-btn">
+                                <i data-lucide="mail" class="w-4 h-4"></i>
+                                ${tD('auth_send_link')}
+                            </button>
+                        </form>
+                        <p class="auth-demo-note">${tD('auth_demo_note')}</p>
+                    </div>
+                `;
+            } else if (authState === 'magic_sent') {
+                host.innerHTML = `
+                    <div class="auth-card" style="text-align:center;">
+                        <div class="auth-magic-icon">
+                            <i data-lucide="mail-check"></i>
+                        </div>
+                        <h2 class="auth-title">${tD('auth_link_sent_title')}</h2>
+                        <p class="auth-sub">${tD('auth_link_sent_msg', esc(authEmail))}</p>
+                        <button onclick="confirmMagicLink()" class="auth-btn-primary" style="margin-top:8px;">
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            ${tD('auth_simulate_click')}
+                        </button>
+                        <button onclick="setAuthState('login')" class="auth-btn-ghost" style="margin-top:12px;">${tD('auth_back')}</button>
+                    </div>
+                `;
+            } else if (authState === 'role_select') {
+                const roleColors = {
+                    saas_admin: { bg: 'rgba(56,120,184,0.2)', icon: 'shield-check', color: '#5fa3dc', sub: 'SAAS' },
+                    hotel_1:    { bg: 'rgba(192,120,32,0.2)', icon: 'building-2',  color: '#e09a48', sub: 'HOTEL' },
+                    hotel_2:    { bg: 'rgba(56,158,106,0.2)', icon: 'building-2',  color: '#4dbc8a', sub: 'HOTEL' },
+                    hotel_3:    { bg: 'rgba(112,96,200,0.2)', icon: 'building-2',  color: '#9384e0', sub: 'HOTEL' },
+                    prov_1:     { bg: 'rgba(208,80,80,0.2)',  icon: 'mountain',    color: '#e07878', sub: 'PROVIDER' }
+                };
+                const hotels = DATABASE.hotels.slice(0, 3);
+                const firstProvider = DATABASE.providers[0];
+                const rolesToShow = [
+                    { id: 'saas_admin', title: tD('auth_role_saas_title'), desc: tD('auth_role_saas_desc') },
+                    ...hotels.map(h => ({ id: h.id, title: h.name, desc: tD('auth_role_hotel_desc') })),
+                    { id: firstProvider.id, title: firstProvider.name, desc: tD('auth_role_prov_desc') }
+                ];
+                host.innerHTML = `
+                    <div class="auth-card wide">
+                        <div class="auth-brand">
+                            <i data-lucide="sparkles" class="w-6 h-6"></i>
+                            ${tD('auth_brand')}
+                        </div>
+                        <h2 class="auth-title" style="text-align:center; margin-top:16px;">${tD('auth_role_title')}</h2>
+                        <p class="auth-sub" style="text-align:center;">${tD('auth_role_sub')}</p>
+                        <div class="auth-role-grid">
+                            ${rolesToShow.map(r => {
+                                const c = roleColors[r.id] || roleColors.saas_admin;
+                                return `
+                                    <button onclick="selectRoleAndEnter('${r.id}')" class="auth-role-card">
+                                        <div class="role-icon" style="background:${c.bg};">
+                                            <i data-lucide="${c.icon}" style="color:${c.color}; width:22px; height:22px;"></i>
+                                        </div>
+                                        <div class="role-sub">${c.sub}</div>
+                                        <div class="role-name">${esc(r.title)}</div>
+                                        <div class="role-desc">${esc(r.desc)}</div>
+                                    </button>
+                                `;
+                            }).join('')}
+                        </div>
+                        <div style="margin-top:18px; text-align:center;">
+                            <button onclick="setAuthState('login')" class="auth-btn-ghost">${tD('auth_back')}</button>
+                        </div>
+                    </div>
+                `;
+            }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            syncAuthLangToggle();
+        }
+
+        function submitLoginEmail(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const inp = document.getElementById('auth-email-input');
+            if (!inp) return;
+            const email = (inp.value || '').trim();
+            if (!email || !email.includes('@')) return;
+            authEmail = email;
+            try { localStorage.setItem('gg_auth_email', email); } catch(err) {}
+            const btn = document.getElementById('auth-submit-btn');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> ${tD('auth_sending')}`;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+            setTimeout(() => setAuthState('magic_sent'), 750);
+        }
+
+        function confirmMagicLink() {
+            setAuthState('role_select');
+        }
+
+        function selectRoleAndEnter(roleId) {
+            if (!DATABASE.roles[roleId]) return;
+            currentRole = roleId;
+            activeTab = 'overview';
+            try {
+                localStorage.setItem('gg_authenticated', 'true');
+                localStorage.setItem('gg_authenticated_role', roleId);
+                localStorage.setItem('gg_auth_email', authEmail);
+            } catch(e) {}
+            authState = 'authenticated';
+            hideAuthOverlay();
+            // Sync banner role selector
+            const sel = document.getElementById('role-simulator');
+            if (sel) sel.value = roleId;
+            renderApp();
+            applyStaticI18n();
+            maybeShowOnboarding();
+        }
+
+        function logout() {
+            if (!confirm(tD('auth_logout_confirm'))) return;
+            try {
+                localStorage.removeItem('gg_authenticated');
+                localStorage.removeItem('gg_authenticated_role');
+                // Keep gg_auth_email for convenience on re-login
+            } catch(e) {}
+            authState = 'login';
+            showAuthOverlay();
+        }
+
+        // ─── Onboarding modal (first time after login) ───
+        function maybeShowOnboarding() {
+            try {
+                if (localStorage.getItem('gg_onboarded') === 'true') return;
+            } catch(e) { return; }
+            const modal = document.getElementById('onboard-modal');
+            if (!modal) return;
+            const tEl = document.getElementById('onboard-title');
+            const mEl = document.getElementById('onboard-msg');
+            const sEl = document.getElementById('onboard-start-btn');
+            const eEl = document.getElementById('onboard-explore-btn');
+            const nEl = document.getElementById('onboard-again-note');
+            if (tEl) tEl.textContent = tD('onboard_title');
+            if (mEl) mEl.textContent = tD('onboard_msg');
+            if (sEl) sEl.textContent = tD('onboard_start_tour');
+            if (eEl) eEl.textContent = tD('onboard_explore');
+            if (nEl) nEl.textContent = tD('onboard_again_note');
+            modal.classList.remove('hidden');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function closeOnboarding(startTourNow) {
+            try { localStorage.setItem('gg_onboarded', 'true'); } catch(e) {}
+            const modal = document.getElementById('onboard-modal');
+            if (modal) modal.classList.add('hidden');
+            if (startTourNow && typeof startTour === 'function') {
+                setTimeout(() => startTour(), 280);
+            }
         }
 
         let saasWidgetOrder = ["total-reservas", "volumen-pos", "tu-comision", "qr-validados"];
@@ -5437,10 +5924,13 @@
 
             userCard.innerHTML = `
                 <div class="w-10 h-10 ${avatarColorClass} rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">${roleInfo.avatar}</div>
-                <div class="overflow-hidden font-sans">
+                <div class="overflow-hidden font-sans flex-1 min-w-0">
                     <p class="text-sm font-bold text-slate-800 truncate" title="${roleInfo.name}">${roleInfo.name}</p>
-                    <p class="text-xs text-slate-500">${roleInfo.badge}</p>
+                    <p class="text-xs text-slate-500 truncate">${authEmail || roleInfo.badge}</p>
                 </div>
+                <button onclick="logout()" title="${escAttr(tD('auth_logout'))}" class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition" style="color:var(--sidebar-muted); background:rgba(255,255,255,0.04);" onmouseover="this.style.background='rgba(208,80,80,0.15)'; this.style.color='#e07878';" onmouseout="this.style.background='rgba(255,255,255,0.04)'; this.style.color='var(--sidebar-muted)';">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                </button>
             `;
         }
 
@@ -10696,8 +11186,16 @@
         // Inicialización
         window.onload = function() {
             ensureQrCodes(); ensureAnalytics(); ensureAuditLog();
-            renderApp();
-            applyStaticI18n();
+            const isAuthed = initAuthFlow();   // returns true if already logged in
+            if (isAuthed) {
+                renderApp();
+                applyStaticI18n();
+                // If a previously-onboarded user, do nothing extra.
+                // First-time-after-clearing-storage will trigger maybeShowOnboarding via selectRoleAndEnter.
+            } else {
+                // Still apply lang toggles + sync auth overlay
+                applyStaticI18n();
+            }
         };
     </script>
 </body>
