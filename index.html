@@ -1884,6 +1884,8 @@
 
         let mobileViewState = 'home';
         let selectedMobileTourId = null;
+        let selectedMobileMenuItemId = null;
+        let menuListFilter = 'all'; // category filter inside the phone menu view
         let mobileLang = (() => {
             try { return localStorage.getItem('gg_mobileLang') || 'es'; } catch(e) { return 'es'; }
         })();
@@ -6361,7 +6363,33 @@
 
         function hideWhatsAppSimulation() { document.getElementById('whatsapp-simulator-popup').classList.add('translate-y-20', 'opacity-0', 'pointer-events-none'); }
 
-        function setMobileView(viewName, tourId = null) { mobileViewState = viewName; selectedMobileTourId = tourId; renderMobilePreview(); }
+        function setMobileView(viewName, idArg = null) {
+            mobileViewState = viewName;
+            if (viewName === 'menu_detail') {
+                selectedMobileMenuItemId = idArg;
+            } else if (viewName === 'tour_detail') {
+                selectedMobileTourId = idArg;
+            }
+            renderMobilePreview();
+        }
+        function setMenuListFilter(cat) {
+            menuListFilter = cat;
+            renderMobilePreview();
+        }
+        function simulateMenuOrder(itemId) {
+            const item = (tempHotel.restaurantMenu || []).find(x => x.id === itemId);
+            if (!item) return;
+            const guest = (tempHotel.pmsGuests && tempHotel.pmsGuests[0]?.guest) || 'Carlos Ruiz';
+            const room = (tempHotel.pmsGuests && tempHotel.pmsGuests[0]?.room) || '302';
+            const phone = tempHotel.whatsappStaffPhone || '+50762000000';
+            const msg = `🍽️ Nueva orden\n${guest} (Hab. ${room})\n${item.name} · $${(item.price||0).toFixed(2)}`;
+            // Simulate
+            showWhatsAppSimulation(msg, phone);
+            // Return to home
+            setTimeout(() => setMobileView('home'), 300);
+            // Toast
+            showToast(dashLang === 'en' ? 'Order received!' : '¡Pedido recibido!', dashLang === 'en' ? `${item.name} on the way to room ${room}` : `${item.name} va camino a hab. ${room}`, 'success');
+        }
 
         function renderMobilePreview(hostElement = null) {
             const phone = hostElement || document.getElementById('guest-phone-preview'); if (!phone) return;
@@ -6409,7 +6437,7 @@
                             <h5 class="text-[13px] font-extrabold text-slate-900 tracking-tight">${tM('mob_restaurant_title') !== 'mob_restaurant_title' ? tM('mob_restaurant_title') : (mobileLang==='en'?'Restaurant Menu':'Menú del Restaurante')}</h5>
                             <span class="text-[10px] font-bold" style="color:${hc};">${availableMenuItems.length}</span>
                         </div>
-                        <button class="w-full rounded-3xl overflow-hidden shadow-sm active:scale-[0.98] transition relative" style="background:linear-gradient(135deg,#d05050,#a83333); min-height:96px;">
+                        <button onclick="setMobileView('menu_list')" class="w-full rounded-3xl overflow-hidden shadow-sm active:scale-[0.98] transition relative" style="background:linear-gradient(135deg,#d05050,#a83333); min-height:96px;">
                             ${availableMenuItems[0]?.photo ? `<img src="${escAttr(availableMenuItems[0].photo)}" class="absolute inset-0 w-full h-full object-cover opacity-30">` : ''}
                             <div class="relative p-3 flex items-center gap-3 text-white">
                                 <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0">
@@ -6635,6 +6663,126 @@
                             </div>
                             <button onclick="triggerMockBooking('${escAttr(tour.id)}', '${escAttr(tour.name)}', ${tour.amount}); setMobileView('home');" class="flex-1 font-bold py-3 px-5 rounded-full text-[12px] active:scale-95 transition flex items-center justify-center gap-2" style="background:#1a2214;color:#fff;">
                                 ${tM('bookNow')} <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else if (mobileViewState === 'menu_list') {
+                // ── Menú del restaurante: lista de platos ──
+                const allItems = tempHotel.restaurantMenu || [];
+                const visibleItems = menuListFilter === 'all' ? allItems : allItems.filter(x => x.category === menuListFilter);
+                const categories = [
+                    { id: 'all',       label: mobileLang==='en'?'All':'Todos',        color:'#1a2214' },
+                    { id: 'breakfast', label: mobileLang==='en'?'Breakfast':'Desay.', color:'#c07820' },
+                    { id: 'lunch',     label: mobileLang==='en'?'Lunch':'Almuerzo',   color:'#6aaa1e' },
+                    { id: 'dinner',    label: mobileLang==='en'?'Dinner':'Cena',      color:'#7060c8' },
+                    { id: 'drinks',    label: mobileLang==='en'?'Drinks':'Bebidas',   color:'#3878b8' },
+                    { id: 'dessert',   label: mobileLang==='en'?'Desserts':'Postres', color:'#d05050' }
+                ];
+                phone.innerHTML = `
+                    <div class="absolute inset-0 flex flex-col bg-white" style="border-radius:34px;overflow:hidden;">
+                        <!-- Header -->
+                        <header class="px-4 py-3 flex items-center gap-2 bg-gradient-to-r from-rose-500 to-red-700 text-white shadow-sm">
+                            <button onclick="setMobileView('home')" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center active:scale-95 transition">
+                                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                            </button>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-[10px] opacity-80 font-semibold leading-none">${mobileLang==='en'?'Order to your room':'Ordena a tu habitación'}</p>
+                                <h1 class="font-extrabold text-[13px] leading-tight mt-0.5 truncate">${mobileLang==='en'?'Restaurant Menu':'Menú del Restaurante'}</h1>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center">
+                                <i data-lucide="chef-hat" class="w-4 h-4"></i>
+                            </div>
+                        </header>
+                        <!-- Category chips -->
+                        <div class="px-3 py-2.5 flex gap-1.5 overflow-x-auto bg-white border-b" style="scrollbar-width:none;-ms-overflow-style:none;border-color:rgba(0,0,0,0.06);">
+                            ${categories.map(c => {
+                                const isActive = menuListFilter === c.id;
+                                return `<button onclick="setMenuListFilter('${c.id}')" class="px-3 py-1 rounded-full text-[10px] font-bold transition flex-shrink-0" style="${isActive?`background:${c.color};color:white;`:'background:#f3f4f6;color:#475569;'}">${esc(c.label)}</button>`;
+                            }).join('')}
+                        </div>
+                        <!-- Items list -->
+                        <div class="flex-1 overflow-y-auto px-3 py-3 space-y-2.5" style="background:#faf7f2;">
+                            ${visibleItems.length === 0 ? `
+                                <div class="text-center py-12">
+                                    <div class="w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center" style="background:rgba(208,80,80,0.1);">
+                                        <i data-lucide="utensils-crossed" class="w-6 h-6" style="color:#d05050;"></i>
+                                    </div>
+                                    <p class="text-[11px] font-bold text-slate-700">${mobileLang==='en'?'No dishes in this category':'Sin platos en esta categoría'}</p>
+                                </div>
+                            ` : visibleItems.map(it => {
+                                const catCfg = categories.find(c => c.id === it.category) || categories[0];
+                                return `
+                                    <button onclick="setMobileView('menu_detail', '${escAttr(it.id)}')" class="w-full bg-white rounded-2xl overflow-hidden shadow-sm flex gap-2.5 active:scale-[0.98] transition text-left ${it.available?'':'opacity-50'}">
+                                        <div class="w-[88px] h-[88px] flex-shrink-0 relative" style="background:${catCfg.color}15;">
+                                            ${it.photo ? `<img src="${escAttr(it.photo)}" class="w-full h-full object-cover" onerror="this.style.display='none';">` : `<div class="w-full h-full flex items-center justify-center"><i data-lucide="image" class="w-6 h-6" style="color:${catCfg.color}66;"></i></div>`}
+                                            ${!it.available ? `<div class="absolute inset-0 bg-black/50 flex items-center justify-center"><span class="text-[8px] font-bold text-white uppercase">${mobileLang==='en'?'N/A':'No disp.'}</span></div>` : ''}
+                                        </div>
+                                        <div class="flex-1 min-w-0 p-2.5 flex flex-col justify-between">
+                                            <div>
+                                                <p class="text-[11px] font-extrabold text-slate-900 leading-tight" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${esc(it.name)}</p>
+                                                <p class="text-[9px] text-slate-500 mt-0.5 leading-tight" style="display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;">${esc(it.description || '')}</p>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <p class="text-[12px] font-extrabold" style="color:#d05050;">$${(it.price||0).toFixed(2)}</p>
+                                                <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400"></i>
+                                            </div>
+                                        </div>
+                                    </button>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (mobileViewState === 'menu_detail') {
+                // ── Detalle de un plato ──
+                const item = (tempHotel.restaurantMenu || []).find(x => x.id === selectedMobileMenuItemId);
+                if (!item) { mobileViewState = 'menu_list'; renderMobilePreview(); return; }
+                const categories = {
+                    breakfast: { label: mobileLang==='en'?'Breakfast':'Desayuno', color:'#c07820', icon:'sunrise' },
+                    lunch:     { label: mobileLang==='en'?'Lunch':'Almuerzo',     color:'#6aaa1e', icon:'sun' },
+                    dinner:    { label: mobileLang==='en'?'Dinner':'Cena',        color:'#7060c8', icon:'moon' },
+                    drinks:    { label: mobileLang==='en'?'Drinks':'Bebidas',     color:'#3878b8', icon:'wine' },
+                    dessert:   { label: mobileLang==='en'?'Desserts':'Postres',   color:'#d05050', icon:'cake' }
+                };
+                const cat = categories[item.category] || categories.breakfast;
+                phone.innerHTML = `
+                    <div class="absolute inset-0 flex flex-col bg-white" style="border-radius:34px;overflow:hidden;">
+                        <!-- Photo + back -->
+                        <div class="relative h-[180px] flex-shrink-0" style="background:${cat.color}22;">
+                            ${item.photo ? `<img src="${escAttr(item.photo)}" class="w-full h-full object-cover" onerror="this.style.display='none';">` : `<div class="w-full h-full flex items-center justify-center"><i data-lucide="image" class="w-12 h-12" style="color:${cat.color}66;"></i></div>`}
+                            <div class="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/40 to-transparent"></div>
+                            <button onclick="setMobileView('menu_list')" class="absolute top-3 left-3 w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center active:scale-95 transition">
+                                <i data-lucide="arrow-left" class="w-4 h-4 text-slate-800"></i>
+                            </button>
+                            <span class="absolute top-3 right-3 inline-flex items-center gap-1 px-2 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider bg-white shadow-md" style="color:${cat.color};">
+                                <i data-lucide="${cat.icon}" class="w-3 h-3"></i>
+                                ${esc(cat.label)}
+                            </span>
+                            ${!item.available ? `<div class="absolute bottom-0 inset-x-0 bg-rose-600/95 py-1 text-center"><span class="text-[10px] font-bold text-white uppercase">${mobileLang==='en'?'Not available now':'No disponible ahora'}</span></div>` : ''}
+                        </div>
+                        <!-- Content -->
+                        <div class="flex-1 overflow-y-auto p-4">
+                            <h1 class="text-[16px] font-extrabold text-slate-900 leading-tight" style="letter-spacing:-0.02em;">${esc(item.name)}</h1>
+                            <div class="flex items-baseline gap-2 mt-1">
+                                <p class="text-[22px] font-extrabold" style="color:#d05050;letter-spacing:-0.03em;">$${(item.price||0).toFixed(2)}</p>
+                                <p class="text-[10px] text-slate-400">${mobileLang==='en'?'incl. taxes':'imp. incluidos'}</p>
+                            </div>
+                            ${item.description ? `<p class="text-[12px] text-slate-700 leading-relaxed mt-3">${esc(item.description)}</p>` : ''}
+                            <!-- Trust badge -->
+                            <div class="mt-4 pt-3 border-t flex items-center gap-2 text-[10px] text-slate-500" style="border-color:rgba(0,0,0,0.06);">
+                                <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                                <span>${mobileLang==='en'?'Delivered to your room in 20–30 min':'Servido a tu habitación en 20–30 min'}</span>
+                            </div>
+                        </div>
+                        <!-- CTA Order -->
+                        <div class="p-3 border-t bg-white flex gap-2" style="border-color:rgba(0,0,0,0.06);">
+                            <button onclick="setMobileView('menu_list')" class="w-11 h-11 rounded-full bg-slate-100 flex items-center justify-center active:scale-95 transition">
+                                <i data-lucide="arrow-left" class="w-4 h-4 text-slate-700"></i>
+                            </button>
+                            <button onclick="${item.available?`simulateMenuOrder('${escAttr(item.id)}')`:''}" ${!item.available?'disabled':''} class="flex-1 rounded-full text-white text-[12px] font-extrabold flex items-center justify-center gap-2 active:scale-95 transition ${item.available?'':'opacity-50 cursor-not-allowed'}" style="background:linear-gradient(135deg,#d05050,#a83333);box-shadow:0 6px 16px rgba(208,80,80,0.35);">
+                                <i data-lucide="${item.available?'shopping-bag':'lock'}" class="w-4 h-4"></i>
+                                ${item.available ? (mobileLang==='en'?`Order now · $${(item.price||0).toFixed(2)}`:`Ordenar · $${(item.price||0).toFixed(2)}`) : (mobileLang==='en'?'Unavailable':'No disponible')}
                             </button>
                         </div>
                     </div>
@@ -9698,7 +9846,15 @@
                 `;
             };
 
-            target.innerHTML = `
+            // Point tempHotel to live hotel so mobile preview reflects edits in real time.
+            // Builder flows clone-on-open, so this is safe between renders.
+            tempHotel = hotel;
+            // Default to menu_list inside the phone unless user navigated to a sub-view
+            if (mobileViewState !== 'menu_list' && mobileViewState !== 'menu_detail') {
+                mobileViewState = 'menu_list';
+            }
+
+            const editorHTML = `
                 <header class="mb-6 flex flex-wrap items-start justify-between gap-3">
                     <div class="flex-1 min-w-0">
                         <p class="text-xs font-semibold mb-1" style="color:var(--text-3);">${esc(hotel.name)}</p>
@@ -9734,14 +9890,13 @@
                         </button>
                     </div>
                 ` : `
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-4">
                         ${filtered.map(item => {
                             const cat = RM_CATEGORIES.find(c => c.id === item.category) || RM_CATEGORIES[0];
                             return `
                                 <div class="bg-white rounded-3xl border shadow-sm overflow-hidden hover:shadow-md transition ${item.available ? '' : 'opacity-70'}">
                                     <div class="relative h-40 bg-slate-100">
                                         ${item.photo ? `<img src="${escAttr(item.photo)}" class="w-full h-full object-cover" onerror="this.style.display='none';">` : `<div class="w-full h-full flex items-center justify-center"><i data-lucide="image" class="w-10 h-10 text-slate-300"></i></div>`}
-                                        <!-- Category badge -->
                                         <span class="absolute top-3 left-3 inline-flex items-center gap-1 px-2 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider" style="background:${cat.color}; color:white;">
                                             <i data-lucide="${cat.icon}" class="w-3 h-3"></i>
                                             ${tD('rm_filter_' + cat.id)}
@@ -9773,6 +9928,30 @@
                     </div>
                 `}
             `;
+
+            target.innerHTML = `
+                <div class="flex flex-col lg:flex-row gap-6">
+                    <div class="flex-1 min-w-0">
+                        ${editorHTML}
+                    </div>
+                    <!-- Phone preview (hidden on mobile - redundant since user IS on mobile) -->
+                    <aside class="w-[330px] shrink-0 mx-auto mobile-preview-aside">
+                        <div class="sticky top-4">
+                            <div class="flex items-center justify-between mb-3 px-1">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${tD('hb_guest_view') !== 'hb_guest_view' ? tD('hb_guest_view') : (dashLang==='en'?'Guest view':'Vista del huésped')}</p>
+                                <div class="inline-flex bg-white border border-slate-200 rounded-full p-0.5 shadow-sm">
+                                    <button data-mobile-lang-btn="es" onclick="setMobileLang('es')" class="px-2.5 py-1 rounded-full text-[10px] font-bold transition ${mobileLang==='es'?'bg-slate-900 text-white':'text-slate-500 hover:text-slate-700'}">ES</button>
+                                    <button data-mobile-lang-btn="en" onclick="setMobileLang('en')" class="px-2.5 py-1 rounded-full text-[10px] font-bold transition ${mobileLang==='en'?'bg-slate-900 text-white':'text-slate-500 hover:text-slate-700'}">EN</button>
+                                </div>
+                            </div>
+                            <div id="guest-phone-preview" class="phone-container relative overflow-hidden" style="width:310px;height:600px;border-radius:42px;background:#1a2214;padding:8px;box-shadow:0 25px 60px rgba(0,0,0,0.4);"></div>
+                            <p class="text-[10px] text-slate-400 text-center mt-3 px-2">${dashLang==='en'?'👆 Tap the phone to see how guests order':'👆 Toca el teléfono para ver cómo ordenan los huéspedes'}</p>
+                        </div>
+                    </aside>
+                </div>
+            `;
+            // Re-render phone after DOM is in place
+            renderMobilePreview();
         }
 
         function renderStayServicesPanel(target, hotelId = null) {
