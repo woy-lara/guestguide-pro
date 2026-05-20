@@ -1632,6 +1632,7 @@
                 <option value="hotel_1" class="text-slate-900 font-medium">Hotel: Grand Resort Playa</option>
                 <option value="hotel_2" class="text-slate-900 font-medium">Hotel: Boutique Centro</option>
                 <option value="hotel_3" class="text-slate-900 font-medium">Hotel: Eco Lodge Selva</option>
+                <option value="hotel_4" class="text-slate-900 font-medium">Hotel: Hacienda Los Molinos</option>
                 <option value="prov_1" class="text-slate-900 font-medium">Proveedor: Snorkel VIP</option>
             </select>
         </div>
@@ -1732,6 +1733,7 @@
                 hotel_1: { name: "Grand Resort Playa", badge: "Hotel Partner", avatar: "GR", color: "amber" },
                 hotel_2: { name: "Boutique Centro", badge: "Hotel Partner", avatar: "BC", color: "sky" },
                 hotel_3: { name: "Eco Lodge Selva", badge: "Hotel Partner", avatar: "EL", color: "emerald" },
+                hotel_4: { name: "Hacienda Los Molinos", badge: "Hotel Partner", avatar: "HM", color: "amber" },
                 prov_1: { name: "Snorkel VIP", badge: "Proveedor Turístico", avatar: "SV", color: "violet" }
             },
             hotels: [
@@ -1775,6 +1777,23 @@
                         { name: "Transporte al Centro", type: "Transporte", price: 15, description: "Shuttle ida y vuelta al centro de Boquete.", photo: "https://images.unsplash.com/photo-1494522855154-9297ac14b55f?w=400&q=70" }
                     ],
                     experiences: ["prov_2"], pmsConnected: false, pmsType: "none", pmsKey: "", pmsGuests: []
+                },
+                {
+                    id: "hotel_4", name: "Hacienda Los Molinos", rooms: 30, commissionRate: 18, active: true, location: "Alto Boquete, El Francés, Chiriquí", coords: [8.7558, -82.4265], website: "https://losmolinoshotel.com", instagram: "haciendalosmolinos", facebook: "haciendalosmolinosboutique", logo: "https://placehold.co/100x100/8b6f47/ffffff?text=HM", colorTheme: "#8b6f47", coverPreset: "jungle", layoutOrder: "services_first", whatsappStaffPhone: "+50762000004",
+                    team: [
+                        { id: 'tm_10', name: 'Diego Salazar',  role: 'owner',     email: 'diego@losmolinoshotel.com', phone: '+507 6676-0653', avatar: '' },
+                        { id: 'tm_11', name: 'Marcela Pinto',  role: 'manager',   email: 'gerencia@losmolinoshotel.com', phone: '+507 730-8313', avatar: '' },
+                        { id: 'tm_12', name: 'Chef Ramiro',    role: 'fb',        email: 'restaurante@losmolinoshotel.com', phone: '', avatar: '' },
+                        { id: 'tm_13', name: 'Sara Villarreal', role: 'concierge', email: '', phone: '+507 6000-0040', avatar: '' }
+                    ],
+                    services: [
+                        { name: "Tour por la Hacienda", type: "Amenidades", price: 0, description: "Recorrido guiado por los jardines y la historia de la hacienda colonial.", photo: "https://images.unsplash.com/photo-1505765050516-f72dcac9c60f?w=400&q=70" },
+                        { name: "Cata de Café Boquete", type: "Amenidades", price: 22, description: "Experiencia sensorial con cafés de altura de la región.", photo: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&q=70" }
+                    ],
+                    experiences: ["prov_1", "prov_2", "prov_3"], pmsConnected: false, pmsType: "none", pmsKey: "", pmsGuests: [
+                        { room: "Villa 3", guest: "Elena Pinto",   status: "In-house", email: "elena@ejemplo.com" }
+                    ],
+                    enabledModules: ['room_service', 'maintenance', 'amenities', 'restaurant']
                 }
             ],
             potentialHotels: [
@@ -3796,9 +3815,10 @@
                     hotel_1:    { bg: 'rgba(192,120,32,0.2)', icon: 'building-2',  color: '#e09a48', sub: 'HOTEL' },
                     hotel_2:    { bg: 'rgba(56,158,106,0.2)', icon: 'building-2',  color: '#4dbc8a', sub: 'HOTEL' },
                     hotel_3:    { bg: 'rgba(112,96,200,0.2)', icon: 'building-2',  color: '#9384e0', sub: 'HOTEL' },
+                    hotel_4:    { bg: 'rgba(139,111,71,0.22)', icon: 'building-2', color: '#b89060', sub: 'HOTEL' },
                     prov_1:     { bg: 'rgba(208,80,80,0.2)',  icon: 'mountain',    color: '#e07878', sub: 'PROVIDER' }
                 };
-                const hotels = DATABASE.hotels.slice(0, 3);
+                const hotels = DATABASE.hotels;  // show all hotels
                 const firstProvider = DATABASE.providers[0];
                 const rolesToShow = [
                     { id: 'saas_admin', title: tD('auth_role_saas_title'), desc: tD('auth_role_saas_desc') },
@@ -4617,6 +4637,23 @@
                     { id:'rm3_4', category:'dinner',    name:'Salmón al Vapor',         price:26, description:'Filete de salmón con vegetales al vapor y arroz integral.',                                photo:'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=70', available:true },
                     { id:'rm3_5', category:'drinks',    name:'Té Verde Premium',        price:6,  description:'Té matcha ceremonial con leche de almendra.',                                                photo:'https://images.unsplash.com/photo-1571934811356-5cc061b6821f?w=400&q=70', available:true },
                     { id:'rm3_6', category:'dessert',   name:'Frutas de Temporada',     price:7,  description:'Frutas frescas locales con miel de abeja boquetena.',                                       photo:'https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=400&q=70', available:true }
+                ],
+                // NOTA: Menú placeholder de Hacienda Los Molinos — reemplazar con los platos reales del Canva cuando llegue.
+                hotel_4: [
+                    { id:'rm4_1', category:'breakfast', name:'Desayuno Hacienda',          price:16, description:'Huevos benedictinos, salmón ahumado local, pan artesanal y café Geisha de altura.',         photo:'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=400&q=70', available:true },
+                    { id:'rm4_2', category:'breakfast', name:'Hotcakes del Volcán',        price:13, description:'Pancakes esponjosos con jarabe de caña de Chiriquí y frutas de la finca.',                  photo:'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&q=70', available:true },
+                    { id:'rm4_3', category:'breakfast', name:'Tortilla Chiricana',         price:11, description:'Tortilla rellena de queso fresco, plátano maduro y crema agria.',                            photo:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=70', available:true },
+                    { id:'rm4_4', category:'lunch',     name:'Sopa Boquetena',             price:9,  description:'Sopa de la casa con vegetales locales, cilantro y un toque de ají picante artesanal.',      photo:'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=70', available:true },
+                    { id:'rm4_5', category:'lunch',     name:'Trucha del Río Caldera',     price:24, description:'Trucha local al ajillo, acompañada de quinoa de la región y vegetales asados.',             photo:'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&q=70', available:true },
+                    { id:'rm4_6', category:'lunch',     name:'Ensalada de la Hacienda',    price:14, description:'Lechugas hidropónicas, tomate cherry, queso de cabra y aderezo de miel boquetena.',         photo:'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=70', available:true },
+                    { id:'rm4_7', category:'dinner',    name:'Cordero al Asador',          price:34, description:'Cordero a la parrilla con chimichurri panameño y puré rústico de yuca.',                    photo:'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&q=70', available:true },
+                    { id:'rm4_8', category:'dinner',    name:'Bistec Premium 10oz',        price:32, description:'Corte angus madurado, mantequilla de hierbas y papas confitadas en grasa de pato.',         photo:'https://images.unsplash.com/photo-1546964124-0cce460f38ef?w=400&q=70', available:true },
+                    { id:'rm4_9', category:'dinner',    name:'Pasta del Chef Ramiro',      price:22, description:'Pasta fresca artesanal con setas locales, parmesano y crema de café.',                       photo:'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400&q=70', available:false },
+                    { id:'rm4_10', category:'drinks',   name:'Café Geisha de la Casa',     price:9,  description:'Tueste claro de altura — la joya cafetalera de Boquete. Preparación V60.',                  photo:'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&q=70', available:true },
+                    { id:'rm4_11', category:'drinks',   name:'Vino Tinto Reserva',         price:14, description:'Copa de Cabernet Sauvignon argentino, ideal con carnes.',                                    photo:'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&q=70', available:true },
+                    { id:'rm4_12', category:'drinks',   name:'Smoothie del Jardín',        price:8,  description:'Maracuyá, mango, jengibre y menta del huerto orgánico.',                                     photo:'https://images.unsplash.com/photo-1502741224143-90386d7f8c82?w=400&q=70', available:true },
+                    { id:'rm4_13', category:'dessert',  name:'Brownie con Helado',         price:10, description:'Brownie tibio de chocolate Geisha con helado artesanal de vainilla.',                        photo:'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&q=70', available:true },
+                    { id:'rm4_14', category:'dessert',  name:'Cheesecake de Maracuyá',     price:9,  description:'Cheesecake cremoso con coulis de maracuyá fresco de la región.',                            photo:'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=400&q=70', available:true }
                 ]
             };
             DATABASE.hotels.forEach(h => {
