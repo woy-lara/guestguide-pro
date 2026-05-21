@@ -7181,10 +7181,8 @@
                         <!-- Hero photo (más imponente: 260px) -->
                         <div class="relative h-[260px] flex-shrink-0" style="background:${cat.color}22;">
                             ${item.photo ? `<img src="${escAttr(item.photo)}" class="w-full h-full object-cover" onerror="this.style.display='none';">` : `<div class="w-full h-full flex items-center justify-center"><i data-lucide="image" class="w-16 h-16" style="color:${cat.color}66;"></i></div>`}
-                            <!-- Gradiente arriba para legibilidad de los botones -->
-                            <div class="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/45 to-transparent"></div>
-                            <!-- Gradiente abajo para "fundir" con el contenido -->
-                            <div class="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white to-transparent"></div>
+                            <!-- Gradiente sutil arriba: sólo para legibilidad de los botones flotantes -->
+                            <div class="absolute inset-x-0 top-0 h-14 bg-gradient-to-b from-black/30 to-transparent pointer-events-none"></div>
                             <button onclick="setMobileView('menu_list')" class="absolute top-3 left-3 w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center active:scale-95 transition">
                                 <i data-lucide="arrow-left" class="w-4 h-4 text-slate-800"></i>
                             </button>
