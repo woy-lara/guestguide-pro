@@ -2813,6 +2813,13 @@
                 modreq_cancel: 'Cancelar',
                 modreq_success_title: '¡Solicitud recibida! ✨',
                 modreq_success_msg: 'Nuestro equipo te contactará en 24h para coordinar la integración.',
+                modreq_change_title: 'Solicitar cambio mayor',
+                modreq_change_subtitle: 'Pide los cambios que necesitas y los procesamos por ti.',
+                modreq_change_module_note: 'Solicitud de cambio sobre un módulo ya activo.',
+                modreq_change_notes_label: '¿Qué cambios necesitas? (sé específico)',
+                modreq_change_placeholder: 'Ej: Agregar 3 platos nuevos (envíame las fotos por WhatsApp). Cambiar foto del bistec. Subir precio de la pasta a $14.',
+                modreq_change_success_msg: 'Nuestro equipo procesará tu solicitud y te confirmará el costo en 24h.',
+                mreq_kind_change: 'Cambio de menú',
                 // ── Toggle confirmation ──
                 modtoggle_enabled_title: 'Módulo activado',
                 modtoggle_enabled_msg: (name) => `${name} ya está disponible en la app del huésped.`,
@@ -2871,9 +2878,23 @@
                 rm_filter_dessert: 'Postres',
                 rm_empty_title: 'Aún no hay platos en tu menú',
                 rm_empty_sub: 'Añade tu primer plato para que los huéspedes puedan ordenar desde su habitación.',
+                rm_empty_sub_restricted: 'Tu menú aún no está listo. GuestGuide Pro lo prepara — solicita la creación cuando estés listo.',
                 rm_empty_cta: 'Añadir mi primer plato',
+                rm_back_to_menus: '← Volver a Menús',
+                rm_request_change: 'Solicitar cambio mayor',
+                rm_restricted_title: 'Solo puedes editar precios y disponibilidad',
+                rm_restricted_body: 'Para añadir, eliminar o modificar platos (nombre, foto, descripción, categoría), solicita un cambio mayor a GuestGuide Pro. Te respondemos en 24h.',
+                rm_no_create_title: 'Acción no permitida',
+                rm_no_create_msg: 'Para crear platos nuevos, solicita un cambio mayor a GuestGuide Pro.',
+                rm_no_delete_title: 'Acción no permitida',
+                rm_no_delete_msg: 'Para eliminar platos, solicita un cambio mayor a GuestGuide Pro.',
                 rm_modal_new: 'Nuevo plato',
                 rm_modal_edit: 'Editar plato',
+                rm_modal_edit_restricted: 'Editar precio y disponibilidad',
+                rm_modal_restricted_hint: 'Estás en modo limitado: solo puedes ajustar precio y disponibilidad de este plato. Para cambios mayores, usa "Solicitar cambio mayor".',
+                rm_modal_locked: 'Solo GuestGuide Pro puede editar este campo',
+                rm_modal_editable: 'editable',
+                rm_modal_avail_hint: 'Apaga si el plato no está disponible hoy.',
                 rm_modal_name: 'Nombre del plato',
                 rm_modal_name_ph: 'Ej. Bistec a la parrilla',
                 rm_modal_category: 'Categoría',
@@ -3638,6 +3659,13 @@
                 mod_concierge: 'Premium Concierge',
                 mod_concierge_desc: 'Dedicated human assistant via chat for VIP guests.',
                 // ── Request integration modal ──
+                modreq_change_title: 'Request major change',
+                modreq_change_subtitle: 'Tell us what changes you need and we will process them.',
+                modreq_change_module_note: 'Change request for an already-active module.',
+                modreq_change_notes_label: 'What changes do you need? (be specific)',
+                modreq_change_placeholder: 'E.g.: Add 3 new dishes (I will send photos via WhatsApp). Replace the steak photo. Raise pasta price to $14.',
+                modreq_change_success_msg: 'Our team will process your request and confirm cost within 24h.',
+                mreq_kind_change: 'Menu change',
                 modreq_title: 'Request integration',
                 modreq_subtitle: 'Tell us why you need this module and we will prioritize it.',
                 modreq_module: 'Requested module',
@@ -3705,9 +3733,23 @@
                 rm_filter_dessert: 'Desserts',
                 rm_empty_title: 'No dishes in your menu yet',
                 rm_empty_sub: 'Add your first dish so guests can order from their room.',
+                rm_empty_sub_restricted: 'Your menu is not ready yet. GuestGuide Pro builds it for you — request creation when ready.',
                 rm_empty_cta: 'Add my first dish',
+                rm_back_to_menus: '← Back to Menus',
+                rm_request_change: 'Request major change',
+                rm_restricted_title: 'You can only edit prices and availability',
+                rm_restricted_body: 'To add, remove or modify dishes (name, photo, description, category), request a major change to GuestGuide Pro. We respond within 24h.',
+                rm_no_create_title: 'Action not allowed',
+                rm_no_create_msg: 'To create new dishes, request a major change to GuestGuide Pro.',
+                rm_no_delete_title: 'Action not allowed',
+                rm_no_delete_msg: 'To delete dishes, request a major change to GuestGuide Pro.',
                 rm_modal_new: 'New dish',
                 rm_modal_edit: 'Edit dish',
+                rm_modal_edit_restricted: 'Edit price and availability',
+                rm_modal_restricted_hint: 'Limited mode: you can only adjust price and availability for this dish. For larger changes, use "Request major change".',
+                rm_modal_locked: 'Only GuestGuide Pro can edit this field',
+                rm_modal_editable: 'editable',
+                rm_modal_avail_hint: 'Toggle off if the dish is not available today.',
                 rm_modal_name: 'Dish name',
                 rm_modal_name_ph: 'Ex. Grilled steak',
                 rm_modal_category: 'Category',
@@ -9681,18 +9723,29 @@
             const mod = MODULES_CATALOG.find(m => m.id === moduleRequestDraft.moduleId);
             if (!mod) return;
             const hotel = DATABASE.hotels.find(h => h.id === currentRole);
+            const kind = moduleRequestDraft.kind || 'enable'; // 'enable' (default) | 'change'
             DATABASE.moduleRequests.push({
                 id: 'modreq_' + Date.now(),
                 hotelId: currentRole,
                 moduleId: mod.id,
+                kind: kind,
                 notes: moduleRequestDraft.notes || '',
                 timestamp: new Date().toISOString(),
                 status: 'pending'
             });
-            logAudit('module.request', { type:'hotel', id: hotel?.id, name: hotel?.name }, { module: mod.id, notes: moduleRequestDraft.notes });
-            showToastT('modreq_success_title', tD('modreq_success_msg'), 'success');
+            logAudit('module.request', { type:'hotel', id: hotel?.id, name: hotel?.name }, { module: mod.id, kind: kind, notes: moduleRequestDraft.notes });
+            showToastT('modreq_success_title', kind === 'change' ? tD('modreq_change_success_msg') : tD('modreq_success_msg'), 'success');
             closeModuleRequestModal();
             renderApp();
+        }
+
+        // Hotelero solicita un cambio mayor al menú (agregar platos, cambiar fotos, etc.).
+        // Reusa el modal de moduleRequest con kind='change' para que aparezca en el inbox
+        // de saas_admin como una solicitud distinta a "activación de módulo".
+        function requestMenuChange() {
+            if (currentRole === 'saas_admin') return; // saas_admin no debería ver este botón
+            moduleRequestDraft = { moduleId: 'restaurant', notes: '', kind: 'change' };
+            renderModuleRequestModal();
         }
 
         function renderModuleRequestModal() {
@@ -9705,6 +9758,10 @@
             if (!moduleRequestDraft) { host.innerHTML = ''; return; }
             const mod = MODULES_CATALOG.find(m => m.id === moduleRequestDraft.moduleId);
             if (!mod) { host.innerHTML = ''; return; }
+            const isChange = moduleRequestDraft.kind === 'change';
+            const modalTitle = isChange ? tD('modreq_change_title') : tD('modreq_title');
+            const modalSubtitle = isChange ? tD('modreq_change_subtitle') : tD('modreq_subtitle');
+            const notesPlaceholder = isChange ? tD('modreq_change_placeholder') : tD('modreq_notes_placeholder');
 
             host.innerHTML = `
                 <div class="invoice-modal-overlay" onclick="if(event.target===this) closeModuleRequestModal()">
@@ -9712,11 +9769,11 @@
                         <header class="px-6 py-5 border-b flex items-start justify-between" style="border-color:rgba(80,100,55,0.1);">
                             <div class="flex items-start gap-3 flex-1 min-w-0">
                                 <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:${mod.color}1a; color:${mod.color};">
-                                    <i data-lucide="${mod.icon}" class="w-6 h-6"></i>
+                                    <i data-lucide="${isChange ? 'edit-3' : mod.icon}" class="w-6 h-6"></i>
                                 </div>
                                 <div class="min-w-0">
-                                    <h3 class="font-bold text-lg text-slate-800">${tD('modreq_title')}</h3>
-                                    <p class="text-xs text-slate-500 mt-0.5">${tD('modreq_subtitle')}</p>
+                                    <h3 class="font-bold text-lg text-slate-800">${modalTitle}</h3>
+                                    <p class="text-xs text-slate-500 mt-0.5">${modalSubtitle}</p>
                                 </div>
                             </div>
                             <button onclick="closeModuleRequestModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 transition flex items-center justify-center text-slate-400 flex-shrink-0">
@@ -9730,13 +9787,13 @@
                                     <i data-lucide="${mod.icon}" class="w-5 h-5" style="color:${mod.color};"></i>
                                     <div class="flex-1 min-w-0">
                                         <p class="font-bold text-slate-800 text-sm">${tD(mod.i18nKey)}</p>
-                                        <p class="text-xs text-slate-500 truncate">${tD(mod.i18nKey + '_desc')}</p>
+                                        <p class="text-xs text-slate-500 truncate">${isChange ? tD('modreq_change_module_note') : tD(mod.i18nKey + '_desc')}</p>
                                     </div>
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('modreq_notes_label')}</label>
-                                <textarea oninput="updateModuleRequestNotes(this.value)" rows="4" placeholder="${escAttr(tD('modreq_notes_placeholder'))}" class="w-full px-4 py-3 rounded-2xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:bg-white transition" style="border-color:rgba(80,100,55,0.15); resize:vertical; min-height:96px;"></textarea>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${isChange ? tD('modreq_change_notes_label') : tD('modreq_notes_label')}</label>
+                                <textarea oninput="updateModuleRequestNotes(this.value)" rows="4" placeholder="${escAttr(notesPlaceholder)}" class="w-full px-4 py-3 rounded-2xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:bg-white transition" style="border-color:rgba(80,100,55,0.15); resize:vertical; min-height:96px;"></textarea>
                             </div>
                         </div>
                         <footer class="px-6 py-4 border-t flex gap-2 justify-end" style="border-color:rgba(80,100,55,0.1);">
@@ -9921,9 +9978,23 @@
             renderApp();
         }
 
+        // Resuelve qué hotel se está editando según rol:
+        //  - saas_admin: el que tiene seleccionado en saasEditMenuHotelId
+        //  - hotel_*:    su propio currentRole
+        function getMenuEditHotel() {
+            const id = currentRole === 'saas_admin' ? saasEditMenuHotelId : currentRole;
+            return DATABASE.hotels.find(h => h.id === id);
+        }
+
         function openRmItemModal(itemId = null) {
-            const hotel = DATABASE.hotels.find(h => h.id === currentRole);
+            const hotel = getMenuEditHotel();
             if (!hotel) return;
+            const isFullEdit = currentRole === 'saas_admin';
+            // Hotelero no puede crear platos nuevos — solo editar precio/disponibilidad de existentes
+            if (!itemId && !isFullEdit) {
+                showToast(tD('rm_no_create_title'), tD('rm_no_create_msg'), 'info');
+                return;
+            }
             if (itemId) {
                 const it = (hotel.restaurantMenu || []).find(x => x.id === itemId);
                 if (it) rmItemDraft = { ...it };
@@ -9944,9 +10015,10 @@
         }
         function saveRmItem() {
             if (!rmItemDraft) return;
-            const hotel = DATABASE.hotels.find(h => h.id === currentRole);
+            const hotel = getMenuEditHotel();
             if (!hotel) return;
             if (!hotel.restaurantMenu) hotel.restaurantMenu = [];
+            const isFullEdit = currentRole === 'saas_admin';
             const draft = rmItemDraft;
             if (!draft.name || !draft.name.trim()) {
                 showToast(tD('toast_error'), tD('toast_action_msg'), 'error');
@@ -9955,21 +10027,38 @@
             if (draft.id) {
                 const idx = hotel.restaurantMenu.findIndex(x => x.id === draft.id);
                 if (idx >= 0) {
-                    hotel.restaurantMenu[idx] = { ...draft };
+                    // Hotelero solo puede tocar precio + availability — preservamos lo demás
+                    const original = hotel.restaurantMenu[idx];
+                    if (isFullEdit) {
+                        hotel.restaurantMenu[idx] = { ...draft };
+                    } else {
+                        hotel.restaurantMenu[idx] = {
+                            ...original,
+                            price: draft.price,
+                            available: draft.available
+                        };
+                    }
                     showToastT('rm_toast_updated', draft.name, 'success');
                 }
             } else {
+                // Crear nuevo plato sólo permitido para saas_admin (openRmItemModal ya bloquea, esto es defensivo)
+                if (!isFullEdit) { closeRmItemModal(); return; }
                 const newItem = { ...draft, id: 'rm_' + Date.now() };
                 hotel.restaurantMenu.unshift(newItem);
                 showToastT('rm_toast_added', newItem.name, 'success');
             }
-            logAudit('restaurant.menu_update', { type:'hotel', id: hotel.id, name: hotel.name }, { item: draft.name });
+            logAudit('restaurant.menu_update', { type:'hotel', id: hotel.id, name: hotel.name }, { item: draft.name, by: isFullEdit ? 'saas_admin' : 'hotel' });
             closeRmItemModal();
             renderApp();
         }
         function deleteRmItem(itemId) {
+            // Sólo saas_admin puede borrar platos
+            if (currentRole !== 'saas_admin') {
+                showToast(tD('rm_no_delete_title'), tD('rm_no_delete_msg'), 'info');
+                return;
+            }
             if (!confirm(tD('rm_confirm_delete'))) return;
-            const hotel = DATABASE.hotels.find(h => h.id === currentRole);
+            const hotel = getMenuEditHotel();
             if (!hotel || !hotel.restaurantMenu) return;
             const it = hotel.restaurantMenu.find(x => x.id === itemId);
             hotel.restaurantMenu = hotel.restaurantMenu.filter(x => x.id !== itemId);
@@ -9978,7 +10067,7 @@
             renderApp();
         }
         function toggleRmItemAvailable(itemId) {
-            const hotel = DATABASE.hotels.find(h => h.id === currentRole);
+            const hotel = getMenuEditHotel();
             if (!hotel) return;
             const it = (hotel.restaurantMenu || []).find(x => x.id === itemId);
             if (!it) return;
@@ -9996,16 +10085,118 @@
             }
             if (!rmItemDraft) { host.innerHTML = ''; return; }
             const isEdit = !!rmItemDraft.id;
+            const isFullEdit = currentRole === 'saas_admin';
+            const cat = RM_CATEGORIES.find(c => c.id === rmItemDraft.category) || RM_CATEGORIES[0];
+            const modalTitle = isFullEdit
+                ? (isEdit ? tD('rm_modal_edit') : tD('rm_modal_new'))
+                : tD('rm_modal_edit_restricted');
+
+            // Bloque restringido para hotelero — solo precio + disponibilidad
+            const restrictedFieldsHTML = `
+                <div class="rounded-2xl p-3 mb-1 border flex items-start gap-2" style="background:rgba(80,100,55,0.04); border-color:rgba(80,100,55,0.15);">
+                    <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0" style="color:var(--sidebar-bg);"></i>
+                    <p class="text-[11px] text-slate-600 leading-relaxed">${tD('rm_modal_restricted_hint')}</p>
+                </div>
+                <!-- Foto preview (read-only) -->
+                ${rmItemDraft.photo ? `
+                    <div class="rounded-2xl overflow-hidden border" style="border-color:rgba(80,100,55,0.15);">
+                        <img src="${escAttr(rmItemDraft.photo)}" class="w-full h-44 object-cover" onerror="this.style.display='none';">
+                    </div>
+                ` : ''}
+                <!-- Nombre + categoría (read-only) -->
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <i data-lucide="${cat.icon}" class="w-3.5 h-3.5" style="color:${cat.color};"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-wider" style="color:${cat.color};">${tD('rm_filter_' + cat.id)}</span>
+                    </div>
+                    <h4 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                        ${esc(rmItemDraft.name)}
+                        <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-400" title="${escAttr(tD('rm_modal_locked'))}"></i>
+                    </h4>
+                    ${rmItemDraft.description ? `<p class="text-xs text-slate-500 mt-1 leading-relaxed">${esc(rmItemDraft.description)}</p>` : ''}
+                </div>
+                <!-- Precio (editable) -->
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-emerald-600 mb-1.5 flex items-center gap-1.5">
+                        <i data-lucide="dollar-sign" class="w-3 h-3"></i>
+                        ${tD('rm_modal_price')}
+                        <span class="font-normal text-slate-400 normal-case">· ${tD('rm_modal_editable')}</span>
+                    </label>
+                    <input type="number" step="0.01" oninput="updateRmField('price', this.value)" value="${rmItemDraft.price || ''}" placeholder="0.00" class="w-full px-3 py-2.5 rounded-xl border bg-white text-sm font-bold focus:outline-none focus:ring-2 focus:ring-emerald-200" style="border-color:rgba(106,170,30,0.35); font-size:1rem;">
+                </div>
+                <!-- Disponibilidad (editable) -->
+                <label class="flex items-center gap-3 cursor-pointer p-3 rounded-2xl border" style="border-color:rgba(106,170,30,0.25); background:rgba(106,170,30,0.04);">
+                    <div class="relative">
+                        <input type="checkbox" ${rmItemDraft.available ? 'checked' : ''} onchange="updateRmField('available', this.checked)" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-200 peer-checked:bg-emerald-500 rounded-full transition relative">
+                            <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full" style="transition:transform 0.2s ease; transform:${rmItemDraft.available ? 'translateX(20px)' : 'translateX(0)'};"></span>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-bold ${rmItemDraft.available ? 'text-emerald-700' : 'text-slate-500'}">${rmItemDraft.available ? tD('rm_modal_available') : tD('rm_modal_unavailable')}</p>
+                        <p class="text-[10px] text-slate-400">${tD('rm_modal_avail_hint')}</p>
+                    </div>
+                </label>
+            `;
+
+            // Bloque completo para saas_admin
+            const fullFieldsHTML = `
+                ${rmItemDraft.photo ? `
+                    <div class="rounded-2xl overflow-hidden border" style="border-color:rgba(80,100,55,0.15);">
+                        <img src="${escAttr(rmItemDraft.photo)}" class="w-full h-44 object-cover" onerror="this.style.display='none';">
+                    </div>
+                ` : ''}
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('rm_modal_name')}</label>
+                        <input type="text" oninput="updateRmField('name', this.value)" value="${escAttr(rmItemDraft.name)}" placeholder="${escAttr(tD('rm_modal_name_ph'))}" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:bg-white" style="border-color:rgba(80,100,55,0.15);">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('rm_modal_price')}</label>
+                        <input type="number" step="0.01" oninput="updateRmField('price', this.value)" value="${rmItemDraft.price || ''}" placeholder="0.00" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:bg-white" style="border-color:rgba(80,100,55,0.15);">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('rm_modal_category')}</label>
+                    <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
+                        ${RM_CATEGORIES.map(c => `
+                            <button onclick="updateRmField('category', '${c.id}')" class="px-2 py-2 rounded-xl border-2 text-center transition flex flex-col items-center gap-1 ${rmItemDraft.category===c.id ? '' : 'opacity-60 hover:opacity-100'}" style="border-color:${rmItemDraft.category===c.id ? c.color : 'rgba(80,100,55,0.12)'}; ${rmItemDraft.category===c.id ? `background:${c.color}1a;` : 'background:#fff;'}">
+                                <i data-lucide="${c.icon}" class="w-4 h-4" style="color:${c.color};"></i>
+                                <span class="text-[10px] font-bold" style="color:${rmItemDraft.category===c.id ? c.color : 'var(--text-2)'};">${tD('rm_filter_' + c.id)}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('rm_modal_desc')}</label>
+                    <textarea oninput="updateRmField('description', this.value)" rows="3" placeholder="${escAttr(tD('rm_modal_desc_ph'))}" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:bg-white" style="border-color:rgba(80,100,55,0.15); resize:vertical;">${esc(rmItemDraft.description || '')}</textarea>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('rm_modal_photo')}</label>
+                    <input type="url" oninput="updateRmField('photo', this.value)" value="${escAttr(rmItemDraft.photo || '')}" placeholder="${escAttr(tD('rm_modal_photo_ph'))}" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:bg-white" style="border-color:rgba(80,100,55,0.15);">
+                    <p class="text-[10px] text-slate-400 mt-1">${tD('rm_modal_photo_hint')}</p>
+                </div>
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <div class="relative">
+                        <input type="checkbox" ${rmItemDraft.available ? 'checked' : ''} onchange="updateRmField('available', this.checked)" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-200 peer-checked:bg-emerald-500 rounded-full transition relative">
+                            <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full" style="transition:transform 0.2s ease; transform:${rmItemDraft.available ? 'translateX(20px)' : 'translateX(0)'};"></span>
+                        </div>
+                    </div>
+                    <span class="text-sm font-semibold ${rmItemDraft.available ? 'text-emerald-700' : 'text-slate-500'}">${rmItemDraft.available ? tD('rm_modal_available') : tD('rm_modal_unavailable')}</span>
+                </label>
+            `;
+
             host.innerHTML = `
                 <div class="invoice-modal-overlay" onclick="if(event.target===this) closeRmItemModal()">
                     <div class="bg-white rounded-3xl shadow-2xl w-full" style="max-width:540px; margin-top:60px;">
                         <header class="px-6 py-5 border-b flex items-center justify-between" style="border-color:rgba(80,100,55,0.1);">
                             <div class="flex items-center gap-3">
                                 <div class="w-11 h-11 rounded-2xl flex items-center justify-center" style="background:rgba(208,80,80,0.14); color:#d05050;">
-                                    <i data-lucide="chef-hat" class="w-5 h-5"></i>
+                                    <i data-lucide="${isFullEdit ? 'chef-hat' : 'tag'}" class="w-5 h-5"></i>
                                 </div>
                                 <div>
-                                    <h3 class="font-bold text-lg text-slate-800">${isEdit ? tD('rm_modal_edit') : tD('rm_modal_new')}</h3>
+                                    <h3 class="font-bold text-lg text-slate-800">${modalTitle}</h3>
                                 </div>
                             </div>
                             <button onclick="closeRmItemModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 transition flex items-center justify-center text-slate-400">
@@ -10013,55 +10204,11 @@
                             </button>
                         </header>
                         <div class="p-6 space-y-4">
-                            <!-- Photo preview -->
-                            ${rmItemDraft.photo ? `
-                                <div class="rounded-2xl overflow-hidden border" style="border-color:rgba(80,100,55,0.15);">
-                                    <img src="${escAttr(rmItemDraft.photo)}" class="w-full h-44 object-cover" onerror="this.style.display='none';">
-                                </div>
-                            ` : ''}
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('rm_modal_name')}</label>
-                                    <input type="text" oninput="updateRmField('name', this.value)" value="${escAttr(rmItemDraft.name)}" placeholder="${escAttr(tD('rm_modal_name_ph'))}" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:bg-white" style="border-color:rgba(80,100,55,0.15);">
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('rm_modal_price')}</label>
-                                    <input type="number" step="0.01" oninput="updateRmField('price', this.value)" value="${rmItemDraft.price || ''}" placeholder="0.00" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:bg-white" style="border-color:rgba(80,100,55,0.15);">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('rm_modal_category')}</label>
-                                <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
-                                    ${RM_CATEGORIES.map(c => `
-                                        <button onclick="updateRmField('category', '${c.id}')" class="px-2 py-2 rounded-xl border-2 text-center transition flex flex-col items-center gap-1 ${rmItemDraft.category===c.id ? '' : 'opacity-60 hover:opacity-100'}" style="border-color:${rmItemDraft.category===c.id ? c.color : 'rgba(80,100,55,0.12)'}; ${rmItemDraft.category===c.id ? `background:${c.color}1a;` : 'background:#fff;'}">
-                                            <i data-lucide="${c.icon}" class="w-4 h-4" style="color:${c.color};"></i>
-                                            <span class="text-[10px] font-bold" style="color:${rmItemDraft.category===c.id ? c.color : 'var(--text-2)'};">${tD('rm_filter_' + c.id)}</span>
-                                        </button>
-                                    `).join('')}
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('rm_modal_desc')}</label>
-                                <textarea oninput="updateRmField('description', this.value)" rows="3" placeholder="${escAttr(tD('rm_modal_desc_ph'))}" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:bg-white" style="border-color:rgba(80,100,55,0.15); resize:vertical;">${esc(rmItemDraft.description || '')}</textarea>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('rm_modal_photo')}</label>
-                                <input type="url" oninput="updateRmField('photo', this.value)" value="${escAttr(rmItemDraft.photo || '')}" placeholder="${escAttr(tD('rm_modal_photo_ph'))}" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:bg-white" style="border-color:rgba(80,100,55,0.15);">
-                                <p class="text-[10px] text-slate-400 mt-1">${tD('rm_modal_photo_hint')}</p>
-                            </div>
-                            <label class="flex items-center gap-3 cursor-pointer">
-                                <div class="relative">
-                                    <input type="checkbox" ${rmItemDraft.available ? 'checked' : ''} onchange="updateRmField('available', this.checked)" class="sr-only peer">
-                                    <div class="w-11 h-6 bg-slate-200 peer-checked:bg-emerald-500 rounded-full transition relative">
-                                        <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full" style="transition:transform 0.2s ease; transform:${rmItemDraft.available ? 'translateX(20px)' : 'translateX(0)'};"></span>
-                                    </div>
-                                </div>
-                                <span class="text-sm font-semibold ${rmItemDraft.available ? 'text-emerald-700' : 'text-slate-500'}">${rmItemDraft.available ? tD('rm_modal_available') : tD('rm_modal_unavailable')}</span>
-                            </label>
+                            ${isFullEdit ? fullFieldsHTML : restrictedFieldsHTML}
                         </div>
                         <footer class="px-6 py-4 border-t flex gap-2 justify-between" style="border-color:rgba(80,100,55,0.1);">
                             <div>
-                                ${isEdit ? `<button onclick="deleteRmItem('${escAttr(rmItemDraft.id)}')" class="px-4 py-2.5 rounded-full text-sm font-bold text-rose-600 hover:bg-rose-50 transition flex items-center gap-1.5"><i data-lucide="trash-2" class="w-4 h-4"></i>${tD('rm_modal_delete')}</button>` : ''}
+                                ${isEdit && isFullEdit ? `<button onclick="deleteRmItem('${escAttr(rmItemDraft.id)}')" class="px-4 py-2.5 rounded-full text-sm font-bold text-rose-600 hover:bg-rose-50 transition flex items-center gap-1.5"><i data-lucide="trash-2" class="w-4 h-4"></i>${tD('rm_modal_delete')}</button>` : ''}
                             </div>
                             <div class="flex gap-2">
                                 <button onclick="closeRmItemModal()" class="px-4 py-2.5 rounded-full text-sm font-semibold text-slate-600 hover:bg-slate-100 transition">${tD('rm_modal_cancel')}</button>
@@ -10178,6 +10325,8 @@
             const hotel = DATABASE.hotels.find(h => h.id === hotelId);
             if (!hotel) { target.innerHTML = ''; return; }
             if (!hotel.restaurantMenu) hotel.restaurantMenu = [];
+            // saas_admin = control total. hotelero = sólo precio + disponibilidad.
+            const isFullEdit = currentRole === 'saas_admin';
             const items = hotel.restaurantMenu;
             const filtered = restaurantMenuFilter === 'all' ? items : items.filter(i => i.category === restaurantMenuFilter);
             const totalItems = items.length;
@@ -10208,6 +10357,29 @@
                 mobileViewState = 'menu_list';
             }
 
+            // Botones del header dependen del rol:
+            //  - saas_admin: "Volver a Menús" + "Agregar plato"
+            //  - hotel_*:    "Volver a Módulos" + "Solicitar cambio mayor"
+            const backBtn = isFullEdit
+                ? `<button onclick="goToSaasMenusList()" class="bg-white border text-slate-700 px-4 py-2.5 rounded-full text-sm font-semibold shadow-sm hover:shadow active:scale-95 transition flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i>${tD('rm_back_to_menus')}</button>`
+                : `<button onclick="switchTab('modules')" class="bg-white border text-slate-700 px-4 py-2.5 rounded-full text-sm font-semibold shadow-sm hover:shadow active:scale-95 transition flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i>${tD('rm_back_to_modules')}</button>`;
+            const actionBtn = isFullEdit
+                ? `<button onclick="openRmItemModal()" class="text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-md hover:shadow-lg active:scale-95 transition flex items-center gap-2" style="background:linear-gradient(135deg,#d05050,#a83333);"><i data-lucide="plus" class="w-4 h-4"></i>${tD('rm_add_item')}</button>`
+                : `<button onclick="requestMenuChange()" class="text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-md hover:shadow-lg active:scale-95 transition flex items-center gap-2" style="background:linear-gradient(135deg, var(--accent-hi), var(--accent));"><i data-lucide="send" class="w-4 h-4"></i>${tD('rm_request_change')}</button>`;
+
+            // Banner sólo para hotelero — explica qué puede y qué no puede hacer
+            const restrictedBanner = isFullEdit ? '' : `
+                <div class="rounded-3xl p-4 mb-5 border flex items-start gap-3" style="background:linear-gradient(135deg,rgba(80,100,55,0.06),rgba(208,80,80,0.06)); border-color:rgba(80,100,55,0.18);">
+                    <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center flex-shrink-0" style="background:rgba(80,100,55,0.15); color:var(--sidebar-bg);">
+                        <i data-lucide="lock" class="w-5 h-5"></i>
+                    </span>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-bold text-slate-800 mb-0.5">${tD('rm_restricted_title')}</p>
+                        <p class="text-xs text-slate-600 leading-relaxed">${tD('rm_restricted_body')}</p>
+                    </div>
+                </div>
+            `;
+
             const editorHTML = `
                 <header class="mb-6 flex flex-wrap items-start justify-between gap-3">
                     <div class="flex-1 min-w-0">
@@ -10219,10 +10391,11 @@
                         <p class="text-slate-500 text-sm mt-1">${tD('rm_page_sub')} · <span class="font-semibold">${tD('rm_count_items', totalItems)}</span> · ${tD('rm_count_available', availableNow)}</p>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <button onclick="switchTab('modules')" class="bg-white border text-slate-700 px-4 py-2.5 rounded-full text-sm font-semibold shadow-sm hover:shadow active:scale-95 transition flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i>${tD('rm_back_to_modules')}</button>
-                        <button onclick="openRmItemModal()" class="text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-md hover:shadow-lg active:scale-95 transition flex items-center gap-2" style="background:linear-gradient(135deg,#d05050,#a83333);"><i data-lucide="plus" class="w-4 h-4"></i>${tD('rm_add_item')}</button>
+                        ${backBtn}
+                        ${actionBtn}
                     </div>
                 </header>
+                ${restrictedBanner}
 
                 <!-- Category filters -->
                 <div class="flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-x-visible gap-2 mb-6 pb-1">
@@ -10237,11 +10410,18 @@
                             <i data-lucide="utensils-crossed" class="w-9 h-9" style="color:#d05050;"></i>
                         </div>
                         <h3 class="text-lg font-bold text-slate-800 mb-1">${tD('rm_empty_title')}</h3>
-                        <p class="text-sm text-slate-500 mb-5 max-w-md mx-auto">${tD('rm_empty_sub')}</p>
-                        <button onclick="openRmItemModal()" class="text-white px-6 py-3 rounded-full text-sm font-bold shadow-md hover:shadow-lg active:scale-95 transition inline-flex items-center gap-2" style="background:linear-gradient(135deg,#d05050,#a83333);">
-                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                            ${tD('rm_empty_cta')}
-                        </button>
+                        <p class="text-sm text-slate-500 mb-5 max-w-md mx-auto">${isFullEdit ? tD('rm_empty_sub') : tD('rm_empty_sub_restricted')}</p>
+                        ${isFullEdit ? `
+                            <button onclick="openRmItemModal()" class="text-white px-6 py-3 rounded-full text-sm font-bold shadow-md hover:shadow-lg active:scale-95 transition inline-flex items-center gap-2" style="background:linear-gradient(135deg,#d05050,#a83333);">
+                                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                                ${tD('rm_empty_cta')}
+                            </button>
+                        ` : `
+                            <button onclick="requestMenuChange()" class="text-white px-6 py-3 rounded-full text-sm font-bold shadow-md hover:shadow-lg active:scale-95 transition inline-flex items-center gap-2" style="background:linear-gradient(135deg, var(--accent-hi), var(--accent));">
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                                ${tD('rm_request_change')}
+                            </button>
+                        `}
                     </div>
                 ` : `
                     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-4">
@@ -13106,6 +13286,7 @@
                                                     <span class="w-1.5 h-1.5 rounded-full" style="background:${ss.dot};"></span>
                                                     ${tD('mreq_status_' + r.status)}
                                                 </span>
+                                                ${r.kind === 'change' ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider" style="background:rgba(208,80,80,0.12); color:#a83333;"><i data-lucide="edit-3" class="w-2.5 h-2.5"></i>${tD('mreq_kind_change')}</span>` : ''}
                                             </div>
                                             <p class="text-xs text-slate-500 mb-2">
                                                 <span class="font-semibold text-slate-700">${esc(hotel?.name || tD('unknown'))}</span> · ${esc(timeAgo)}
