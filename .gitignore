@@ -4,9 +4,10 @@
 .LSOverride
 ._*
 
-# Editor
+# Editor / local tooling
 .vscode/
 .idea/
+.claude/
 *.swp
 *.swo
 *~
