@@ -1967,7 +1967,12 @@
                 maxPerOrder: 'Máx. 20 por orden',
                 specialNotes: 'Instrucciones especiales',
                 optional: '(opcional)',
-                notesPlaceholder: 'Ej: huevo bien cocido, sin cebolla, alergia a maní…'
+                notesPlaceholder: 'Ej: huevo bien cocido, sin cebolla, alergia a maní…',
+                required: 'Obligatorio',
+                pickOne: 'Elige 1',
+                pickMultiple: 'Elige los que quieras',
+                pleasePick: 'Selecciona',
+                completeSelection: 'Completa la selección'
             },
             en: {
                 hello: 'Hi',
@@ -2007,7 +2012,12 @@
                 maxPerOrder: 'Max. 20 per order',
                 specialNotes: 'Special instructions',
                 optional: '(optional)',
-                notesPlaceholder: 'E.g.: egg well-done, no onion, peanut allergy…'
+                notesPlaceholder: 'E.g.: egg well-done, no onion, peanut allergy…',
+                required: 'Required',
+                pickOne: 'Pick 1',
+                pickMultiple: 'Pick any you want',
+                pleasePick: 'Please pick',
+                completeSelection: 'Complete the selection'
             }
         };
         function tM(key, ...args) {
@@ -2895,6 +2905,18 @@
                 rm_modal_locked: 'Solo GuestGuide Pro puede editar este campo',
                 rm_modal_editable: 'editable',
                 rm_modal_avail_hint: 'Apaga si el plato no está disponible hoy.',
+                rm_mod_section_title: 'Modificadores y extras',
+                rm_mod_section_sub: 'Permite que el huésped personalice el plato (punto de cocción, tamaños, extras con precio).',
+                rm_mod_add_group: 'Agregar grupo',
+                rm_mod_remove_group: 'Eliminar grupo',
+                rm_mod_group_name_ph: 'Ej: Punto de cocción, Tamaño, Extras',
+                rm_mod_type_single: 'Elegir UNO',
+                rm_mod_type_multiple: 'Elegir VARIOS',
+                rm_mod_required: 'Obligatorio',
+                rm_mod_optional: 'Opcional',
+                rm_mod_option_name_ph: 'Ej: Bien cocido, Queso extra',
+                rm_mod_add_option: 'Agregar opción',
+                rm_mod_empty: 'Sin modificadores. Agrega un grupo si quieres permitir personalización (ej: "Punto de cocción").',
                 rm_modal_name: 'Nombre del plato',
                 rm_modal_name_ph: 'Ej. Bistec a la parrilla',
                 rm_modal_category: 'Categoría',
@@ -3750,6 +3772,18 @@
                 rm_modal_locked: 'Only GuestGuide Pro can edit this field',
                 rm_modal_editable: 'editable',
                 rm_modal_avail_hint: 'Toggle off if the dish is not available today.',
+                rm_mod_section_title: 'Modifiers and extras',
+                rm_mod_section_sub: 'Let the guest customize the dish (cooking level, sizes, paid add-ons).',
+                rm_mod_add_group: 'Add group',
+                rm_mod_remove_group: 'Remove group',
+                rm_mod_group_name_ph: 'E.g.: Cooking level, Size, Extras',
+                rm_mod_type_single: 'Pick ONE',
+                rm_mod_type_multiple: 'Pick MANY',
+                rm_mod_required: 'Required',
+                rm_mod_optional: 'Optional',
+                rm_mod_option_name_ph: 'E.g.: Well-done, Extra cheese',
+                rm_mod_add_option: 'Add option',
+                rm_mod_empty: 'No modifiers. Add a group if you want to allow customization (e.g. "Cooking level").',
                 rm_modal_name: 'Dish name',
                 rm_modal_name_ph: 'Ex. Grilled steak',
                 rm_modal_category: 'Category',
@@ -4746,10 +4780,57 @@
                 hotel_4: [
                     // ── DESAYUNO / BREAKFAST ──
                     { id:'rm4_b1',  category:'breakfast', name:'Tostada Mediterránea',           price:7.90,  description:'Pan de masa madre, guacamole, tomate cherry, hongos confitados, huevos revueltos y crema de cebolla.',     photo:'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=70',  available:true },
-                    { id:'rm4_b2',  category:'breakfast', name:'Huevos Rancheros',               price:6.90,  description:'Huevos fritos en salsa ranchera con aceite de jalapeños, totopos o tostadas, queso del país.',           photo:'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=400&q=70',  available:true },
+                    { id:'rm4_b2',  category:'breakfast', name:'Huevos Rancheros',               price:6.90,  description:'Huevos fritos en salsa ranchera con aceite de jalapeños, totopos o tostadas, queso del país.',           photo:'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=400&q=70',  available:true,
+                        modifierGroups: [
+                            { id:'mg_b2_cook', name:'Punto del huevo', type:'single', required:true, options:[
+                                { id:'opt_b2c1', name:'Jugoso', priceDelta:0 },
+                                { id:'opt_b2c2', name:'Término medio', priceDelta:0 },
+                                { id:'opt_b2c3', name:'Bien cocido', priceDelta:0 }
+                            ]},
+                            { id:'mg_b2_side', name:'Acompañar con', type:'single', required:true, options:[
+                                { id:'opt_b2s1', name:'Totopos', priceDelta:0 },
+                                { id:'opt_b2s2', name:'Tostadas', priceDelta:0 }
+                            ]},
+                            { id:'mg_b2_ext', name:'Extras', type:'multiple', required:false, options:[
+                                { id:'opt_b2e1', name:'Queso del país extra', priceDelta:1.50 },
+                                { id:'opt_b2e2', name:'Tocino', priceDelta:2.00 },
+                                { id:'opt_b2e3', name:'Aguacate', priceDelta:1.75 }
+                            ]}
+                        ]
+                    },
                     { id:'rm4_b3',  category:'breakfast', name:'Croissant de la Casa',           price:7.90,  description:'Cebollas caramelizadas, puré de guacamole, huevos revueltos, salsa rosada y tocino.',                     photo:'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&q=70',  available:true },
-                    { id:'rm4_b4',  category:'breakfast', name:'Filete a lo Panameño',           price:10.90, description:'Filete de res en salsa criolla, mix de vegetales, almojabanos y queso prensado asado.',                  photo:'https://images.unsplash.com/photo-1546964124-0cce460f38ef?w=400&q=70',  available:true },
-                    { id:'rm4_b5',  category:'breakfast', name:'Smoothie de Frutas de Temporada', price:6.90, description:'Leche de almendras, mix de frutas con frutos secos y hierbabuena, coronado con miel.',                    photo:'https://images.unsplash.com/photo-1502741224143-90386d7f8c82?w=400&q=70',  available:true },
+                    { id:'rm4_b4',  category:'breakfast', name:'Filete a lo Panameño',           price:10.90, description:'Filete de res en salsa criolla, mix de vegetales, almojabanos y queso prensado asado.',                  photo:'https://images.unsplash.com/photo-1546964124-0cce460f38ef?w=400&q=70',  available:true,
+                        modifierGroups: [
+                            { id:'mg_b4_cook', name:'Término de la carne', type:'single', required:true, options:[
+                                { id:'opt_b4c1', name:'Jugoso (rojo al centro)', priceDelta:0 },
+                                { id:'opt_b4c2', name:'Término medio', priceDelta:0 },
+                                { id:'opt_b4c3', name:'Bien cocido', priceDelta:0 }
+                            ]},
+                            { id:'mg_b4_ext', name:'Agregar acompañamiento', type:'multiple', required:false, options:[
+                                { id:'opt_b4e1', name:'Huevo frito encima', priceDelta:1.50 },
+                                { id:'opt_b4e2', name:'Porción extra de almojábanos', priceDelta:2.50 }
+                            ]}
+                        ]
+                    },
+                    { id:'rm4_b5',  category:'breakfast', name:'Smoothie de Frutas de Temporada', price:6.90, description:'Leche de almendras, mix de frutas con frutos secos y hierbabuena, coronado con miel.',                    photo:'https://images.unsplash.com/photo-1502741224143-90386d7f8c82?w=400&q=70',  available:true,
+                        modifierGroups: [
+                            { id:'mg_b5_size', name:'Tamaño', type:'single', required:true, options:[
+                                { id:'opt_b5s1', name:'Pequeño (300ml)', priceDelta:0 },
+                                { id:'opt_b5s2', name:'Mediano (500ml)', priceDelta:1.50 },
+                                { id:'opt_b5s3', name:'Grande (750ml)', priceDelta:3.00 }
+                            ]},
+                            { id:'mg_b5_milk', name:'Tipo de leche', type:'single', required:true, options:[
+                                { id:'opt_b5m1', name:'Almendras (incluido)', priceDelta:0 },
+                                { id:'opt_b5m2', name:'Coco', priceDelta:0.75 },
+                                { id:'opt_b5m3', name:'Avena', priceDelta:0.75 }
+                            ]},
+                            { id:'mg_b5_ext', name:'Boosters', type:'multiple', required:false, options:[
+                                { id:'opt_b5e1', name:'Proteína vegetal', priceDelta:2.00 },
+                                { id:'opt_b5e2', name:'Granola extra', priceDelta:1.00 },
+                                { id:'opt_b5e3', name:'Cacao nibs', priceDelta:0.75 }
+                            ]}
+                        ]
+                    },
                     { id:'rm4_b6',  category:'breakfast', name:'Desayuno Americano',             price:10.90, description:'Frutas de temporada, huevos revueltos, queso del país y tostadas, jugo y café de especialidad.',         photo:'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=400&q=70',  available:true },
                     { id:'rm4_b7',  category:'breakfast', name:'Pancake de Chocoavellana',       price:8.90,  description:'Pancakes con chocolate, sirope de fresas, huevos revueltos y tocino.',                                   photo:'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&q=70',  available:true },
                     { id:'rm4_b8',  category:'breakfast', name:'Omelette con Vegetales',         price:8.50,  description:'Omelette de vegetales mixtos con queso mozzarella, acompañado de tostadas.',                              photo:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=70',  available:true },
@@ -6562,6 +6643,53 @@
         // Se resetea al entrar a un plato diferente (no persistir entre platos).
         let menuDetailQty = 1;
         let menuDetailNotes = '';
+        // Selecciones de modificadores: { [groupId]: [optionId, ...] }
+        // Grupos single permiten 1 opción; grupos multiple permiten N
+        let menuDetailModifierSelections = {};
+
+        // ─── Helpers para modificadores ───
+        function getModifierGroups(item) {
+            return Array.isArray(item?.modifierGroups) ? item.modifierGroups : [];
+        }
+        function calculateModifiersDelta(item, selections) {
+            let delta = 0;
+            for (const g of getModifierGroups(item)) {
+                const picked = selections[g.id] || [];
+                for (const optId of picked) {
+                    const opt = (g.options || []).find(o => o.id === optId);
+                    if (opt) delta += (opt.priceDelta || 0);
+                }
+            }
+            return delta;
+        }
+        function isModifierSelectionValid(item, selections) {
+            for (const g of getModifierGroups(item)) {
+                if (g.required) {
+                    const picked = selections[g.id] || [];
+                    if (picked.length === 0) return false;
+                }
+            }
+            return true;
+        }
+        function toggleModifierOption(groupId, optionId) {
+            const item = (tempHotel.restaurantMenu || []).find(x => x.id === selectedMobileMenuItemId);
+            if (!item) return;
+            const group = getModifierGroups(item).find(g => g.id === groupId);
+            if (!group) return;
+            const current = menuDetailModifierSelections[groupId] || [];
+            if (group.type === 'single') {
+                // Radio: reemplazar la selección
+                menuDetailModifierSelections[groupId] = [optionId];
+            } else {
+                // Checkbox: toggle
+                if (current.includes(optionId)) {
+                    menuDetailModifierSelections[groupId] = current.filter(id => id !== optionId);
+                } else {
+                    menuDetailModifierSelections[groupId] = [...current, optionId];
+                }
+            }
+            renderMobilePreview();
+        }
 
         function setMobileView(viewName, idArg = null) {
             mobileViewState = viewName;
@@ -6570,6 +6698,7 @@
                 if (selectedMobileMenuItemId !== idArg) {
                     menuDetailQty = 1;
                     menuDetailNotes = '';
+                    menuDetailModifierSelections = {};
                 }
                 selectedMobileMenuItemId = idArg;
             } else if (viewName === 'tour_detail') {
@@ -6595,14 +6724,30 @@
         function simulateMenuOrder(itemId) {
             const item = (tempHotel.restaurantMenu || []).find(x => x.id === itemId);
             if (!item) return;
+            // Defensive: si hay grupos required sin selección, no proceder
+            if (!isModifierSelectionValid(item, menuDetailModifierSelections)) return;
             const guest = (tempHotel.pmsGuests && tempHotel.pmsGuests[0]?.guest) || 'Carlos Ruiz';
             const room = (tempHotel.pmsGuests && tempHotel.pmsGuests[0]?.room) || '302';
             const phone = tempHotel.whatsappStaffPhone || '+50762000000';
             const qty = menuDetailQty || 1;
-            const lineTotal = (item.price || 0) * qty;
+            const modsDelta = calculateModifiersDelta(item, menuDetailModifierSelections);
+            const lineTotal = ((item.price || 0) + modsDelta) * qty;
             const notes = (menuDetailNotes || '').trim();
             const notesLine = notes ? `\n📝 ${notes}` : '';
-            const msg = `🍽️ Nueva orden\n${guest} (Hab. ${room})\n${qty}× ${item.name} · $${lineTotal.toFixed(2)}${notesLine}`;
+            // Construir líneas legibles de los modificadores seleccionados
+            const modLines = [];
+            for (const g of getModifierGroups(item)) {
+                const picked = menuDetailModifierSelections[g.id] || [];
+                for (const optId of picked) {
+                    const opt = (g.options || []).find(o => o.id === optId);
+                    if (opt) {
+                        const deltaTxt = (opt.priceDelta || 0) > 0 ? ` (+$${opt.priceDelta.toFixed(2)})` : '';
+                        modLines.push(`  • ${g.name}: ${opt.name}${deltaTxt}`);
+                    }
+                }
+            }
+            const modsBlock = modLines.length > 0 ? `\n${modLines.join('\n')}` : '';
+            const msg = `🍽️ Nueva orden\n${guest} (Hab. ${room})\n${qty}× ${item.name} · $${lineTotal.toFixed(2)}${modsBlock}${notesLine}`;
             // Simulate
             showWhatsAppSimulation(msg, phone);
             // Return to home
@@ -6617,6 +6762,7 @@
             // Reset draft después de ordenar
             menuDetailQty = 1;
             menuDetailNotes = '';
+            menuDetailModifierSelections = {};
         }
 
         function renderMobilePreview(hostElement = null) {
@@ -6975,8 +7121,47 @@
                 };
                 const cat = categories[item.category] || categories.breakfast;
                 const qty = menuDetailQty || 1;
-                const lineTotal = (item.price || 0) * qty;
+                const modsDelta = calculateModifiersDelta(item, menuDetailModifierSelections);
+                const baseWithMods = (item.price || 0) + modsDelta;
+                const lineTotal = baseWithMods * qty;
                 const notesLen = (menuDetailNotes || '').length;
+                const modGroups = getModifierGroups(item);
+                const selectionValid = isModifierSelectionValid(item, menuDetailModifierSelections);
+                const canOrder = item.available && selectionValid;
+
+                // Render de cada grupo de modificadores (radios/checkboxes)
+                const modifierGroupsHTML = modGroups.length === 0 ? '' : modGroups.map(g => {
+                    const picked = menuDetailModifierSelections[g.id] || [];
+                    const missingRequired = g.required && picked.length === 0;
+                    const optsHTML = (g.options || []).map(opt => {
+                        const isPicked = picked.includes(opt.id);
+                        const delta = opt.priceDelta || 0;
+                        const deltaLabel = delta > 0 ? ` +$${delta.toFixed(2)}` : '';
+                        const indicator = g.type === 'single'
+                            ? `<span class="w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center" style="border-color:${isPicked?'#d05050':'rgba(0,0,0,0.2)'};">${isPicked?'<span class="w-2 h-2 rounded-full" style="background:#d05050;"></span>':''}</span>`
+                            : `<span class="w-4 h-4 rounded border-2 flex-shrink-0 flex items-center justify-center" style="border-color:${isPicked?'#d05050':'rgba(0,0,0,0.2)'}; background:${isPicked?'#d05050':'transparent'};">${isPicked?'<i data-lucide="check" class="w-3 h-3 text-white"></i>':''}</span>`;
+                        return `
+                            <button onclick="toggleModifierOption('${escAttr(g.id)}','${escAttr(opt.id)}')" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-left transition active:scale-[0.98] ${isPicked?'':'hover:bg-slate-50'}" style="background:${isPicked?'rgba(208,80,80,0.08)':'#fff'}; border:1px solid ${isPicked?'rgba(208,80,80,0.3)':'rgba(0,0,0,0.06)'};">
+                                ${indicator}
+                                <span class="flex-1 text-[11px] font-semibold text-slate-800">${esc(opt.name)}</span>
+                                ${delta>0?`<span class="text-[10px] font-bold" style="color:#d05050;">${esc(deltaLabel)}</span>`:''}
+                            </button>
+                        `;
+                    }).join('');
+                    return `
+                        <div class="mt-3">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <p class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
+                                    ${esc(g.name)}
+                                    ${g.required ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded" style="background:rgba(208,80,80,0.12); color:#a83333;">${tM('required')}</span>` : `<span class="text-[9px] font-normal text-slate-400">${tM('optional')}</span>`}
+                                </p>
+                                ${g.type==='multiple' ? `<span class="text-[9px] text-slate-400">${tM('pickMultiple')}</span>` : `<span class="text-[9px] text-slate-400">${tM('pickOne')}</span>`}
+                            </div>
+                            <div class="space-y-1.5">${optsHTML}</div>
+                            ${missingRequired ? `<p class="text-[9px] mt-1.5 flex items-center gap-1" style="color:#a83333;"><i data-lucide="alert-circle" class="w-3 h-3"></i>${tM('pleasePick')} ${esc(g.name)}</p>` : ''}
+                        </div>
+                    `;
+                }).join('');
                 phone.innerHTML = `
                     <div class="absolute inset-0 flex flex-col bg-white" style="border-radius:34px;overflow:hidden;">
                         <!-- Hero photo (más imponente: 260px) -->
@@ -7022,6 +7207,9 @@
                                     </div>
                                 </div>
 
+                                <!-- Modificadores y extras (radios / checkboxes) -->
+                                ${modifierGroupsHTML}
+
                                 <!-- Notas especiales -->
                                 <div class="mt-3">
                                     <div class="flex items-center justify-between mb-1.5">
@@ -7054,9 +7242,9 @@
                             <button onclick="setMobileView('menu_list')" class="w-11 h-11 rounded-full bg-slate-100 flex items-center justify-center active:scale-95 transition">
                                 <i data-lucide="arrow-left" class="w-4 h-4 text-slate-700"></i>
                             </button>
-                            <button onclick="${item.available?`simulateMenuOrder('${escAttr(item.id)}')`:''}" ${!item.available?'disabled':''} class="flex-1 rounded-full text-white text-[12px] font-extrabold flex items-center justify-center gap-2 active:scale-95 transition ${item.available?'':'opacity-50 cursor-not-allowed'}" style="background:linear-gradient(135deg,#d05050,#a83333);box-shadow:0 6px 16px rgba(208,80,80,0.35);">
-                                <i data-lucide="${item.available?'shopping-bag':'lock'}" class="w-4 h-4"></i>
-                                ${item.available ? (mobileLang==='en'?`Order ${qty>1?qty+'× ':''}· $${lineTotal.toFixed(2)}`:`Ordenar ${qty>1?qty+'× ':''}· $${lineTotal.toFixed(2)}`) : (mobileLang==='en'?'Unavailable':'No disponible')}
+                            <button onclick="${canOrder?`simulateMenuOrder('${escAttr(item.id)}')`:''}" ${!canOrder?'disabled':''} class="flex-1 rounded-full text-white text-[12px] font-extrabold flex items-center justify-center gap-2 active:scale-95 transition ${canOrder?'':'opacity-50 cursor-not-allowed'}" style="background:linear-gradient(135deg,#d05050,#a83333);box-shadow:0 6px 16px rgba(208,80,80,0.35);">
+                                <i data-lucide="${item.available?(selectionValid?'shopping-bag':'alert-circle'):'lock'}" class="w-4 h-4"></i>
+                                ${!item.available ? (mobileLang==='en'?'Unavailable':'No disponible') : (!selectionValid ? tM('completeSelection') : (mobileLang==='en'?`Order ${qty>1?qty+'× ':''}· $${lineTotal.toFixed(2)}`:`Ordenar ${qty>1?qty+'× ':''}· $${lineTotal.toFixed(2)}`))}
                             </button>
                         </div>
                     </div>
@@ -10003,6 +10191,69 @@
             }
             renderRmItemModal();
         }
+        // ─── Editor de modificadores (solo saas_admin, dentro del modal) ───
+        function addModifierGroup() {
+            if (!rmItemDraft) return;
+            if (!Array.isArray(rmItemDraft.modifierGroups)) rmItemDraft.modifierGroups = [];
+            rmItemDraft.modifierGroups.push({
+                id: 'mg_' + Date.now(),
+                name: '',
+                type: 'single',
+                required: false,
+                options: []
+            });
+            renderRmItemModal();
+        }
+        function removeModifierGroup(groupId) {
+            if (!rmItemDraft || !Array.isArray(rmItemDraft.modifierGroups)) return;
+            rmItemDraft.modifierGroups = rmItemDraft.modifierGroups.filter(g => g.id !== groupId);
+            renderRmItemModal();
+        }
+        function updateModifierGroupField(groupId, field, value) {
+            if (!rmItemDraft || !Array.isArray(rmItemDraft.modifierGroups)) return;
+            const g = rmItemDraft.modifierGroups.find(x => x.id === groupId);
+            if (!g) return;
+            g[field] = value;
+            // Si pasamos de multiple → single y hay required, el render se ajusta solo.
+        }
+        function addModifierOption(groupId) {
+            if (!rmItemDraft || !Array.isArray(rmItemDraft.modifierGroups)) return;
+            const g = rmItemDraft.modifierGroups.find(x => x.id === groupId);
+            if (!g) return;
+            if (!Array.isArray(g.options)) g.options = [];
+            g.options.push({ id: 'opt_' + Date.now() + '_' + Math.floor(Math.random()*1000), name: '', priceDelta: 0 });
+            renderRmItemModal();
+        }
+        function removeModifierOption(groupId, optId) {
+            if (!rmItemDraft || !Array.isArray(rmItemDraft.modifierGroups)) return;
+            const g = rmItemDraft.modifierGroups.find(x => x.id === groupId);
+            if (!g || !Array.isArray(g.options)) return;
+            g.options = g.options.filter(o => o.id !== optId);
+            renderRmItemModal();
+        }
+        function updateModifierOptionField(groupId, optId, field, value) {
+            if (!rmItemDraft || !Array.isArray(rmItemDraft.modifierGroups)) return;
+            const g = rmItemDraft.modifierGroups.find(x => x.id === groupId);
+            if (!g || !Array.isArray(g.options)) return;
+            const opt = g.options.find(o => o.id === optId);
+            if (!opt) return;
+            opt[field] = field === 'priceDelta' ? (parseFloat(value) || 0) : value;
+        }
+        function toggleModifierGroupType(groupId) {
+            if (!rmItemDraft || !Array.isArray(rmItemDraft.modifierGroups)) return;
+            const g = rmItemDraft.modifierGroups.find(x => x.id === groupId);
+            if (!g) return;
+            g.type = g.type === 'single' ? 'multiple' : 'single';
+            renderRmItemModal();
+        }
+        function toggleModifierGroupRequired(groupId) {
+            if (!rmItemDraft || !Array.isArray(rmItemDraft.modifierGroups)) return;
+            const g = rmItemDraft.modifierGroups.find(x => x.id === groupId);
+            if (!g) return;
+            g.required = !g.required;
+            renderRmItemModal();
+        }
+
         function closeRmItemModal() {
             rmItemDraft = null;
             const host = document.getElementById('rm-item-modal-host');
@@ -10185,6 +10436,72 @@
                     </div>
                     <span class="text-sm font-semibold ${rmItemDraft.available ? 'text-emerald-700' : 'text-slate-500'}">${rmItemDraft.available ? tD('rm_modal_available') : tD('rm_modal_unavailable')}</span>
                 </label>
+
+                <!-- Sección: Modificadores y extras -->
+                <div class="pt-4 border-t" style="border-color:rgba(80,100,55,0.12);">
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <div class="min-w-0">
+                            <p class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+                                <i data-lucide="sliders-horizontal" class="w-4 h-4" style="color:#d05050;"></i>
+                                ${tD('rm_mod_section_title')}
+                            </p>
+                            <p class="text-[11px] text-slate-500 leading-relaxed mt-0.5">${tD('rm_mod_section_sub')}</p>
+                        </div>
+                        <button onclick="addModifierGroup()" type="button" class="text-white px-3 py-1.5 rounded-full text-[11px] font-bold flex-shrink-0 flex items-center gap-1.5 shadow-sm hover:shadow active:scale-95 transition" style="background:linear-gradient(135deg,#d05050,#a83333);">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                            ${tD('rm_mod_add_group')}
+                        </button>
+                    </div>
+                    ${(Array.isArray(rmItemDraft.modifierGroups) && rmItemDraft.modifierGroups.length > 0) ? `
+                        <div class="space-y-3">
+                            ${rmItemDraft.modifierGroups.map(g => `
+                                <div class="rounded-2xl border p-3" style="background:#fafaf7; border-color:rgba(80,100,55,0.15);">
+                                    <!-- Encabezado del grupo -->
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <input type="text" oninput="updateModifierGroupField('${escAttr(g.id)}','name', this.value)" value="${escAttr(g.name || '')}" placeholder="${escAttr(tD('rm_mod_group_name_ph'))}" class="flex-1 px-2.5 py-1.5 rounded-lg border bg-white text-[12px] font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-200" style="border-color:rgba(80,100,55,0.18);">
+                                        <button onclick="removeModifierGroup('${escAttr(g.id)}')" type="button" class="w-7 h-7 rounded-full text-rose-500 hover:bg-rose-50 flex items-center justify-center transition flex-shrink-0" title="${escAttr(tD('rm_mod_remove_group'))}">
+                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                        </button>
+                                    </div>
+                                    <!-- Tipo + required -->
+                                    <div class="flex flex-wrap items-center gap-2 mb-2">
+                                        <button onclick="toggleModifierGroupType('${escAttr(g.id)}')" type="button" class="px-2.5 py-1 rounded-full text-[10px] font-bold border flex items-center gap-1.5 transition" style="background:${g.type==='single'?'rgba(208,80,80,0.1)':'#fff'}; border-color:${g.type==='single'?'rgba(208,80,80,0.3)':'rgba(0,0,0,0.12)'}; color:${g.type==='single'?'#a83333':'#475569'};">
+                                            <i data-lucide="${g.type==='single'?'circle-dot':'check-square'}" class="w-3 h-3"></i>
+                                            ${g.type==='single' ? tD('rm_mod_type_single') : tD('rm_mod_type_multiple')}
+                                        </button>
+                                        <button onclick="toggleModifierGroupRequired('${escAttr(g.id)}')" type="button" class="px-2.5 py-1 rounded-full text-[10px] font-bold border flex items-center gap-1.5 transition" style="background:${g.required?'rgba(208,80,80,0.1)':'#fff'}; border-color:${g.required?'rgba(208,80,80,0.3)':'rgba(0,0,0,0.12)'}; color:${g.required?'#a83333':'#475569'};">
+                                            <i data-lucide="${g.required?'asterisk':'circle'}" class="w-3 h-3"></i>
+                                            ${g.required ? tD('rm_mod_required') : tD('rm_mod_optional')}
+                                        </button>
+                                    </div>
+                                    <!-- Opciones -->
+                                    <div class="space-y-1.5">
+                                        ${(g.options || []).map(opt => `
+                                            <div class="flex items-center gap-1.5">
+                                                <input type="text" oninput="updateModifierOptionField('${escAttr(g.id)}','${escAttr(opt.id)}','name', this.value)" value="${escAttr(opt.name || '')}" placeholder="${escAttr(tD('rm_mod_option_name_ph'))}" class="flex-1 px-2 py-1.5 rounded-lg border bg-white text-[11px] focus:outline-none focus:ring-1 focus:ring-emerald-200" style="border-color:rgba(80,100,55,0.15);">
+                                                <div class="flex items-center gap-1 px-2 py-1.5 rounded-lg border bg-white" style="border-color:rgba(80,100,55,0.15);">
+                                                    <span class="text-[10px] text-slate-400 font-mono">+$</span>
+                                                    <input type="number" step="0.01" min="0" oninput="updateModifierOptionField('${escAttr(g.id)}','${escAttr(opt.id)}','priceDelta', this.value)" value="${opt.priceDelta || 0}" class="w-12 text-[11px] focus:outline-none" style="border:none;">
+                                                </div>
+                                                <button onclick="removeModifierOption('${escAttr(g.id)}','${escAttr(opt.id)}')" type="button" class="w-6 h-6 rounded-full text-rose-500 hover:bg-rose-50 flex items-center justify-center transition flex-shrink-0">
+                                                    <i data-lucide="x" class="w-3 h-3"></i>
+                                                </button>
+                                            </div>
+                                        `).join('')}
+                                        <button onclick="addModifierOption('${escAttr(g.id)}')" type="button" class="text-[10px] font-bold text-slate-600 hover:text-slate-900 flex items-center gap-1 px-2 py-1 rounded-lg transition">
+                                            <i data-lucide="plus" class="w-3 h-3"></i>
+                                            ${tD('rm_mod_add_option')}
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : `
+                        <div class="rounded-2xl p-4 border border-dashed text-center" style="border-color:rgba(80,100,55,0.2);">
+                            <p class="text-[11px] text-slate-500">${tD('rm_mod_empty')}</p>
+                        </div>
+                    `}
+                </div>
             `;
 
             host.innerHTML = `
