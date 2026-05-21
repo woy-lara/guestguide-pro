@@ -2810,6 +2810,19 @@
                 modtoggle_disabled_msg: (name) => `${name} dejará de mostrarse en la app del huésped.`,
                 // ── SaaS Admin: Module Requests view ──
                 nav_module_requests: 'Solicitudes de Módulos',
+                nav_restaurant_menus: 'Menús de Restaurantes',
+                srm_page_title: 'Menús de Restaurantes',
+                srm_page_sub: 'Edita los menús de tus hoteles clientes desde aquí.',
+                srm_module_on: 'Módulo activo',
+                srm_module_off: 'Módulo inactivo',
+                srm_total_items: 'Platos totales',
+                srm_available: 'Disponibles',
+                srm_edit_menu: 'Editar menú',
+                srm_build_menu: 'Crear menú',
+                srm_hotels_active: 'hoteles con módulo activo',
+                srm_total_dishes: 'platos en total',
+                srm_banner_title: 'Control central de menús',
+                srm_banner_body: 'Tú gestionas los productos, fotos, categorías y descripciones de cada cliente. El hotelero solo ajusta precios y disponibilidad — los cambios mayores se solicitan a GuestGuide Pro.',
                 mreq_title: 'Solicitudes de Integración',
                 mreq_subtitle: 'Lo que tus hoteles piden — prioriza tu roadmap con datos reales',
                 mreq_total: 'Total',
@@ -3631,6 +3644,19 @@
                 modtoggle_disabled_msg: (name) => `${name} will no longer appear in the guest app.`,
                 // ── SaaS Admin: Module Requests view ──
                 nav_module_requests: 'Module Requests',
+                nav_restaurant_menus: 'Restaurant Menus',
+                srm_page_title: 'Restaurant Menus',
+                srm_page_sub: 'Edit menus for your client hotels from here.',
+                srm_module_on: 'Module active',
+                srm_module_off: 'Module inactive',
+                srm_total_items: 'Total dishes',
+                srm_available: 'Available',
+                srm_edit_menu: 'Edit menu',
+                srm_build_menu: 'Create menu',
+                srm_hotels_active: 'hotels with module active',
+                srm_total_dishes: 'total dishes',
+                srm_banner_title: 'Central menu control',
+                srm_banner_body: 'You manage products, photos, categories and descriptions for each client. Hotel managers only adjust prices and availability — bigger changes are requested to GuestGuide Pro.',
                 mreq_title: 'Integration Requests',
                 mreq_subtitle: 'What your hotels are asking for — prioritize your roadmap with real data',
                 mreq_total: 'Total',
@@ -6979,6 +7005,9 @@
                     <button onclick="switchTab('module_requests')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'module_requests' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
                         <i data-lucide="inbox" class="w-5 h-5"></i> ${tD('nav_module_requests')} ${pendingModuleRequests > 0 ? `<span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">${pendingModuleRequests}</span>` : ''}
                     </button>
+                    <button onclick="goToSaasMenusList()" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'restaurant_menus' || activeTab === 'restaurant_menu' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
+                        <i data-lucide="chef-hat" class="w-5 h-5"></i> ${tD('nav_restaurant_menus')}
+                    </button>
                     <button onclick="switchTab('backup')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'backup' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
                         <i data-lucide="database-backup" class="w-5 h-5"></i> ${tD('nav_backup')}
                     </button>
@@ -7114,6 +7143,8 @@
                 else if (activeTab === 'analytics') renderAnalyticsGlobal(container);
                 else if (activeTab === 'audit') renderAuditView(container, null);
                 else if (activeTab === 'module_requests') renderModuleRequestsView(container);
+                else if (activeTab === 'restaurant_menus') renderSaasMenusList(container);
+                else if (activeTab === 'restaurant_menu') renderRestaurantMenu(container, saasEditMenuHotelId);
                 else if (activeTab === 'backup') renderBackupView(container);
             } else if (currentRole.startsWith('hotel_')) {
                 if (activeTab === 'overview') renderHotelOverview(container, currentRole);
@@ -9784,6 +9815,9 @@
         // ═══════════════════════════════════════════════
         let restaurantMenuFilter = 'all'; // category filter
         let rmItemDraft = null; // { id?, category, name, price, description, photo, available } | null = closed
+        // saas_admin uses this to remember which hotel's menu it's editing (no implicit hotel from currentRole).
+        // null = show the list of hotels; set to a hotel id = render the editor for that hotel.
+        let saasEditMenuHotelId = null;
 
         const RM_CATEGORIES = [
             { id: 'breakfast', icon: 'sunrise',  color: '#c07820' },
@@ -9952,6 +9986,103 @@
                 </div>
             `;
             if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // ─── saas_admin: lista de hoteles con módulo Restaurante para entrar a editar ───
+        function goToSaasMenusList() {
+            saasEditMenuHotelId = null;
+            switchTab('restaurant_menus');
+        }
+        function openSaasMenuEditor(hotelId) {
+            saasEditMenuHotelId = hotelId;
+            switchTab('restaurant_menu');
+        }
+        function renderSaasMenusList(target) {
+            const hotels = DATABASE.hotels;
+            const rows = hotels.map(h => {
+                const enabled = Array.isArray(h.enabledModules) && h.enabledModules.includes('restaurant');
+                const menu = Array.isArray(h.restaurantMenu) ? h.restaurantMenu : [];
+                const totalItems = menu.length;
+                const availableNow = menu.filter(m => m.available).length;
+                return { hotel: h, enabled, totalItems, availableNow };
+            });
+
+            const cards = rows.map(r => {
+                const h = r.hotel;
+                const badge = r.enabled
+                    ? `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider" style="background:rgba(106,170,30,0.15);color:#3d7710;"><i data-lucide="check-circle-2" class="w-3 h-3"></i>${tD('srm_module_on')}</span>`
+                    : `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider" style="background:rgba(148,163,184,0.18);color:#475569;"><i data-lucide="circle-slash" class="w-3 h-3"></i>${tD('srm_module_off')}</span>`;
+                return `
+                    <div class="bg-white rounded-3xl border shadow-sm overflow-hidden hover:shadow-md transition">
+                        <div class="p-5">
+                            <div class="flex items-start justify-between gap-3 mb-4">
+                                <div class="min-w-0">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">${esc(h.location || '')}</p>
+                                    <h3 class="text-base font-bold text-slate-800 leading-tight truncate">${esc(h.name)}</h3>
+                                </div>
+                                <span class="inline-flex w-10 h-10 rounded-xl items-center justify-center flex-shrink-0" style="background:rgba(208,80,80,0.14);color:#d05050;">
+                                    <i data-lucide="chef-hat" class="w-5 h-5"></i>
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-2 mb-4">
+                                ${badge}
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 mb-4">
+                                <div class="bg-slate-50 rounded-2xl p-3 border" style="border-color:rgba(80,100,55,0.08);">
+                                    <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400">${tD('srm_total_items')}</p>
+                                    <p class="font-bold mt-0.5" style="font-size:1.6rem; letter-spacing:-0.04em;">${r.totalItems}</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-2xl p-3 border" style="border-color:rgba(80,100,55,0.08);">
+                                    <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400">${tD('srm_available')}</p>
+                                    <p class="font-bold mt-0.5" style="font-size:1.6rem; letter-spacing:-0.04em; color:#3d7710;">${r.availableNow}</p>
+                                </div>
+                            </div>
+                            <button onclick="openSaasMenuEditor('${escAttr(h.id)}')" class="w-full text-white px-4 py-2.5 rounded-full text-sm font-bold shadow-sm hover:shadow active:scale-95 transition flex items-center justify-center gap-2" style="background:linear-gradient(135deg,#d05050,#a83333);">
+                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                                ${r.totalItems === 0 ? tD('srm_build_menu') : tD('srm_edit_menu')}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const totalDishes = rows.reduce((s, r) => s + r.totalItems, 0);
+            const activeHotels = rows.filter(r => r.enabled).length;
+
+            target.innerHTML = `
+                <header class="mb-6">
+                    <div class="flex items-start justify-between flex-wrap gap-3">
+                        <div>
+                            <h2 class="text-2xl md:text-3xl font-bold flex items-center gap-2" style="letter-spacing:-0.03em;">
+                                <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(208,80,80,0.14); color:#d05050;"><i data-lucide="chef-hat" class="w-5 h-5"></i></span>
+                                ${tD('srm_page_title')}
+                            </h2>
+                            <p class="text-slate-500 text-sm mt-1">${tD('srm_page_sub')}</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 inline-flex items-center gap-4 px-4 py-2 rounded-full bg-white border shadow-sm text-xs">
+                        <span class="flex items-center gap-1.5"><i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-400"></i><span class="font-bold text-slate-700">${activeHotels}</span> <span class="text-slate-500">${tD('srm_hotels_active')}</span></span>
+                        <span class="w-px h-3 bg-slate-200"></span>
+                        <span class="flex items-center gap-1.5"><i data-lucide="utensils" class="w-3.5 h-3.5 text-slate-400"></i><span class="font-bold text-slate-700">${totalDishes}</span> <span class="text-slate-500">${tD('srm_total_dishes')}</span></span>
+                    </div>
+                </header>
+
+                <!-- Banner explicativo del modelo de negocio -->
+                <div class="rounded-3xl p-5 mb-6 border" style="background:linear-gradient(135deg,rgba(80,100,55,0.06),rgba(208,80,80,0.06)); border-color:rgba(80,100,55,0.18);">
+                    <div class="flex items-start gap-3">
+                        <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center flex-shrink-0" style="background:rgba(80,100,55,0.15); color:var(--sidebar-bg);">
+                            <i data-lucide="shield-check" class="w-5 h-5"></i>
+                        </span>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-bold text-slate-800 mb-1">${tD('srm_banner_title')}</p>
+                            <p class="text-xs text-slate-600 leading-relaxed">${tD('srm_banner_body')}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">${cards}</div>
+            `;
+            lucide.createIcons();
         }
 
         function renderRestaurantMenu(target, hotelId) {
