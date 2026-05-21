@@ -1957,7 +1957,12 @@
                 free: 'Gratis',
                 reviews: (n) => `(${n} reseñas)`,
                 local: 'Local',
-                noServices: 'Sin servicios activos.'
+                noServices: 'Sin servicios activos.',
+                // ── Restaurant module CTA + screens ──
+                restaurantTitle: 'Menú del Restaurante',
+                restaurantSub: 'Ordena a tu habitación',
+                dishesAvailable: (n) => `${n} platos disponibles`,
+                orderNow: 'Ordenar'
             },
             en: {
                 hello: 'Hi',
@@ -1987,7 +1992,12 @@
                 free: 'Free',
                 reviews: (n) => `(${n} reviews)`,
                 local: 'Local',
-                noServices: 'No active services.'
+                noServices: 'No active services.',
+                // ── Restaurant module CTA + screens ──
+                restaurantTitle: 'Restaurant Menu',
+                restaurantSub: 'Order to your room',
+                dishesAvailable: (n) => `${n} dishes available`,
+                orderNow: 'Order'
             }
         };
         function tM(key, ...args) {
@@ -4751,11 +4761,9 @@
             const req = DATABASE.moduleRequests.find(r => r.id === reqId);
             if (!req) return;
             req.status = newStatus;
-            const statusLabel = tD('mreq_status_' + newStatus);
             const hotel = DATABASE.hotels.find(h => h.id === req.hotelId);
-            const mod = MODULES_CATALOG.find(m => m.id === req.moduleId);
             logAudit('module.request_status', { type:'hotel', id: req.hotelId, name: hotel?.name }, { module: req.moduleId, status: newStatus });
-            showToastT('toast_action_done', tD('mreq_advanced_to', statusLabel), 'success');
+            showToastT('toast_action_done', tD('mreq_advanced_to', tD('mreq_status_' + newStatus)), 'success');
             renderApp();
         }
 
@@ -5368,9 +5376,11 @@
             'tour.start':         { label:'Demo guiada iniciada',  icon:'play-circle',    severity:'info' },
             'tour.complete':      { label:'Demo guiada completada',icon:'check-circle',   severity:'success' },
             'tour.skip':          { label:'Demo guiada abandonada',icon:'log-out',        severity:'warning' },
-            'module.enable':      { label:'Módulo activado',       icon:'toggle-right',   severity:'success' },
-            'module.disable':     { label:'Módulo desactivado',    icon:'toggle-left',    severity:'warning' },
-            'module.request':     { label:'Solicitud de integración', icon:'zap',         severity:'info' }
+            'module.enable':         { label:'Módulo activado',          icon:'toggle-right',  severity:'success' },
+            'module.disable':        { label:'Módulo desactivado',       icon:'toggle-left',   severity:'warning' },
+            'module.request':        { label:'Solicitud de integración', icon:'zap',           severity:'info' },
+            'module.request_status': { label:'Solicitud actualizada',    icon:'refresh-cw',    severity:'info' },
+            'restaurant.menu_update':{ label:'Menú restaurante actualizado', icon:'chef-hat',  severity:'info' }
         };
 
         // Resuelve el label del evento de audit usando i18n; cae al label hardcoded si no existe.
@@ -6541,7 +6551,7 @@
                 const rBlock = (restaurantEnabled && availableMenuItems.length > 0) ? `
                     <div class="mb-5">
                         <div class="flex items-center justify-between mb-3 px-1">
-                            <h5 class="text-[13px] font-extrabold text-slate-900 tracking-tight">${tM('mob_restaurant_title') !== 'mob_restaurant_title' ? tM('mob_restaurant_title') : (mobileLang==='en'?'Restaurant Menu':'Menú del Restaurante')}</h5>
+                            <h5 class="text-[13px] font-extrabold text-slate-900 tracking-tight">${tM('restaurantTitle')}</h5>
                             <span class="text-[10px] font-bold" style="color:${hc};">${availableMenuItems.length}</span>
                         </div>
                         <button onclick="setMobileView('menu_list')" class="w-full rounded-3xl overflow-hidden shadow-sm active:scale-[0.98] transition relative" style="background:linear-gradient(135deg,#d05050,#a83333); min-height:96px;">
@@ -6551,8 +6561,8 @@
                                     <i data-lucide="chef-hat" class="w-6 h-6"></i>
                                 </div>
                                 <div class="text-left flex-1 min-w-0">
-                                    <p class="font-extrabold text-[13px] leading-tight">${mobileLang==='en'?'Order to your room':'Ordena a tu habitación'}</p>
-                                    <p class="text-[10px] opacity-90 mt-0.5">${availableMenuItems.length} ${mobileLang==='en'?'dishes available':'platos disponibles'}</p>
+                                    <p class="font-extrabold text-[13px] leading-tight">${tM('restaurantSub')}</p>
+                                    <p class="text-[10px] opacity-90 mt-0.5">${tM('dishesAvailable', availableMenuItems.length)}</p>
                                 </div>
                                 <i data-lucide="arrow-right" class="w-5 h-5"></i>
                             </div>
@@ -6914,6 +6924,9 @@
             `;
 
             let navHTML = '';
+            // Pre-computed counts shared across sidebar branches (avoids repeated filters in template literals)
+            const pendingModuleRequests = DATABASE.moduleRequests.filter(r => r.status === 'pending').length;
+
             if (currentRole === 'saas_admin') {
                 navHTML = searchBtn + `
                     <button onclick="switchTab('overview')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'overview' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
@@ -6964,7 +6977,7 @@
                         <i data-lucide="history" class="w-5 h-5"></i> ${tD('nav_activity')}
                     </button>
                     <button onclick="switchTab('module_requests')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'module_requests' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
-                        <i data-lucide="inbox" class="w-5 h-5"></i> ${tD('nav_module_requests')} ${DATABASE.moduleRequests.filter(r => r.status === 'pending').length > 0 ? `<span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">${DATABASE.moduleRequests.filter(r => r.status === 'pending').length}</span>` : ''}
+                        <i data-lucide="inbox" class="w-5 h-5"></i> ${tD('nav_module_requests')} ${pendingModuleRequests > 0 ? `<span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">${pendingModuleRequests}</span>` : ''}
                     </button>
                     <button onclick="switchTab('backup')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'backup' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
                         <i data-lucide="database-backup" class="w-5 h-5"></i> ${tD('nav_backup')}
@@ -6981,6 +6994,9 @@
                 `;
             } else if (currentRole.startsWith('hotel_')) {
                 const countReq = DATABASE.guestRequests.filter(r => r.hotelId === currentRole && r.status === "Pendiente").length;
+                const sidebarHotel = DATABASE.hotels.find(h => h.id === currentRole);
+                const enabledModulesList = sidebarHotel?.enabledModules || [];
+                const restaurantMenuCount = (sidebarHotel?.restaurantMenu || []).length;
                 navHTML = `
                     <button onclick="switchTab('overview')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'overview' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
                         <i data-lucide="layout-dashboard" class="w-5 h-5"></i> ${tD('nav_panel_hotel')}
@@ -6996,12 +7012,12 @@
                         <div class="nav-submenu ${activeTab === 'modules' || activeTab === 'restaurant_menu' ? 'is-open' : ''}">
                             <button onclick="switchTab('modules')" class="${activeTab === 'modules' ? 'is-current' : ''}">
                                 <span class="dot"></span> ${tD('mod_section_active')}
-                                <span class="ml-auto text-[10px] font-mono opacity-60">${(DATABASE.hotels.find(h => h.id === currentRole)?.enabledModules || []).length}</span>
+                                <span class="ml-auto text-[10px] font-mono opacity-60">${enabledModulesList.length}</span>
                             </button>
-                            ${(DATABASE.hotels.find(h => h.id === currentRole)?.enabledModules || []).includes('restaurant') ? `
+                            ${enabledModulesList.includes('restaurant') ? `
                                 <button onclick="switchTab('restaurant_menu')" class="${activeTab === 'restaurant_menu' ? 'is-current' : ''}">
                                     <span class="dot" style="background:#d05050;"></span> ${tD('rm_page_title')}
-                                    <span class="ml-auto text-[10px] font-mono opacity-60">${(DATABASE.hotels.find(h => h.id === currentRole)?.restaurantMenu || []).length}</span>
+                                    <span class="ml-auto text-[10px] font-mono opacity-60">${restaurantMenuCount}</span>
                                 </button>
                             ` : ''}
                         </div>
@@ -9625,15 +9641,20 @@
             const activeModules = MODULES_CATALOG.filter(m => m.available);
             const availableModules = MODULES_CATALOG.filter(m => !m.available);
 
-            // Count items per module (real demand signal)
-            const moduleCounts = {
-                room_service: DATABASE.guestRequests.filter(r => r.hotelId === hotelId && r.type === 'Room Service').length,
-                maintenance: DATABASE.guestRequests.filter(r => r.hotelId === hotelId && r.type === 'Mantenimiento').length,
-                amenities: DATABASE.guestRequests.filter(r => r.hotelId === hotelId && r.type === 'Amenidades').length
-            };
+            // Single pass over guestRequests to count by module type, instead of 3 separate filters
+            const moduleCounts = { room_service: 0, maintenance: 0, amenities: 0 };
+            const typeToModule = { 'Room Service': 'room_service', 'Mantenimiento': 'maintenance', 'Amenidades': 'amenities' };
+            DATABASE.guestRequests.forEach(r => {
+                if (r.hotelId !== hotelId) return;
+                const k = typeToModule[r.type];
+                if (k) moduleCounts[k]++;
+            });
+
+            // Build a Set of requested module IDs once, instead of .some() per card
+            const requestedModuleIds = new Set(requests.map(r => r.moduleId));
 
             const renderModuleCard = (mod, opts = {}) => {
-                const { isActive, isRequested, count } = opts;
+                const { isRequested, count } = opts;
                 const tinted = `background:${mod.color}1a; color:${mod.color};`;
                 const enabledNow = enabled.includes(mod.id);
                 if (mod.available) {
@@ -9720,7 +9741,7 @@
                         <h3 class="text-xs font-bold uppercase tracking-wider" style="color:var(--text-2);">${tD('mod_section_available')}</h3>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        ${availableModules.map(m => renderModuleCard(m, { isRequested: isModuleRequested(hotelId, m.id) })).join('')}
+                        ${availableModules.map(m => renderModuleCard(m, { isRequested: requestedModuleIds.has(m.id) })).join('')}
                     </div>
                 </section>
 
@@ -9744,7 +9765,7 @@
                                         <div class="flex-1 min-w-0">
                                             <div class="flex items-center gap-2 mb-0.5">
                                                 <p class="font-bold text-sm text-slate-800">${tD(m.i18nKey)}</p>
-                                                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase" style="background:rgba(56,120,184,0.14); color:var(--blue);">${esc(r.status)}</span>
+                                                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase" style="background:rgba(56,120,184,0.14); color:var(--blue);">${tD('mreq_status_' + r.status)}</span>
                                             </div>
                                             ${r.notes ? `<p class="text-xs text-slate-500 mt-1 line-clamp-2">${esc(r.notes)}</p>` : ''}
                                             <p class="text-[10px] text-slate-400 mt-1 font-mono">${esc(date)}</p>
@@ -9940,11 +9961,17 @@
             const items = hotel.restaurantMenu;
             const filtered = restaurantMenuFilter === 'all' ? items : items.filter(i => i.category === restaurantMenuFilter);
             const totalItems = items.length;
-            const availableNow = items.filter(i => i.available).length;
+            // Single pass to compute totals + counts per category (was 7+ separate filter passes over a 61-item menu)
+            let availableNow = 0;
+            const catCounts = { all: totalItems };
+            for (const it of items) {
+                if (it.available) availableNow++;
+                catCounts[it.category] = (catCounts[it.category] || 0) + 1;
+            }
 
             const filterPill = (key, label, color) => {
                 const isActive = restaurantMenuFilter === key;
-                const count = key === 'all' ? items.length : items.filter(i => i.category === key).length;
+                const count = catCounts[key] || 0;
                 return `
                     <button onclick="setRestaurantMenuFilter('${key}')" class="px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 flex-shrink-0 ${isActive ? 'text-white shadow-md' : 'bg-white text-slate-600 border hover:border-slate-300'}" style="${isActive ? `background:${color || 'var(--sidebar-bg)'}; color:white;` : ''}">
                         ${label}
