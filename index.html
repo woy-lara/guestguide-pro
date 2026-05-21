@@ -1962,7 +1962,12 @@
                 restaurantTitle: 'Menú del Restaurante',
                 restaurantSub: 'Ordena a tu habitación',
                 dishesAvailable: (n) => `${n} platos disponibles`,
-                orderNow: 'Ordenar'
+                orderNow: 'Ordenar',
+                quantity: 'Cantidad',
+                maxPerOrder: 'Máx. 20 por orden',
+                specialNotes: 'Instrucciones especiales',
+                optional: '(opcional)',
+                notesPlaceholder: 'Ej: huevo bien cocido, sin cebolla, alergia a maní…'
             },
             en: {
                 hello: 'Hi',
@@ -1997,7 +2002,12 @@
                 restaurantTitle: 'Restaurant Menu',
                 restaurantSub: 'Order to your room',
                 dishesAvailable: (n) => `${n} dishes available`,
-                orderNow: 'Order'
+                orderNow: 'Order',
+                quantity: 'Quantity',
+                maxPerOrder: 'Max. 20 per order',
+                specialNotes: 'Special instructions',
+                optional: '(optional)',
+                notesPlaceholder: 'E.g.: egg well-done, no onion, peanut allergy…'
             }
         };
         function tM(key, ...args) {
@@ -6506,14 +6516,35 @@
 
         function hideWhatsAppSimulation() { document.getElementById('whatsapp-simulator-popup').classList.add('translate-y-20', 'opacity-0', 'pointer-events-none'); }
 
+        // Draft del pedido para el plato actualmente abierto en menu_detail.
+        // Se resetea al entrar a un plato diferente (no persistir entre platos).
+        let menuDetailQty = 1;
+        let menuDetailNotes = '';
+
         function setMobileView(viewName, idArg = null) {
             mobileViewState = viewName;
             if (viewName === 'menu_detail') {
+                // Reset draft cuando se abre un plato nuevo
+                if (selectedMobileMenuItemId !== idArg) {
+                    menuDetailQty = 1;
+                    menuDetailNotes = '';
+                }
                 selectedMobileMenuItemId = idArg;
             } else if (viewName === 'tour_detail') {
                 selectedMobileTourId = idArg;
             }
             renderMobilePreview();
+        }
+
+        function changeMenuDetailQty(delta) {
+            menuDetailQty = Math.max(1, Math.min(20, menuDetailQty + delta));
+            renderMobilePreview();
+        }
+        function updateMenuDetailNotes(value) {
+            // Almacena sin re-render para preservar el foco del textarea mientras se escribe
+            menuDetailNotes = (value || '').slice(0, 200);
+            const counter = document.getElementById('mob-notes-counter');
+            if (counter) counter.textContent = `${menuDetailNotes.length}/200`;
         }
         function setMenuListFilter(cat) {
             menuListFilter = cat;
@@ -6525,13 +6556,25 @@
             const guest = (tempHotel.pmsGuests && tempHotel.pmsGuests[0]?.guest) || 'Carlos Ruiz';
             const room = (tempHotel.pmsGuests && tempHotel.pmsGuests[0]?.room) || '302';
             const phone = tempHotel.whatsappStaffPhone || '+50762000000';
-            const msg = `🍽️ Nueva orden\n${guest} (Hab. ${room})\n${item.name} · $${(item.price||0).toFixed(2)}`;
+            const qty = menuDetailQty || 1;
+            const lineTotal = (item.price || 0) * qty;
+            const notes = (menuDetailNotes || '').trim();
+            const notesLine = notes ? `\n📝 ${notes}` : '';
+            const msg = `🍽️ Nueva orden\n${guest} (Hab. ${room})\n${qty}× ${item.name} · $${lineTotal.toFixed(2)}${notesLine}`;
             // Simulate
             showWhatsAppSimulation(msg, phone);
             // Return to home
             setTimeout(() => setMobileView('home'), 300);
-            // Toast
-            showToast(dashLang === 'en' ? 'Order received!' : '¡Pedido recibido!', dashLang === 'en' ? `${item.name} on the way to room ${room}` : `${item.name} va camino a hab. ${room}`, 'success');
+            // Toast (incluye cantidad si > 1)
+            const qtyPrefix = qty > 1 ? `${qty}× ` : '';
+            showToast(
+                dashLang === 'en' ? 'Order received!' : '¡Pedido recibido!',
+                dashLang === 'en' ? `${qtyPrefix}${item.name} on the way to room ${room}` : `${qtyPrefix}${item.name} va camino a hab. ${room}`,
+                'success'
+            );
+            // Reset draft después de ordenar
+            menuDetailQty = 1;
+            menuDetailNotes = '';
         }
 
         function renderMobilePreview(hostElement = null) {
@@ -6889,12 +6932,18 @@
                     dessert:   { label: mobileLang==='en'?'Desserts':'Postres',   color:'#d05050', icon:'cake' }
                 };
                 const cat = categories[item.category] || categories.breakfast;
+                const qty = menuDetailQty || 1;
+                const lineTotal = (item.price || 0) * qty;
+                const notesLen = (menuDetailNotes || '').length;
                 phone.innerHTML = `
                     <div class="absolute inset-0 flex flex-col bg-white" style="border-radius:34px;overflow:hidden;">
-                        <!-- Photo + back -->
-                        <div class="relative h-[180px] flex-shrink-0" style="background:${cat.color}22;">
-                            ${item.photo ? `<img src="${escAttr(item.photo)}" class="w-full h-full object-cover" onerror="this.style.display='none';">` : `<div class="w-full h-full flex items-center justify-center"><i data-lucide="image" class="w-12 h-12" style="color:${cat.color}66;"></i></div>`}
-                            <div class="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/40 to-transparent"></div>
+                        <!-- Hero photo (más imponente: 260px) -->
+                        <div class="relative h-[260px] flex-shrink-0" style="background:${cat.color}22;">
+                            ${item.photo ? `<img src="${escAttr(item.photo)}" class="w-full h-full object-cover" onerror="this.style.display='none';">` : `<div class="w-full h-full flex items-center justify-center"><i data-lucide="image" class="w-16 h-16" style="color:${cat.color}66;"></i></div>`}
+                            <!-- Gradiente arriba para legibilidad de los botones -->
+                            <div class="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/45 to-transparent"></div>
+                            <!-- Gradiente abajo para "fundir" con el contenido -->
+                            <div class="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white to-transparent"></div>
                             <button onclick="setMobileView('menu_list')" class="absolute top-3 left-3 w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center active:scale-95 transition">
                                 <i data-lucide="arrow-left" class="w-4 h-4 text-slate-800"></i>
                             </button>
@@ -6904,16 +6953,56 @@
                             </span>
                             ${!item.available ? `<div class="absolute bottom-0 inset-x-0 bg-rose-600/95 py-1 text-center"><span class="text-[10px] font-bold text-white uppercase">${mobileLang==='en'?'Not available now':'No disponible ahora'}</span></div>` : ''}
                         </div>
-                        <!-- Content -->
-                        <div class="flex-1 overflow-y-auto p-4">
-                            <h1 class="text-[16px] font-extrabold text-slate-900 leading-tight" style="letter-spacing:-0.02em;">${esc(item.name)}</h1>
+                        <!-- Content scrollable -->
+                        <div class="flex-1 overflow-y-auto px-4 pb-3 pt-1">
+                            <h1 class="text-[17px] font-extrabold text-slate-900 leading-tight" style="letter-spacing:-0.02em;">${esc(item.name)}</h1>
                             <div class="flex items-baseline gap-2 mt-1">
-                                <p class="text-[22px] font-extrabold" style="color:#d05050;letter-spacing:-0.03em;">$${(item.price||0).toFixed(2)}</p>
-                                <p class="text-[10px] text-slate-400">${mobileLang==='en'?'incl. taxes':'imp. incluidos'}</p>
+                                <p class="text-[20px] font-extrabold" style="color:#d05050;letter-spacing:-0.03em;">$${(item.price||0).toFixed(2)}</p>
+                                <p class="text-[10px] text-slate-400">${mobileLang==='en'?'per unit · incl. taxes':'por unidad · imp. incluidos'}</p>
                             </div>
                             ${item.description ? `<p class="text-[12px] text-slate-700 leading-relaxed mt-3">${esc(item.description)}</p>` : ''}
+
+                            ${item.available ? `
+                                <!-- Stepper de cantidad -->
+                                <div class="mt-4 flex items-center justify-between rounded-2xl p-3" style="background:#f7f5f0; border:1px solid rgba(0,0,0,0.05);">
+                                    <div>
+                                        <p class="text-[11px] font-bold text-slate-700">${tM('quantity')}</p>
+                                        <p class="text-[9px] text-slate-400">${tM('maxPerOrder')}</p>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="changeMenuDetailQty(-1)" ${qty<=1?'disabled':''} class="w-8 h-8 rounded-full bg-white shadow-sm border flex items-center justify-center active:scale-90 transition ${qty<=1?'opacity-40 cursor-not-allowed':''}" style="border-color:rgba(0,0,0,0.08);">
+                                            <i data-lucide="minus" class="w-3.5 h-3.5 text-slate-700"></i>
+                                        </button>
+                                        <span class="text-[15px] font-extrabold text-slate-900 w-7 text-center tabular-nums">${qty}</span>
+                                        <button onclick="changeMenuDetailQty(1)" ${qty>=20?'disabled':''} class="w-8 h-8 rounded-full text-white shadow-sm flex items-center justify-center active:scale-90 transition ${qty>=20?'opacity-40 cursor-not-allowed':''}" style="background:linear-gradient(135deg,#d05050,#a83333);">
+                                            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Notas especiales -->
+                                <div class="mt-3">
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <label class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
+                                            <i data-lucide="message-square" class="w-3 h-3 text-slate-500"></i>
+                                            ${tM('specialNotes')}
+                                            <span class="text-[9px] font-normal text-slate-400">${tM('optional')}</span>
+                                        </label>
+                                        <span id="mob-notes-counter" class="text-[9px] font-mono text-slate-400">${notesLen}/200</span>
+                                    </div>
+                                    <textarea
+                                        oninput="updateMenuDetailNotes(this.value)"
+                                        maxlength="200"
+                                        rows="2"
+                                        placeholder="${escAttr(tM('notesPlaceholder'))}"
+                                        class="w-full text-[11px] text-slate-800 px-3 py-2 rounded-xl border resize-none focus:outline-none focus:ring-2 focus:ring-rose-200"
+                                        style="background:#f7f5f0; border-color:rgba(0,0,0,0.08); line-height:1.4;"
+                                    >${esc(menuDetailNotes || '')}</textarea>
+                                </div>
+                            ` : ''}
+
                             <!-- Trust badge -->
-                            <div class="mt-4 pt-3 border-t flex items-center gap-2 text-[10px] text-slate-500" style="border-color:rgba(0,0,0,0.06);">
+                            <div class="mt-3 pt-3 border-t flex items-center gap-2 text-[10px] text-slate-500" style="border-color:rgba(0,0,0,0.06);">
                                 <i data-lucide="clock" class="w-3.5 h-3.5"></i>
                                 <span>${mobileLang==='en'?'Delivered to your room in 20–30 min':'Servido a tu habitación en 20–30 min'}</span>
                             </div>
@@ -6925,7 +7014,7 @@
                             </button>
                             <button onclick="${item.available?`simulateMenuOrder('${escAttr(item.id)}')`:''}" ${!item.available?'disabled':''} class="flex-1 rounded-full text-white text-[12px] font-extrabold flex items-center justify-center gap-2 active:scale-95 transition ${item.available?'':'opacity-50 cursor-not-allowed'}" style="background:linear-gradient(135deg,#d05050,#a83333);box-shadow:0 6px 16px rgba(208,80,80,0.35);">
                                 <i data-lucide="${item.available?'shopping-bag':'lock'}" class="w-4 h-4"></i>
-                                ${item.available ? (mobileLang==='en'?`Order now · $${(item.price||0).toFixed(2)}`:`Ordenar · $${(item.price||0).toFixed(2)}`) : (mobileLang==='en'?'Unavailable':'No disponible')}
+                                ${item.available ? (mobileLang==='en'?`Order ${qty>1?qty+'× ':''}· $${lineTotal.toFixed(2)}`:`Ordenar ${qty>1?qty+'× ':''}· $${lineTotal.toFixed(2)}`) : (mobileLang==='en'?'Unavailable':'No disponible')}
                             </button>
                         </div>
                     </div>
