@@ -14565,11 +14565,14 @@
             const views = recentEvents.filter(e => e.action === 'view_tour').length;
             const vouchers = recentEvents.filter(e => e.action === 'voucher_generated').length;
 
-            const kpi = (icon, color, value, label) => `
-                <div class="bg-white rounded-3xl border shadow-sm p-5">
-                    <div class="w-9 h-9 rounded-xl flex items-center justify-center mb-3" style="background:${color}1a; color:${color};"><i data-lucide="${icon}" class="w-5 h-5"></i></div>
-                    <p class="font-bold" style="font-size:2rem; letter-spacing:-0.04em; line-height:1; color:${color};">${value}</p>
-                    <p class="text-xs text-slate-500 mt-1.5">${label}</p>
+            // KPI compacto: icono + número en una fila, label debajo. extraClass para el span en móvil.
+            const kpi = (icon, color, value, label, extraClass = '') => `
+                <div class="bg-white rounded-2xl border shadow-sm p-4 ${extraClass}">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:${color}1a; color:${color};"><i data-lucide="${icon}" class="w-4 h-4"></i></div>
+                        <p class="font-bold" style="font-size:1.6rem; letter-spacing:-0.04em; line-height:1; color:${color};">${value}</p>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-2">${label}</p>
                 </div>`;
 
             // Lista de fuera-de-servicio
@@ -14611,10 +14614,10 @@
                     <p class="text-slate-500 text-sm mt-1">${tD('dr_subtitle')} · <span class="font-semibold capitalize">${esc(todayLabel)}</span></p>
                 </header>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
                     ${kpi('power-off', '#d05050', totalOff, tD('dr_kpi_off'))}
                     ${kpi('refresh-cw', '#c07820', recentChanges.length, tD('dr_kpi_changes'))}
-                    ${kpi('scan-line', '#3d7710', scans, tD('dr_kpi_scans'))}
+                    ${kpi('scan-line', '#3d7710', scans, tD('dr_kpi_scans'), 'col-span-2 sm:col-span-1')}
                 </div>
 
                 <div class="bg-white rounded-3xl border shadow-sm overflow-hidden mb-6">
