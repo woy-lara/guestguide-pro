@@ -2850,6 +2850,54 @@
                 srm_total_dishes: 'platos en total',
                 srm_banner_title: 'Control central de menús',
                 srm_banner_body: 'Tú gestionas los productos, fotos, categorías y descripciones de cada cliente. El hotelero solo ajusta precios y disponibilidad — los cambios mayores se solicitan a GuestGuide Pro.',
+                nav_spa_services: 'Spas / Reservas',
+                spa_page_title: 'Spas y Reservas',
+                spa_page_sub: 'Edita los servicios de spa de tus hoteles clientes desde aquí.',
+                spa_total_services: 'Servicios',
+                spa_total_label: 'servicios en total',
+                spa_build: 'Crear servicios',
+                spa_edit: 'Editar servicios',
+                spa_banner_title: 'Control central de spa',
+                spa_banner_body: 'Tú defines los servicios, fotos, duración y descripciones. El hotelero solo ajusta precios y disponibilidad — los cambios mayores se solicitan a GuestGuide Pro.',
+                spa_editor_title: 'Reservas de Spa',
+                spa_editor_sub: 'Servicios de bienestar reservables por el huésped',
+                spa_count_services: (n) => `${n} servicios`,
+                spa_count_available: (n) => `${n} disponibles`,
+                spa_back_to_list: '← Volver a Spas',
+                spa_add: 'Añadir servicio',
+                spa_restricted_title: 'Solo puedes editar precios y disponibilidad',
+                spa_restricted_body: 'Para añadir, eliminar o modificar servicios (nombre, foto, duración, descripción), solicita un cambio mayor a GuestGuide Pro. Te respondemos en 24h.',
+                spa_empty_title: 'Aún no hay servicios de spa',
+                spa_empty_sub: 'Añade tu primer servicio para que los huéspedes puedan reservar desde su habitación.',
+                spa_empty_sub_restricted: 'Tu spa aún no está listo. GuestGuide Pro lo prepara — solicita la creación cuando estés listo.',
+                spa_cat_massage: 'Masajes',
+                spa_cat_beauty: 'Belleza',
+                spa_cat_body: 'Corporal',
+                spa_cat_wellness: 'Bienestar',
+                spa_modal_new: 'Nuevo servicio',
+                spa_modal_edit: 'Editar servicio',
+                spa_modal_edit_restricted: 'Editar precio y disponibilidad',
+                spa_modal_name: 'Nombre del servicio',
+                spa_modal_name_ph: 'Ej. Masaje relajante',
+                spa_modal_price: 'Precio (USD)',
+                spa_modal_category: 'Categoría',
+                spa_modal_duration: 'Duración',
+                spa_modal_desc: 'Descripción',
+                spa_modal_desc_ph: 'Describe el servicio, qué incluye y sus beneficios...',
+                spa_modal_photo: 'URL de foto',
+                spa_modal_available: 'Disponible',
+                spa_modal_unavailable: 'No disponible',
+                spa_modal_avail_hint: 'Apaga si el servicio no está disponible hoy.',
+                spa_modal_restricted_hint: 'Estás en modo limitado: solo puedes ajustar precio y disponibilidad. Para cambios mayores, usa "Solicitar cambio mayor".',
+                spa_no_create_title: 'Acción no permitida',
+                spa_no_create_msg: 'Para crear servicios nuevos, solicita un cambio mayor a GuestGuide Pro.',
+                spa_no_delete_title: 'Acción no permitida',
+                spa_no_delete_msg: 'Para eliminar servicios, solicita un cambio mayor a GuestGuide Pro.',
+                spa_confirm_delete: '¿Eliminar este servicio del spa?',
+                spa_toast_added: 'Servicio añadido al spa',
+                spa_toast_updated: 'Servicio actualizado',
+                spa_toast_deleted: 'Servicio eliminado',
+                spa_toast_toggled: (name, on) => `${name} ${on ? 'disponible' : 'no disponible'}`,
                 mreq_title: 'Solicitudes de Integración',
                 mreq_subtitle: 'Lo que tus hoteles piden — prioriza tu roadmap con datos reales',
                 mreq_total: 'Total',
@@ -3719,6 +3767,54 @@
                 srm_total_dishes: 'total dishes',
                 srm_banner_title: 'Central menu control',
                 srm_banner_body: 'You manage products, photos, categories and descriptions for each client. Hotel managers only adjust prices and availability — bigger changes are requested to GuestGuide Pro.',
+                nav_spa_services: 'Spas / Bookings',
+                spa_page_title: 'Spas & Bookings',
+                spa_page_sub: 'Edit spa services for your client hotels from here.',
+                spa_total_services: 'Services',
+                spa_total_label: 'total services',
+                spa_build: 'Create services',
+                spa_edit: 'Edit services',
+                spa_banner_title: 'Central spa control',
+                spa_banner_body: 'You define services, photos, duration and descriptions. Hotel managers only adjust prices and availability — bigger changes are requested to GuestGuide Pro.',
+                spa_editor_title: 'Spa Bookings',
+                spa_editor_sub: 'Wellness services bookable by the guest',
+                spa_count_services: (n) => `${n} services`,
+                spa_count_available: (n) => `${n} available`,
+                spa_back_to_list: '← Back to Spas',
+                spa_add: 'Add service',
+                spa_restricted_title: 'You can only edit prices and availability',
+                spa_restricted_body: 'To add, remove or modify services (name, photo, duration, description), request a major change to GuestGuide Pro. We respond within 24h.',
+                spa_empty_title: 'No spa services yet',
+                spa_empty_sub: 'Add your first service so guests can book from their room.',
+                spa_empty_sub_restricted: 'Your spa is not ready yet. GuestGuide Pro builds it for you — request creation when ready.',
+                spa_cat_massage: 'Massages',
+                spa_cat_beauty: 'Beauty',
+                spa_cat_body: 'Body',
+                spa_cat_wellness: 'Wellness',
+                spa_modal_new: 'New service',
+                spa_modal_edit: 'Edit service',
+                spa_modal_edit_restricted: 'Edit price and availability',
+                spa_modal_name: 'Service name',
+                spa_modal_name_ph: 'E.g. Relaxing massage',
+                spa_modal_price: 'Price (USD)',
+                spa_modal_category: 'Category',
+                spa_modal_duration: 'Duration',
+                spa_modal_desc: 'Description',
+                spa_modal_desc_ph: 'Describe the service, what it includes and its benefits...',
+                spa_modal_photo: 'Photo URL',
+                spa_modal_available: 'Available',
+                spa_modal_unavailable: 'Unavailable',
+                spa_modal_avail_hint: 'Toggle off if the service is not available today.',
+                spa_modal_restricted_hint: 'Limited mode: you can only adjust price and availability. For larger changes, use "Request major change".',
+                spa_no_create_title: 'Action not allowed',
+                spa_no_create_msg: 'To create new services, request a major change to GuestGuide Pro.',
+                spa_no_delete_title: 'Action not allowed',
+                spa_no_delete_msg: 'To delete services, request a major change to GuestGuide Pro.',
+                spa_confirm_delete: 'Delete this service from the spa?',
+                spa_toast_added: 'Service added to spa',
+                spa_toast_updated: 'Service updated',
+                spa_toast_deleted: 'Service deleted',
+                spa_toast_toggled: (name, on) => `${name} ${on ? 'available' : 'unavailable'}`,
                 mreq_title: 'Integration Requests',
                 mreq_subtitle: 'What your hotels are asking for — prioritize your roadmap with real data',
                 mreq_total: 'Total',
@@ -4101,7 +4197,7 @@
             { id: 'amenities',     i18nKey: 'mod_amenities',     icon: 'gift',       color: '#2e9e6a', available: true },
             // ── Próximamente / Solicitar integración ──
             { id: 'restaurant',    i18nKey: 'mod_restaurant',    icon: 'chef-hat',   color: '#d05050', available: true,  featured: true, configurable: true },
-            { id: 'spa_booking',   i18nKey: 'mod_spa_booking',   icon: 'flower-2',   color: '#3878b8', available: false },
+            { id: 'spa_booking',   i18nKey: 'mod_spa_booking',   icon: 'flower-2',   color: '#3878b8', available: true,  configurable: true },
             { id: 'transport',     i18nKey: 'mod_transport',     icon: 'car',        color: '#6aaa1e', available: false },
             { id: 'laundry',       i18nKey: 'mod_laundry',       icon: 'shirt',      color: '#7d8c70', available: false },
             { id: 'wake_up',       i18nKey: 'mod_wake_up',       icon: 'sun',        color: '#c07820', available: false },
@@ -4906,6 +5002,42 @@
             });
         }
 
+        // Seed de servicios de Spa por hotel (replica el patrón de restaurantMenu).
+        // Un servicio: { id, category, name, price, duration (min), description, photo, available }
+        function ensureSpaServices() {
+            const seeds = {
+                hotel_1: [
+                    { id:'sp1_1', category:'massage',  name:'Masaje Relajante de Café',   price:75, duration:60, description:'Masaje de cuerpo completo con aceite de café Geisha local. Ideal tras un día de senderismo.', photo:'https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=400&q=70', available:true },
+                    { id:'sp1_2', category:'massage',  name:'Masaje de Piedras Calientes', price:90, duration:75, description:'Piedras volcánicas tibias para liberar tensión muscular profunda.',                          photo:'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&q=70', available:true },
+                    { id:'sp1_3', category:'body',     name:'Exfoliación Corporal',        price:55, duration:45, description:'Exfoliación con sales minerales y miel boquetena. Piel renovada al instante.',               photo:'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400&q=70', available:true },
+                    { id:'sp1_4', category:'wellness', name:'Sauna + Vapor',               price:40, duration:45, description:'Circuito de calor para desintoxicar y relajar. Acceso a sauna seco y baño de vapor.',         photo:'https://images.unsplash.com/photo-1610465299996-30f240ac2b1c?w=400&q=70', available:true },
+                    { id:'sp1_5', category:'beauty',   name:'Facial Hidratante',           price:65, duration:50, description:'Limpieza profunda e hidratación con productos botánicos locales.',                           photo:'https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=400&q=70', available:false }
+                ],
+                hotel_2: [
+                    { id:'sp2_1', category:'massage',  name:'Masaje Sueco Clásico',        price:80, duration:60, description:'Masaje terapéutico de presión media para aliviar el estrés.',                                photo:'https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=400&q=70', available:true },
+                    { id:'sp2_2', category:'beauty',   name:'Ritual Facial Premium',       price:95, duration:70, description:'Tratamiento facial completo con masaje y mascarilla de colágeno.',                            photo:'https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=400&q=70', available:true },
+                    { id:'sp2_3', category:'beauty',   name:'Manicure Spa',                price:35, duration:50, description:'Manicure completo con exfoliación de manos y esmaltado de larga duración.',                  photo:'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400&q=70', available:true },
+                    { id:'sp2_4', category:'wellness', name:'Clase de Yoga Privada',       price:50, duration:60, description:'Sesión personalizada de yoga con instructor certificado, en el jardín del hotel.',           photo:'https://images.unsplash.com/photo-1603988363607-e1e4a66962c6?w=400&q=70', available:true }
+                ],
+                hotel_4: [
+                    { id:'sp4_1', category:'massage',  name:'Masaje Descontracturante',    price:85, duration:75, description:'Enfocado en cuello, espalda y hombros. Libera la tensión acumulada.',                        photo:'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&q=70', available:true },
+                    { id:'sp4_2', category:'massage',  name:'Masaje en Pareja',            price:160, duration:60, description:'Experiencia de relajación para dos, en cabaña privada con vista al jardín.',                 photo:'https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=400&q=70', available:true },
+                    { id:'sp4_3', category:'body',     name:'Envoltura de Barro Volcánico', price:70, duration:60, description:'Desintoxicación corporal con barro mineral de la región de Chiriquí.',                     photo:'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400&q=70', available:true },
+                    { id:'sp4_4', category:'wellness', name:'Hidroterapia Termal',         price:45, duration:50, description:'Circuito de aguas termales con jets y zona de relajación.',                                  photo:'https://images.unsplash.com/photo-1610465299996-30f240ac2b1c?w=400&q=70', available:true },
+                    { id:'sp4_5', category:'beauty',   name:'Pedicure Spa',                price:40, duration:55, description:'Pedicure relajante con baño de pies, exfoliación y masaje.',                                 photo:'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400&q=70', available:true }
+                ]
+            };
+            DATABASE.hotels.forEach(h => {
+                if (!h.spaServices) {
+                    h.spaServices = seeds[h.id] ? JSON.parse(JSON.stringify(seeds[h.id])) : [];
+                }
+                // Activar el módulo en hoteles que tienen servicios sembrados (para el demo del hotelero)
+                if (h.spaServices.length > 0 && Array.isArray(h.enabledModules) && !h.enabledModules.includes('spa_booking')) {
+                    h.enabledModules.push('spa_booking');
+                }
+            });
+        }
+
         // Seed inicial de solicitudes de módulos para demo del SaaS Admin
         function ensureModuleRequestsSeed() {
             if (DATABASE.moduleRequests.length > 0) return;
@@ -5543,7 +5675,8 @@
             'module.disable':        { label:'Módulo desactivado',       icon:'toggle-left',   severity:'warning' },
             'module.request':        { label:'Solicitud de integración', icon:'zap',           severity:'info' },
             'module.request_status': { label:'Solicitud actualizada',    icon:'refresh-cw',    severity:'info' },
-            'restaurant.menu_update':{ label:'Menú restaurante actualizado', icon:'chef-hat',  severity:'info' }
+            'restaurant.menu_update':{ label:'Menú restaurante actualizado', icon:'chef-hat',  severity:'info' },
+            'spa.update':            { label:'Servicio de spa actualizado',  icon:'flower-2',  severity:'info' }
         };
 
         // Resuelve el label del evento de audit usando i18n; cae al label hardcoded si no existe.
@@ -7354,6 +7487,9 @@
                     <button onclick="goToSaasMenusList()" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'restaurant_menus' || activeTab === 'restaurant_menu' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
                         <i data-lucide="chef-hat" class="w-5 h-5"></i> ${tD('nav_restaurant_menus')}
                     </button>
+                    <button onclick="goToSaasSpaList()" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'spa_services_admin' || activeTab === 'spa_booking' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
+                        <i data-lucide="flower-2" class="w-5 h-5"></i> ${tD('nav_spa_services')}
+                    </button>
                     <button onclick="switchTab('backup')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'backup' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
                         <i data-lucide="database-backup" class="w-5 h-5"></i> ${tD('nav_backup')}
                     </button>
@@ -7372,6 +7508,7 @@
                 const sidebarHotel = DATABASE.hotels.find(h => h.id === currentRole);
                 const enabledModulesList = sidebarHotel?.enabledModules || [];
                 const restaurantMenuCount = (sidebarHotel?.restaurantMenu || []).length;
+                const spaServiceCount = (sidebarHotel?.spaServices || []).length;
                 navHTML = `
                     <button onclick="switchTab('overview')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'overview' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
                         <i data-lucide="layout-dashboard" class="w-5 h-5"></i> ${tD('nav_panel_hotel')}
@@ -7380,11 +7517,11 @@
                         <i data-lucide="bell-ring" class="w-5 h-5"></i> ${tD('nav_room_requests')} <span class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full">${countReq}</span>
                     </button>
                     <div class="nav-group">
-                        <button onclick="switchTab('modules')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'modules' || activeTab === 'restaurant_menu' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
+                        <button onclick="switchTab('modules')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'modules' || activeTab === 'restaurant_menu' || activeTab === 'spa_booking' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
                             <i data-lucide="grid-3x3" class="w-5 h-5"></i> ${tD('nav_modules')}
                             <i data-lucide="chevron-right" class="w-3.5 h-3.5 chevron"></i>
                         </button>
-                        <div class="nav-submenu ${activeTab === 'modules' || activeTab === 'restaurant_menu' ? 'is-open' : ''}">
+                        <div class="nav-submenu ${activeTab === 'modules' || activeTab === 'restaurant_menu' || activeTab === 'spa_booking' ? 'is-open' : ''}">
                             <button onclick="switchTab('modules')" class="${activeTab === 'modules' ? 'is-current' : ''}">
                                 <span class="dot"></span> ${tD('mod_section_active')}
                                 <span class="ml-auto text-[10px] font-mono opacity-60">${enabledModulesList.length}</span>
@@ -7393,6 +7530,12 @@
                                 <button onclick="switchTab('restaurant_menu')" class="${activeTab === 'restaurant_menu' ? 'is-current' : ''}">
                                     <span class="dot" style="background:#d05050;"></span> ${tD('rm_page_title')}
                                     <span class="ml-auto text-[10px] font-mono opacity-60">${restaurantMenuCount}</span>
+                                </button>
+                            ` : ''}
+                            ${enabledModulesList.includes('spa_booking') ? `
+                                <button onclick="switchTab('spa_booking')" class="${activeTab === 'spa_booking' ? 'is-current' : ''}">
+                                    <span class="dot" style="background:#3878b8;"></span> ${tD('spa_editor_title')}
+                                    <span class="ml-auto text-[10px] font-mono opacity-60">${spaServiceCount}</span>
                                 </button>
                             ` : ''}
                         </div>
@@ -7491,12 +7634,15 @@
                 else if (activeTab === 'module_requests') renderModuleRequestsView(container);
                 else if (activeTab === 'restaurant_menus') renderSaasMenusList(container);
                 else if (activeTab === 'restaurant_menu') renderRestaurantMenu(container, saasEditMenuHotelId);
+                else if (activeTab === 'spa_services_admin') renderSaasSpaList(container);
+                else if (activeTab === 'spa_booking') renderSpaBooking(container, saasEditSpaHotelId);
                 else if (activeTab === 'backup') renderBackupView(container);
             } else if (currentRole.startsWith('hotel_')) {
                 if (activeTab === 'overview') renderHotelOverview(container, currentRole);
                 else if (activeTab === 'stay_services') renderStayServicesPanel(container, currentRole);
                 else if (activeTab === 'modules') renderHotelModules(container, currentRole);
                 else if (activeTab === 'restaurant_menu') renderRestaurantMenu(container, currentRole);
+                else if (activeTab === 'spa_booking') renderSpaBooking(container, currentRole);
                 else if (activeTab === 'finances') renderHotelCharges(container, currentRole);
                 else if (activeTab === 'ai_assistant') renderAIAssistantHub(container);
                 else if (activeTab === 'analytics') renderAnalyticsForOwner(container, 'hotel', currentRole);
@@ -10179,6 +10325,10 @@
         // saas_admin uses this to remember which hotel's menu it's editing (no implicit hotel from currentRole).
         // null = show the list of hotels; set to a hotel id = render the editor for that hotel.
         let saasEditMenuHotelId = null;
+        // Estado del módulo Spa (mismo patrón que el menú)
+        let spaServiceFilter = 'all';
+        let spaItemDraft = null;
+        let saasEditSpaHotelId = null;
 
         const RM_CATEGORIES = [
             { id: 'breakfast', icon: 'sunrise',  color: '#c07820' },
@@ -10187,6 +10337,16 @@
             { id: 'drinks',    icon: 'wine',     color: '#3878b8' },
             { id: 'dessert',   icon: 'cake',     color: '#d05050' }
         ];
+
+        // ── Categorías de servicios de Spa ──
+        const SPA_CATEGORIES = [
+            { id: 'massage',  icon: 'hand',      color: '#7060c8' },
+            { id: 'beauty',   icon: 'sparkles',  color: '#d05050' },
+            { id: 'body',     icon: 'droplets',  color: '#3878b8' },
+            { id: 'wellness', icon: 'flower-2',  color: '#6aaa1e' }
+        ];
+        // Franjas horarias para reservas de spa (demo: slots fijos)
+        const SPA_TIME_SLOTS = ['09:00','10:00','11:00','12:00','14:00','15:00','16:00','17:00'];
 
         // Tags dietéticos / destacados — labels bilingües inline (uso ES/EN según lang activo).
         // Se almacenan en item.tags como array de ids. prepTime (min) es número opcional.
@@ -10885,6 +11045,332 @@
                 </div>
             `;
             // Re-render phone after DOM is in place
+            renderMobilePreview();
+        }
+
+        // ═══════════════════════════════════════════════
+        //  SPA BOOKING MODULE  (replica el patrón del menú)
+        // ═══════════════════════════════════════════════
+        function setSpaServiceFilter(f) { spaServiceFilter = f; renderApp(); }
+        function getSpaEditHotel() {
+            const id = currentRole === 'saas_admin' ? saasEditSpaHotelId : currentRole;
+            return DATABASE.hotels.find(h => h.id === id);
+        }
+
+        // ─── saas_admin: lista de hoteles con módulo Spa ───
+        function goToSaasSpaList() { saasEditSpaHotelId = null; switchTab('spa_services_admin'); }
+        function openSaasSpaEditor(hotelId) { saasEditSpaHotelId = hotelId; switchTab('spa_booking'); }
+        function renderSaasSpaList(target) {
+            const rows = DATABASE.hotels.map(h => {
+                const enabled = Array.isArray(h.enabledModules) && h.enabledModules.includes('spa_booking');
+                const svc = Array.isArray(h.spaServices) ? h.spaServices : [];
+                return { hotel: h, enabled, total: svc.length, available: svc.filter(s => s.available).length };
+            });
+            const totalServices = rows.reduce((s, r) => s + r.total, 0);
+            const activeHotels = rows.filter(r => r.enabled).length;
+            const cards = rows.map(r => {
+                const h = r.hotel;
+                const badge = r.enabled
+                    ? `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider" style="background:rgba(56,120,184,0.14);color:#2a5e94;"><i data-lucide="check-circle-2" class="w-3 h-3"></i>${tD('srm_module_on')}</span>`
+                    : `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider" style="background:rgba(148,163,184,0.18);color:#475569;"><i data-lucide="circle-slash" class="w-3 h-3"></i>${tD('srm_module_off')}</span>`;
+                return `
+                    <div class="bg-white rounded-3xl border shadow-sm overflow-hidden hover:shadow-md transition">
+                        <div class="p-5">
+                            <div class="flex items-start justify-between gap-3 mb-4">
+                                <div class="min-w-0">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">${esc(h.location || '')}</p>
+                                    <h3 class="text-base font-bold text-slate-800 leading-tight truncate">${esc(h.name)}</h3>
+                                </div>
+                                <span class="inline-flex w-10 h-10 rounded-xl items-center justify-center flex-shrink-0" style="background:rgba(56,120,184,0.14);color:#3878b8;"><i data-lucide="flower-2" class="w-5 h-5"></i></span>
+                            </div>
+                            <div class="flex items-center gap-2 mb-4">${badge}</div>
+                            <div class="grid grid-cols-2 gap-2 mb-4">
+                                <div class="bg-slate-50 rounded-2xl p-3 border" style="border-color:rgba(56,120,184,0.1);">
+                                    <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400">${tD('spa_total_services')}</p>
+                                    <p class="font-bold mt-0.5" style="font-size:1.6rem; letter-spacing:-0.04em;">${r.total}</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-2xl p-3 border" style="border-color:rgba(56,120,184,0.1);">
+                                    <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400">${tD('srm_available')}</p>
+                                    <p class="font-bold mt-0.5" style="font-size:1.6rem; letter-spacing:-0.04em; color:#2a5e94;">${r.available}</p>
+                                </div>
+                            </div>
+                            <button onclick="openSaasSpaEditor('${escAttr(h.id)}')" class="w-full text-white px-4 py-2.5 rounded-full text-sm font-bold shadow-sm hover:shadow active:scale-95 transition flex items-center justify-center gap-2" style="background:linear-gradient(135deg,#3878b8,#2a5e94);">
+                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                                ${r.total === 0 ? tD('spa_build') : tD('spa_edit')}
+                            </button>
+                        </div>
+                    </div>`;
+            }).join('');
+            target.innerHTML = `
+                <header class="mb-6">
+                    <h2 class="text-2xl md:text-3xl font-bold flex items-center gap-2" style="letter-spacing:-0.03em;">
+                        <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(56,120,184,0.14); color:#3878b8;"><i data-lucide="flower-2" class="w-5 h-5"></i></span>
+                        ${tD('spa_page_title')}
+                    </h2>
+                    <p class="text-slate-500 text-sm mt-1">${tD('spa_page_sub')}</p>
+                    <div class="mt-4 inline-flex items-center gap-4 px-4 py-2 rounded-full bg-white border shadow-sm text-xs">
+                        <span class="flex items-center gap-1.5"><i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-400"></i><span class="font-bold text-slate-700">${activeHotels}</span> <span class="text-slate-500">${tD('srm_hotels_active')}</span></span>
+                        <span class="w-px h-3 bg-slate-200"></span>
+                        <span class="flex items-center gap-1.5"><i data-lucide="flower-2" class="w-3.5 h-3.5 text-slate-400"></i><span class="font-bold text-slate-700">${totalServices}</span> <span class="text-slate-500">${tD('spa_total_label')}</span></span>
+                    </div>
+                </header>
+                <div class="rounded-3xl p-5 mb-6 border" style="background:linear-gradient(135deg,rgba(56,120,184,0.06),rgba(112,96,200,0.06)); border-color:rgba(56,120,184,0.18);">
+                    <div class="flex items-start gap-3">
+                        <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center flex-shrink-0" style="background:rgba(56,120,184,0.15); color:#2a5e94;"><i data-lucide="shield-check" class="w-5 h-5"></i></span>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-bold text-slate-800 mb-1">${tD('spa_banner_title')}</p>
+                            <p class="text-xs text-slate-600 leading-relaxed">${tD('spa_banner_body')}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">${cards}</div>
+            `;
+            lucide.createIcons();
+        }
+
+        // ─── CRUD de servicios de spa ───
+        function openSpaItemModal(itemId = null) {
+            const hotel = getSpaEditHotel();
+            if (!hotel) return;
+            const isFullEdit = currentRole === 'saas_admin';
+            if (!itemId && !isFullEdit) { showToast(tD('spa_no_create_title'), tD('spa_no_create_msg'), 'info'); return; }
+            if (itemId) {
+                const it = (hotel.spaServices || []).find(x => x.id === itemId);
+                if (it) spaItemDraft = { ...it };
+            } else {
+                spaItemDraft = { id:null, category:'massage', name:'', price:0, duration:60, description:'', photo:'', available:true };
+            }
+            renderSpaItemModal();
+        }
+        function closeSpaItemModal() {
+            spaItemDraft = null;
+            const host = document.getElementById('spa-item-modal-host');
+            if (host) host.innerHTML = '';
+        }
+        function updateSpaField(field, v) {
+            if (!spaItemDraft) return;
+            if (field === 'price') spaItemDraft[field] = parseFloat(v) || 0;
+            else if (field === 'duration') spaItemDraft[field] = Math.max(0, parseInt(v) || 0);
+            else spaItemDraft[field] = v;
+            if (field === 'category' || field === 'available') renderSpaItemModal();
+        }
+        function saveSpaItem() {
+            if (!spaItemDraft) return;
+            const hotel = getSpaEditHotel();
+            if (!hotel) return;
+            if (!hotel.spaServices) hotel.spaServices = [];
+            const isFullEdit = currentRole === 'saas_admin';
+            const draft = spaItemDraft;
+            if (!draft.name || !draft.name.trim()) { showToast(tD('toast_error'), tD('toast_action_msg'), 'error'); return; }
+            if (draft.id) {
+                const idx = hotel.spaServices.findIndex(x => x.id === draft.id);
+                if (idx >= 0) {
+                    const original = hotel.spaServices[idx];
+                    hotel.spaServices[idx] = isFullEdit ? { ...draft } : { ...original, price: draft.price, available: draft.available };
+                    showToastT('spa_toast_updated', draft.name, 'success');
+                }
+            } else {
+                if (!isFullEdit) { closeSpaItemModal(); return; }
+                hotel.spaServices.unshift({ ...draft, id: 'sp_' + Date.now() });
+                showToastT('spa_toast_added', draft.name, 'success');
+            }
+            logAudit('spa.update', { type:'hotel', id: hotel.id, name: hotel.name }, { service: draft.name, by: isFullEdit ? 'saas_admin' : 'hotel' });
+            closeSpaItemModal();
+            renderApp();
+        }
+        function deleteSpaItem(itemId) {
+            if (currentRole !== 'saas_admin') { showToast(tD('spa_no_delete_title'), tD('spa_no_delete_msg'), 'info'); return; }
+            if (!confirm(tD('spa_confirm_delete'))) return;
+            const hotel = getSpaEditHotel();
+            if (!hotel || !hotel.spaServices) return;
+            const it = hotel.spaServices.find(x => x.id === itemId);
+            hotel.spaServices = hotel.spaServices.filter(x => x.id !== itemId);
+            if (it) showToastT('spa_toast_deleted', it.name, 'info');
+            closeSpaItemModal();
+            renderApp();
+        }
+        function toggleSpaItemAvailable(itemId) {
+            const hotel = getSpaEditHotel();
+            if (!hotel) return;
+            const it = (hotel.spaServices || []).find(x => x.id === itemId);
+            if (!it) return;
+            it.available = !it.available;
+            showToastT('toast_action_done', tD('spa_toast_toggled', it.name, it.available), it.available ? 'success' : 'info');
+            renderApp();
+        }
+        function requestSpaChange() {
+            if (currentRole === 'saas_admin') return;
+            moduleRequestDraft = { moduleId: 'spa_booking', notes: '', kind: 'change' };
+            renderModuleRequestModal();
+        }
+
+        function renderSpaItemModal() {
+            let host = document.getElementById('spa-item-modal-host');
+            if (!host) { host = document.createElement('div'); host.id = 'spa-item-modal-host'; document.body.appendChild(host); }
+            if (!spaItemDraft) { host.innerHTML = ''; return; }
+            const isEdit = !!spaItemDraft.id;
+            const isFullEdit = currentRole === 'saas_admin';
+            const cat = SPA_CATEGORIES.find(c => c.id === spaItemDraft.category) || SPA_CATEGORIES[0];
+            const modalTitle = isFullEdit ? (isEdit ? tD('spa_modal_edit') : tD('spa_modal_new')) : tD('spa_modal_edit_restricted');
+
+            const restrictedHTML = `
+                <div class="rounded-2xl p-3 mb-1 border flex items-start gap-2" style="background:rgba(56,120,184,0.05); border-color:rgba(56,120,184,0.18);">
+                    <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0" style="color:#3878b8;"></i>
+                    <p class="text-[11px] text-slate-600 leading-relaxed">${tD('spa_modal_restricted_hint')}</p>
+                </div>
+                ${spaItemDraft.photo ? `<div class="rounded-2xl overflow-hidden border" style="border-color:rgba(56,120,184,0.15);"><img src="${escAttr(spaItemDraft.photo)}" class="w-full h-44 object-cover" onerror="this.style.display='none';"></div>` : ''}
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <i data-lucide="${cat.icon}" class="w-3.5 h-3.5" style="color:${cat.color};"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-wider" style="color:${cat.color};">${tD('spa_cat_' + cat.id)}</span>
+                        <span class="text-[10px] text-slate-400">· ${spaItemDraft.duration || 0} min</span>
+                    </div>
+                    <h4 class="text-base font-bold text-slate-800 flex items-center gap-2">${esc(spaItemDraft.name)} <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-400"></i></h4>
+                    ${spaItemDraft.description ? `<p class="text-xs text-slate-500 mt-1 leading-relaxed">${esc(spaItemDraft.description)}</p>` : ''}
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-emerald-600 mb-1.5 flex items-center gap-1.5"><i data-lucide="dollar-sign" class="w-3 h-3"></i>${tD('spa_modal_price')} <span class="font-normal text-slate-400 normal-case">· ${tD('rm_modal_editable')}</span></label>
+                    <input type="number" step="0.01" oninput="updateSpaField('price', this.value)" value="${spaItemDraft.price || ''}" placeholder="0.00" class="w-full px-3 py-2.5 rounded-xl border bg-white text-sm font-bold focus:outline-none focus:ring-2 focus:ring-emerald-200" style="border-color:rgba(106,170,30,0.35); font-size:1rem;">
+                </div>
+                <label class="flex items-center gap-3 cursor-pointer p-3 rounded-2xl border" style="border-color:rgba(106,170,30,0.25); background:rgba(106,170,30,0.04);">
+                    <div class="relative"><input type="checkbox" ${spaItemDraft.available ? 'checked' : ''} onchange="updateSpaField('available', this.checked)" class="sr-only peer"><div class="w-11 h-6 bg-slate-200 peer-checked:bg-emerald-500 rounded-full transition relative"><span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full" style="transition:transform 0.2s ease; transform:${spaItemDraft.available ? 'translateX(20px)' : 'translateX(0)'};"></span></div></div>
+                    <div class="flex-1"><p class="text-sm font-bold ${spaItemDraft.available ? 'text-emerald-700' : 'text-slate-500'}">${spaItemDraft.available ? tD('spa_modal_available') : tD('spa_modal_unavailable')}</p><p class="text-[10px] text-slate-400">${tD('spa_modal_avail_hint')}</p></div>
+                </label>
+            `;
+            const fullHTML = `
+                ${spaItemDraft.photo ? `<div class="rounded-2xl overflow-hidden border" style="border-color:rgba(56,120,184,0.15);"><img src="${escAttr(spaItemDraft.photo)}" class="w-full h-44 object-cover" onerror="this.style.display='none';"></div>` : ''}
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div><label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('spa_modal_name')}</label><input type="text" oninput="updateSpaField('name', this.value)" value="${escAttr(spaItemDraft.name)}" placeholder="${escAttr(tD('spa_modal_name_ph'))}" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:bg-white" style="border-color:rgba(56,120,184,0.18);"></div>
+                    <div><label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('spa_modal_price')}</label><input type="number" step="0.01" oninput="updateSpaField('price', this.value)" value="${spaItemDraft.price || ''}" placeholder="0.00" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:bg-white" style="border-color:rgba(56,120,184,0.18);"></div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('spa_modal_category')}</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            ${SPA_CATEGORIES.map(c => `<button onclick="updateSpaField('category', '${c.id}')" class="px-2 py-2 rounded-xl border-2 text-center transition flex items-center justify-center gap-1.5 ${spaItemDraft.category===c.id ? '' : 'opacity-60 hover:opacity-100'}" style="border-color:${spaItemDraft.category===c.id ? c.color : 'rgba(56,120,184,0.12)'}; ${spaItemDraft.category===c.id ? `background:${c.color}1a;` : 'background:#fff;'}"><i data-lucide="${c.icon}" class="w-3.5 h-3.5" style="color:${c.color};"></i><span class="text-[10px] font-bold" style="color:${spaItemDraft.category===c.id ? c.color : 'var(--text-2)'};">${tD('spa_cat_' + c.id)}</span></button>`).join('')}
+                        </div>
+                    </div>
+                    <div><label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('spa_modal_duration')}</label><div class="flex items-center gap-2 px-3 py-2.5 rounded-xl border bg-slate-50" style="border-color:rgba(56,120,184,0.18);"><i data-lucide="clock" class="w-4 h-4 text-slate-400"></i><input type="number" min="0" step="5" oninput="updateSpaField('duration', this.value)" value="${spaItemDraft.duration || ''}" placeholder="60" class="flex-1 bg-transparent text-sm focus:outline-none"><span class="text-[11px] text-slate-400">min</span></div></div>
+                </div>
+                <div><label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('spa_modal_desc')}</label><textarea oninput="updateSpaField('description', this.value)" rows="3" placeholder="${escAttr(tD('spa_modal_desc_ph'))}" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:bg-white" style="border-color:rgba(56,120,184,0.18); resize:vertical;">${esc(spaItemDraft.description || '')}</textarea></div>
+                <div><label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('spa_modal_photo')}</label><input type="url" oninput="updateSpaField('photo', this.value)" value="${escAttr(spaItemDraft.photo || '')}" placeholder="${escAttr(tD('rm_modal_photo_ph'))}" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:bg-white" style="border-color:rgba(56,120,184,0.18);"></div>
+                <label class="flex items-center gap-3 cursor-pointer"><div class="relative"><input type="checkbox" ${spaItemDraft.available ? 'checked' : ''} onchange="updateSpaField('available', this.checked)" class="sr-only peer"><div class="w-11 h-6 bg-slate-200 peer-checked:bg-emerald-500 rounded-full transition relative"><span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full" style="transition:transform 0.2s ease; transform:${spaItemDraft.available ? 'translateX(20px)' : 'translateX(0)'};"></span></div></div><span class="text-sm font-semibold ${spaItemDraft.available ? 'text-emerald-700' : 'text-slate-500'}">${spaItemDraft.available ? tD('spa_modal_available') : tD('spa_modal_unavailable')}</span></label>
+            `;
+            host.innerHTML = `
+                <div class="invoice-modal-overlay" onclick="if(event.target===this) closeSpaItemModal()">
+                    <div class="bg-white rounded-3xl shadow-2xl w-full" style="max-width:540px; margin-top:60px;">
+                        <header class="px-6 py-5 border-b flex items-center justify-between" style="border-color:rgba(56,120,184,0.1);">
+                            <div class="flex items-center gap-3"><div class="w-11 h-11 rounded-2xl flex items-center justify-center" style="background:rgba(56,120,184,0.14); color:#3878b8;"><i data-lucide="${isFullEdit ? 'flower-2' : 'tag'}" class="w-5 h-5"></i></div><h3 class="font-bold text-lg text-slate-800">${modalTitle}</h3></div>
+                            <button onclick="closeSpaItemModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 transition flex items-center justify-center text-slate-400"><i data-lucide="x" class="w-4 h-4"></i></button>
+                        </header>
+                        <div class="p-6 space-y-4">${isFullEdit ? fullHTML : restrictedHTML}</div>
+                        <footer class="px-6 py-4 border-t flex gap-2 justify-between" style="border-color:rgba(56,120,184,0.1);">
+                            <div>${isEdit && isFullEdit ? `<button onclick="deleteSpaItem('${escAttr(spaItemDraft.id)}')" class="px-4 py-2.5 rounded-full text-sm font-bold text-rose-600 hover:bg-rose-50 transition flex items-center gap-1.5"><i data-lucide="trash-2" class="w-4 h-4"></i>${tD('rm_modal_delete')}</button>` : ''}</div>
+                            <div class="flex gap-2">
+                                <button onclick="closeSpaItemModal()" class="px-4 py-2.5 rounded-full text-sm font-semibold text-slate-600 hover:bg-slate-100 transition">${tD('rm_modal_cancel')}</button>
+                                <button onclick="saveSpaItem()" class="px-5 py-2.5 rounded-full text-sm font-bold text-white shadow-md hover:shadow-lg active:scale-95 transition flex items-center gap-2" style="background:linear-gradient(135deg,#3878b8,#2a5e94);"><i data-lucide="save" class="w-4 h-4"></i>${tD('rm_modal_save')}</button>
+                            </div>
+                        </footer>
+                    </div>
+                </div>`;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function renderSpaBooking(target, hotelId) {
+            const hotel = DATABASE.hotels.find(h => h.id === hotelId);
+            if (!hotel) { target.innerHTML = ''; return; }
+            if (!hotel.spaServices) hotel.spaServices = [];
+            const isFullEdit = currentRole === 'saas_admin';
+            const items = hotel.spaServices;
+            const filtered = spaServiceFilter === 'all' ? items : items.filter(i => i.category === spaServiceFilter);
+            const totalItems = items.length;
+            let availableNow = 0;
+            const catCounts = { all: totalItems };
+            for (const it of items) { if (it.available) availableNow++; catCounts[it.category] = (catCounts[it.category] || 0) + 1; }
+            tempHotel = hotel;
+            if (mobileViewState !== 'spa_list' && mobileViewState !== 'spa_detail') mobileViewState = 'spa_list';
+
+            const filterPill = (key, label, color) => {
+                const isActive = spaServiceFilter === key;
+                const count = catCounts[key] || 0;
+                return `<button onclick="setSpaServiceFilter('${key}')" class="px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 flex-shrink-0 ${isActive ? 'text-white shadow-md' : 'bg-white text-slate-600 border hover:border-slate-300'}" style="${isActive ? `background:${color || '#3878b8'}; color:white;` : ''}">${label}<span class="px-1.5 py-0.5 rounded-md text-[10px] font-mono ${isActive ? 'bg-white/20' : 'bg-slate-100 text-slate-500'}">${count}</span></button>`;
+            };
+            const backBtn = isFullEdit
+                ? `<button onclick="goToSaasSpaList()" class="bg-white border text-slate-700 px-4 py-2.5 rounded-full text-sm font-semibold shadow-sm hover:shadow active:scale-95 transition flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i>${tD('spa_back_to_list')}</button>`
+                : `<button onclick="switchTab('modules')" class="bg-white border text-slate-700 px-4 py-2.5 rounded-full text-sm font-semibold shadow-sm hover:shadow active:scale-95 transition flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i>${tD('rm_back_to_modules')}</button>`;
+            const actionBtn = isFullEdit
+                ? `<button onclick="openSpaItemModal()" class="text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-md hover:shadow-lg active:scale-95 transition flex items-center gap-2" style="background:linear-gradient(135deg,#3878b8,#2a5e94);"><i data-lucide="plus" class="w-4 h-4"></i>${tD('spa_add')}</button>`
+                : `<button onclick="requestSpaChange()" class="text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-md hover:shadow-lg active:scale-95 transition flex items-center gap-2" style="background:linear-gradient(135deg, var(--accent-hi), var(--accent));"><i data-lucide="send" class="w-4 h-4"></i>${tD('rm_request_change')}</button>`;
+            const restrictedBanner = isFullEdit ? '' : `
+                <div class="rounded-3xl p-4 mb-5 border flex items-start gap-3" style="background:linear-gradient(135deg,rgba(56,120,184,0.06),rgba(112,96,200,0.06)); border-color:rgba(56,120,184,0.18);">
+                    <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center flex-shrink-0" style="background:rgba(56,120,184,0.15); color:#2a5e94;"><i data-lucide="lock" class="w-5 h-5"></i></span>
+                    <div class="flex-1 min-w-0"><p class="text-sm font-bold text-slate-800 mb-0.5">${tD('spa_restricted_title')}</p><p class="text-xs text-slate-600 leading-relaxed">${tD('spa_restricted_body')}</p></div>
+                </div>`;
+
+            const editorHTML = `
+                <header class="mb-6 flex flex-wrap items-start justify-between gap-3">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-semibold mb-1" style="color:var(--text-3);">${esc(hotel.name)}</p>
+                        <h2 class="text-2xl md:text-3xl font-bold flex items-center gap-2" style="letter-spacing:-0.03em;"><span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(56,120,184,0.14); color:#3878b8;"><i data-lucide="flower-2" class="w-5 h-5"></i></span>${tD('spa_editor_title')}</h2>
+                        <p class="text-slate-500 text-sm mt-1">${tD('spa_editor_sub')} · <span class="font-semibold">${tD('spa_count_services', totalItems)}</span> · ${tD('spa_count_available', availableNow)}</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">${backBtn}${actionBtn}</div>
+                </header>
+                ${restrictedBanner}
+                <div class="flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-x-visible gap-2 mb-6 pb-1">
+                    ${filterPill('all', tD('rm_filter_all'))}
+                    ${SPA_CATEGORIES.map(c => filterPill(c.id, tD('spa_cat_' + c.id), c.color)).join('')}
+                </div>
+                ${items.length === 0 ? `
+                    <div class="bg-white rounded-3xl border shadow-sm p-12 text-center">
+                        <div class="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center" style="background:rgba(56,120,184,0.1);"><i data-lucide="flower-2" class="w-9 h-9" style="color:#3878b8;"></i></div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-1">${tD('spa_empty_title')}</h3>
+                        <p class="text-sm text-slate-500 mb-5 max-w-md mx-auto">${isFullEdit ? tD('spa_empty_sub') : tD('spa_empty_sub_restricted')}</p>
+                        ${isFullEdit ? `<button onclick="openSpaItemModal()" class="text-white px-6 py-3 rounded-full text-sm font-bold shadow-md hover:shadow-lg active:scale-95 transition inline-flex items-center gap-2" style="background:linear-gradient(135deg,#3878b8,#2a5e94);"><i data-lucide="plus-circle" class="w-4 h-4"></i>${tD('spa_add')}</button>` : `<button onclick="requestSpaChange()" class="text-white px-6 py-3 rounded-full text-sm font-bold shadow-md hover:shadow-lg active:scale-95 transition inline-flex items-center gap-2" style="background:linear-gradient(135deg, var(--accent-hi), var(--accent));"><i data-lucide="send" class="w-4 h-4"></i>${tD('rm_request_change')}</button>`}
+                    </div>
+                ` : `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-4">
+                        ${filtered.map(item => {
+                            const cat = SPA_CATEGORIES.find(c => c.id === item.category) || SPA_CATEGORIES[0];
+                            return `
+                                <div class="bg-white rounded-3xl border shadow-sm overflow-hidden hover:shadow-md transition ${item.available ? '' : 'opacity-70'}">
+                                    <div class="relative h-40 bg-slate-100">
+                                        ${item.photo ? `<img src="${escAttr(item.photo)}" class="w-full h-full object-cover" onerror="this.style.display='none';">` : `<div class="w-full h-full flex items-center justify-center"><i data-lucide="image" class="w-10 h-10 text-slate-300"></i></div>`}
+                                        <span class="absolute top-3 left-3 inline-flex items-center gap-1 px-2 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider" style="background:${cat.color}; color:white;"><i data-lucide="${cat.icon}" class="w-3 h-3"></i>${tD('spa_cat_' + cat.id)}</span>
+                                        ${!item.available ? `<span class="absolute top-3 right-3 px-2 py-1 rounded-full text-[9px] font-bold uppercase" style="background:rgba(208,80,80,0.95); color:white;">${tD('mob_unavailable_short')}</span>` : ''}
+                                    </div>
+                                    <div class="p-4">
+                                        <div class="flex items-start justify-between gap-2 mb-1">
+                                            <h4 class="font-bold text-slate-800 text-sm leading-tight">${esc(item.name)}</h4>
+                                            <span class="font-bold text-base whitespace-nowrap" style="color:#3878b8;">$${(item.price || 0).toFixed(2)}</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-400 mb-2 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i>${item.duration || 0} min</p>
+                                        <p class="text-xs text-slate-500 line-clamp-2 mb-3 min-h-[32px]">${esc(item.description || '')}</p>
+                                        <div class="flex items-center justify-between gap-2 pt-3 border-t" style="border-color:rgba(56,120,184,0.08);">
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="checkbox" ${item.available ? 'checked' : ''} onchange="toggleSpaItemAvailable('${escAttr(item.id)}')" class="sr-only peer">
+                                                <div class="w-9 h-5 bg-slate-200 peer-checked:bg-emerald-500 rounded-full transition relative"><span class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full" style="transition:transform 0.2s ease; transform:${item.available ? 'translateX(16px)' : 'translateX(0)'};"></span></div>
+                                                <span class="text-[10px] font-semibold ${item.available ? 'text-emerald-700' : 'text-slate-400'}">${item.available ? tD('spa_modal_available') : tD('spa_modal_unavailable')}</span>
+                                            </label>
+                                            <button onclick="openSpaItemModal('${escAttr(item.id)}')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition active:scale-95"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                                        </div>
+                                    </div>
+                                </div>`;
+                        }).join('')}
+                    </div>
+                `}
+            `;
+            target.innerHTML = `
+                <div class="flex flex-col lg:flex-row gap-6">
+                    <div class="flex-1 min-w-0">${editorHTML}</div>
+                    <aside class="w-[330px] shrink-0 mx-auto mobile-preview-aside">
+                        <div class="sticky top-4">
+                            <div class="flex items-center justify-between mb-3 px-1"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${dashLang==='en'?'Guest view':'Vista del huésped'}</p></div>
+                            <div id="guest-phone-preview" class="phone-container relative overflow-hidden" style="width:310px;height:600px;border-radius:42px;background:#1a2214;padding:8px;box-shadow:0 25px 60px rgba(0,0,0,0.4);"></div>
+                            <p class="text-[10px] text-slate-400 text-center mt-3 px-2">${dashLang==='en'?'👆 Tap the phone to see how guests book':'👆 Toca el teléfono para ver cómo reservan los huéspedes'}</p>
+                        </div>
+                    </aside>
+                </div>`;
             renderMobilePreview();
         }
 
@@ -13475,7 +13961,7 @@
         ];
 
         function exportDatabaseJSON() {
-            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus();
+            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus(); ensureSpaServices();
             const payload = {
                 app: BACKUP_APP,
                 version: BACKUP_VERSION,
@@ -13549,7 +14035,7 @@
             const stats = importPreview.stats || {};
             importPreview = null;
             // re-bootstrap arrays defensivamente
-            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus();
+            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus(); ensureSpaServices();
             logAudit('backup.restore', { type:'system', id:'backup', name:'Backup restaurado' }, { before, after: stats });
             renderApp();
             showToast(tD('toast_backup_restored'), `${stats.hotels||0} ${dashLang==='en'?'hotels':'hoteles'}, ${stats.providers||0} ${dashLang==='en'?'providers applied':'proveedores aplicados'}`, 'success');
@@ -14120,7 +14606,7 @@
         // Inicialización
         window.onload = function() {
             applyTheme();   // set data-theme on html before anything renders
-            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus();
+            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus(); ensureSpaServices();
             const isAuthed = initAuthFlow();   // returns true if already logged in
             if (isAuthed) {
                 renderApp();
