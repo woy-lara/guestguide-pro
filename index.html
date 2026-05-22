@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Master Dashboard - Guest Guide SaaS (Stay-App Inspired)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -1341,6 +1341,14 @@
         }
         #mobile-menu-btn, #mobile-sidebar-close { display: none; }
 
+        /* Respetar el notch / Dynamic Island de iOS en el banner superior.
+           En pantallas sin notch, env(safe-area-inset-*) = 0, así que se mantiene el padding original. */
+        #top-banner {
+            padding-top: calc(0.625rem + env(safe-area-inset-top));
+            padding-left: max(1rem, env(safe-area-inset-left));
+            padding-right: max(1rem, env(safe-area-inset-right));
+        }
+
         @media (max-width: 767px) {
             aside.gg-sidebar {
                 position: fixed !important;
@@ -1351,6 +1359,7 @@
                 transform: translateX(-100%);
                 box-shadow: 8px 0 32px rgba(0,0,0,0.35);
                 display: flex !important;
+                padding-top: env(safe-area-inset-top);
             }
             aside.gg-sidebar.is-open { transform: translateX(0); }
             #sidebar-backdrop { display: block; }
@@ -1361,9 +1370,9 @@
             #mobile-menu-btn { display: inline-flex !important; }
             #mobile-sidebar-close { display: inline-flex !important; }
 
-            /* Compact banner on mobile */
+            /* Compact banner on mobile — respeta el notch/Dynamic Island con safe-area-inset-top */
             body > div.bg-gradient-to-r:first-of-type {
-                padding: 8px 10px !important;
+                padding: calc(8px + env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) 8px max(10px, env(safe-area-inset-left)) !important;
                 gap: 6px !important;
             }
             #i18n-simulate-role, #role-simulator { display: none !important; }
@@ -1600,7 +1609,7 @@
     </div>
 
     <!-- Top Simulation Controller Banner -->
-    <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-900 text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 shadow-md relative z-50">
+    <div id="top-banner" class="bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-900 text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 shadow-md relative z-50">
         <div class="flex items-center gap-2">
             <!-- Mobile hamburger (hidden on md+) -->
             <button id="mobile-menu-btn" onclick="openSidebarMobile()" class="w-9 h-9 rounded-full bg-white/10 border border-white/20 hover:bg-white/15 transition items-center justify-center text-white" aria-label="Menu" title="Menú">
