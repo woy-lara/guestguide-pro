@@ -1375,18 +1375,19 @@
             #mobile-menu-btn { display: inline-flex !important; }
             #mobile-sidebar-close { display: inline-flex !important; }
 
-            /* Compact banner on mobile — respeta el notch/Dynamic Island con safe-area-inset-top */
-            body > div.bg-gradient-to-r:first-of-type {
-                padding: calc(8px + env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) 8px max(10px, env(safe-area-inset-left)) !important;
+            /* Compact banner on mobile — respeta el notch/Dynamic Island con safe-area-inset-top.
+               14px de respiro bajo la barra de estado para que los íconos del banner no queden pegados. */
+            #top-banner {
+                padding: calc(14px + env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) 10px max(10px, env(safe-area-inset-left)) !important;
                 gap: 6px !important;
             }
             #i18n-simulate-role, #role-simulator { display: none !important; }
             /* Hide verbose env text on mobile — green dot conveys "live" */
             #i18n-env-active { display: none !important; }
             /* Banner items smaller */
-            body > div.bg-gradient-to-r:first-of-type button { font-size: 11px !important; }
-            body > div.bg-gradient-to-r:first-of-type #demo-tour-btn { padding: 0 8px !important; height: 32px !important; }
-            body > div.bg-gradient-to-r:first-of-type #notif-bell-btn { width: 32px !important; height: 32px !important; }
+            #top-banner button { font-size: 11px !important; }
+            #top-banner #demo-tour-btn { padding: 0 8px !important; height: 32px !important; }
+            #top-banner #notif-bell-btn { width: 32px !important; height: 32px !important; }
 
             /* Main content tighter padding on mobile */
             #main-content-wrapper { padding: 12px !important; }
