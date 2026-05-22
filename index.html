@@ -2967,6 +2967,10 @@
                 nav_daily_report: 'Reporte del Día',
                 dr_title: 'Reporte del Día',
                 dr_subtitle: 'Control operativo de las últimas 24h',
+                dr_list_sub: 'Elige un hotel para ver su reporte',
+                dr_off_short: 'apagado',
+                dr_all_ok: 'Todo activo',
+                dr_back_to_hotels: 'Volver a hoteles',
                 dr_kpi_off: 'Fuera de servicio ahora',
                 dr_kpi_changes: 'Cambios (24h)',
                 dr_kpi_scans: 'Escaneos (24h)',
@@ -3926,6 +3930,10 @@
                 nav_daily_report: 'Daily Report',
                 dr_title: 'Daily Report',
                 dr_subtitle: 'Operational control of the last 24h',
+                dr_list_sub: 'Pick a hotel to see its report',
+                dr_off_short: 'off',
+                dr_all_ok: 'All active',
+                dr_back_to_hotels: 'Back to hotels',
                 dr_kpi_off: 'Off right now',
                 dr_kpi_changes: 'Changes (24h)',
                 dr_kpi_scans: 'Scans (24h)',
@@ -7825,6 +7833,9 @@
                     <button onclick="switchTab('qr_manager')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'qr_manager' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
                         <i data-lucide="qr-code" class="w-5 h-5"></i> ${tD('nav_my_qrs')}
                     </button>
+                    <button onclick="switchTab('daily_report')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'daily_report' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
+                        <i data-lucide="sunrise" class="w-5 h-5"></i> ${tD('nav_daily_report')}
+                    </button>
                     <button onclick="switchTab('audit')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'audit' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
                         <i data-lucide="history" class="w-5 h-5"></i> ${tD('nav_activity')}
                     </button>
@@ -7899,6 +7910,8 @@
             container.innerHTML = '';
 
             if (currentRole === 'saas_admin') {
+                // Reset del hotel seleccionado en Reporte del Día al salir de esa pestaña
+                if (activeTab !== 'daily_report') dailyReportHotelId = null;
                 if (activeTab === 'overview') renderSaaSOverview(container);
                 else if (activeTab === 'hotels') renderSaasHotelsList(container);
                 else if (activeTab === 'stay_services') renderStayServicesPanel(container);
@@ -7927,6 +7940,7 @@
                 else if (activeTab === 'spa_booking') renderSpaBooking(container, currentRole);
                 else if (activeTab === 'finances') renderHotelCharges(container, currentRole);
                 else if (activeTab === 'settings') renderHotelSettings(container, currentRole);
+                else if (activeTab === 'daily_report') renderDailyReportForHotel(container, currentRole, false);
                 else if (activeTab === 'ai_assistant') renderAIAssistantHub(container);
                 else if (activeTab === 'analytics') renderAnalyticsForOwner(container, 'hotel', currentRole);
                 else if (activeTab === 'qr_manager') renderQrManager(container, 'hotel', currentRole);
@@ -14534,38 +14548,80 @@
         //  REPORTE DIARIO (control operativo — Fase 1 frontend)
         //  Fase 2 (backend): cron 7am + envío email/WhatsApp del mismo contenido.
         // ═══════════════════════════════════════════════
+        // saas_admin: null = lista de hoteles; id = reporte de ese hotel. (hotelero siempre ve el suyo)
+        let dailyReportHotelId = null;
+        function dailyReportSince() { return Date.now() - 24 * 3600 * 1000; }
+        function openDailyReportHotel(id) { dailyReportHotelId = id; renderApp(); }
+        function backToDailyReportList() { dailyReportHotelId = null; renderApp(); }
+
+        // Calcula el reporte de UN hotel (fuera de servicio, cambios 24h, tráfico 24h)
+        function computeHotelReport(hotelId) {
+            const h = DATABASE.hotels.find(x => x.id === hotelId);
+            if (!h) return null;
+            const since = dailyReportSince();
+            const offDishes = (h.restaurantMenu || []).filter(i => !i.available);
+            const offSpa = (h.spaServices || []).filter(s => !s.available);
+            const watchedActions = ['restaurant.menu_update', 'spa.update', 'module.disable', 'module.enable', 'hotel.settings_update'];
+            const recentChanges = DATABASE.auditLog.filter(a => new Date(a.ts).getTime() >= since && watchedActions.includes(a.action) && a.targetId === hotelId);
+            const recentEvents = DATABASE.analytics.filter(e => new Date(e.timestamp).getTime() >= since && e.ownerId === hotelId);
+            return {
+                hotel: h, offDishes, offSpa, totalOff: offDishes.length + offSpa.length, recentChanges,
+                scans: recentEvents.filter(e => e.action === 'scan').length,
+                views: recentEvents.filter(e => e.action === 'view_tour').length,
+                vouchers: recentEvents.filter(e => e.action === 'voucher_generated').length
+            };
+        }
+
+        // Router del tab para saas_admin: lista de hoteles o reporte del hotel elegido
         function renderDailyReport(target) {
-            const now = Date.now();
-            const since = now - 24 * 3600 * 1000; // últimas 24h
+            if (dailyReportHotelId) renderDailyReportForHotel(target, dailyReportHotelId, true);
+            else renderDailyReportList(target);
+        }
+
+        // saas_admin: lista de hoteles (clic en uno → su reporte). Cada card muestra estado resumido.
+        function renderDailyReportList(target) {
             const locale = dashLang === 'en' ? 'en-US' : 'es-ES';
             const todayLabel = new Date().toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
+            const cards = DATABASE.hotels.map(h => {
+                const rep = computeHotelReport(h.id);
+                const logo = h.logo
+                    ? `<img src="${escAttr(h.logo)}" class="w-12 h-12 rounded-2xl object-cover flex-shrink-0" onerror="this.style.display='none';">`
+                    : `<div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold flex-shrink-0" style="background:${h.colorTheme||'#6aaa1e'};">${esc((h.name||'?').slice(0,2).toUpperCase())}</div>`;
+                const badge = rep.totalOff > 0
+                    ? `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold" style="background:rgba(208,80,80,0.12); color:#a83333;"><i data-lucide="power-off" class="w-3 h-3"></i>${rep.totalOff} ${tD('dr_off_short')}</span>`
+                    : `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold" style="background:rgba(106,170,30,0.14); color:#3d7710;"><i data-lucide="check-circle-2" class="w-3 h-3"></i>${tD('dr_all_ok')}</span>`;
+                return `
+                    <button onclick="openDailyReportHotel('${escAttr(h.id)}')" class="bg-white rounded-3xl border shadow-sm p-4 text-left hover:shadow-md active:scale-[0.98] transition flex items-center gap-3 w-full">
+                        ${logo}
+                        <div class="flex-1 min-w-0">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 truncate">${esc(h.location||'')}</p>
+                            <h3 class="font-bold text-slate-800 truncate">${esc(h.name)}</h3>
+                            <div class="mt-1.5">${badge}</div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 flex-shrink-0"></i>
+                    </button>`;
+            }).join('');
+            target.innerHTML = `
+                <header class="mb-6">
+                    <h2 class="text-2xl md:text-3xl font-bold flex items-center gap-2" style="letter-spacing:-0.03em;">
+                        <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(80,100,55,0.12); color:var(--sidebar-bg);"><i data-lucide="sunrise" class="w-5 h-5"></i></span>
+                        ${tD('dr_title')}
+                    </h2>
+                    <p class="text-slate-500 text-sm mt-1">${tD('dr_list_sub')} · <span class="font-semibold capitalize">${esc(todayLabel)}</span></p>
+                </header>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${cards}</div>
+            `;
+            lucide.createIcons();
+        }
 
-            // 1. Servicios/platos fuera de servicio AHORA (por hotel)
-            const offByHotel = [];
-            let totalOff = 0;
-            DATABASE.hotels.forEach(h => {
-                const offDishes = (h.restaurantMenu || []).filter(i => !i.available);
-                const offSpa = (h.spaServices || []).filter(s => !s.available);
-                if (offDishes.length || offSpa.length) {
-                    offByHotel.push({ hotel: h, offDishes, offSpa });
-                    totalOff += offDishes.length + offSpa.length;
-                }
-            });
+        // Reporte de UN hotel. showBack=true para saas_admin (botón volver a hoteles); false para el hotelero.
+        function renderDailyReportForHotel(target, hotelId, showBack) {
+            const rep = computeHotelReport(hotelId);
+            if (!rep) { target.innerHTML = ''; return; }
+            const locale = dashLang === 'en' ? 'en-US' : 'es-ES';
+            const todayLabel = new Date().toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
+            const { hotel, offDishes, offSpa, totalOff, recentChanges, scans, views, vouchers } = rep;
 
-            // 2. Cambios en las últimas 24h (auditLog) — foco en activaciones/desactivaciones/ajustes
-            const watchedActions = ['restaurant.menu_update', 'spa.update', 'module.disable', 'module.enable', 'hotel.settings_update'];
-            const recentChanges = DATABASE.auditLog.filter(a => {
-                const t = new Date(a.ts).getTime();
-                return t >= since && watchedActions.includes(a.action);
-            });
-
-            // 3. Tráfico últimas 24h (analytics)
-            const recentEvents = DATABASE.analytics.filter(e => new Date(e.timestamp).getTime() >= since);
-            const scans = recentEvents.filter(e => e.action === 'scan').length;
-            const views = recentEvents.filter(e => e.action === 'view_tour').length;
-            const vouchers = recentEvents.filter(e => e.action === 'voucher_generated').length;
-
-            // KPI compacto: icono + número en una fila, label debajo. extraClass para el span en móvil.
             const kpi = (icon, color, value, label, extraClass = '') => `
                 <div class="bg-white rounded-2xl border shadow-sm p-4 ${extraClass}">
                     <div class="flex items-center gap-2.5">
@@ -14575,23 +14631,17 @@
                     <p class="text-[11px] text-slate-500 mt-2">${label}</p>
                 </div>`;
 
-            // Lista de fuera-de-servicio
-            const offHTML = offByHotel.length === 0 ? `
+            const offHTML = totalOff === 0 ? `
                 <div class="p-6 text-center">
                     <div class="w-12 h-12 rounded-full mx-auto mb-2 flex items-center justify-center" style="background:rgba(106,170,30,0.12);"><i data-lucide="check-circle-2" class="w-6 h-6" style="color:#3d7710;"></i></div>
                     <p class="text-sm font-semibold text-slate-700">${tD('dr_off_empty')}</p>
                 </div>
-            ` : offByHotel.map(row => `
-                <div class="px-5 py-3.5 border-b last:border-b-0" style="border-color:rgba(80,100,55,0.08);">
-                    <p class="text-sm font-bold text-slate-800 mb-1.5">${esc(row.hotel.name)}</p>
-                    <div class="flex flex-wrap gap-1.5">
-                        ${row.offDishes.map(d => `<span class="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full" style="background:rgba(208,80,80,0.1); color:#a83333;"><i data-lucide="chef-hat" class="w-3 h-3"></i>${esc(d.name)}</span>`).join('')}
-                        ${row.offSpa.map(s => `<span class="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full" style="background:rgba(56,120,184,0.1); color:#2a5e94;"><i data-lucide="flower-2" class="w-3 h-3"></i>${esc(s.name)}</span>`).join('')}
-                    </div>
-                </div>
-            `).join('');
+            ` : `
+                <div class="px-5 py-4 flex flex-wrap gap-1.5">
+                    ${offDishes.map(d => `<span class="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full" style="background:rgba(208,80,80,0.1); color:#a83333;"><i data-lucide="chef-hat" class="w-3 h-3"></i>${esc(d.name)}</span>`).join('')}
+                    ${offSpa.map(s => `<span class="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full" style="background:rgba(56,120,184,0.1); color:#2a5e94;"><i data-lucide="flower-2" class="w-3 h-3"></i>${esc(s.name)}</span>`).join('')}
+                </div>`;
 
-            // Lista de cambios
             const changesHTML = recentChanges.length === 0 ? `
                 <div class="p-6 text-center"><p class="text-sm text-slate-500">${tD('dr_changes_empty')}</p></div>
             ` : recentChanges.slice(0, 12).map(a => {
@@ -14607,6 +14657,8 @@
 
             target.innerHTML = `
                 <header class="mb-6">
+                    ${showBack ? `<button onclick="backToDailyReportList()" class="bg-white border text-slate-700 px-4 py-2 rounded-full text-sm font-semibold shadow-sm hover:shadow active:scale-95 transition inline-flex items-center gap-2 mb-3"><i data-lucide="arrow-left" class="w-4 h-4"></i>${tD('dr_back_to_hotels')}</button>` : ''}
+                    <p class="text-xs font-semibold mb-1" style="color:var(--text-3);">${esc(hotel.name)}</p>
                     <h2 class="text-2xl md:text-3xl font-bold flex items-center gap-2" style="letter-spacing:-0.03em;">
                         <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(80,100,55,0.12); color:var(--sidebar-bg);"><i data-lucide="sunrise" class="w-5 h-5"></i></span>
                         ${tD('dr_title')}
@@ -14655,7 +14707,7 @@
                         <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">${tD('dr_email_preview')}</p>
                     </div>
                     <div class="bg-white rounded-2xl border shadow-sm p-4 max-w-md">
-                        <p class="text-[11px] text-slate-400 mb-1">${tD('dr_email_subject')}: <span class="text-slate-700 font-semibold">GuestGuide Pro — ${esc(todayLabel)}</span></p>
+                        <p class="text-[11px] text-slate-400 mb-1">${tD('dr_email_subject')}: <span class="text-slate-700 font-semibold">${esc(hotel.name)} — ${esc(todayLabel)}</span></p>
                         <div class="border-t my-2" style="border-color:rgba(80,100,55,0.08);"></div>
                         <p class="text-sm text-slate-700 leading-relaxed">${tD('dr_email_greeting')}</p>
                         <ul class="text-sm text-slate-700 mt-2 space-y-1">
