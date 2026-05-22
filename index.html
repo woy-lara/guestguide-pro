@@ -10126,7 +10126,7 @@
                 </div>
 
                 <!-- Quick actions -->
-                <div class="grid grid-cols-2 md:grid-cols-${(hotel.enabledModules || []).includes('restaurant') ? '5' : '4'} gap-3 mb-7">
+                <div class="grid grid-cols-2 md:grid-cols-${4 + ((hotel.enabledModules || []).includes('restaurant') ? 1 : 0) + ((hotel.enabledModules || []).includes('spa_booking') ? 1 : 0)} gap-3 mb-7">
                     <button onclick="switchTab('stay_services')" class="bg-white p-4 rounded-2xl border shadow-sm hover:shadow-md transition text-left active:scale-[0.98] relative">
                         <div class="w-9 h-9 rounded-xl flex items-center justify-center mb-2" style="background:rgba(192,120,32,0.14); color:var(--amber);"><i data-lucide="bell" class="w-5 h-5"></i></div>
                         <p class="text-xs font-bold text-slate-800">${tD('hov_action_requests')}</p>
@@ -10137,6 +10137,13 @@
                             <div class="w-9 h-9 rounded-xl flex items-center justify-center mb-2" style="background:rgba(208,80,80,0.14); color:#d05050;"><i data-lucide="chef-hat" class="w-5 h-5"></i></div>
                             <p class="text-xs font-bold text-slate-800">${tD('rm_page_title')}</p>
                             <span class="absolute top-3 right-3 text-[10px] font-mono opacity-60">${(hotel.restaurantMenu || []).length}</span>
+                        </button>
+                    ` : ''}
+                    ${(hotel.enabledModules || []).includes('spa_booking') ? `
+                        <button onclick="switchTab('spa_booking')" class="bg-white p-4 rounded-2xl border shadow-sm hover:shadow-md transition text-left active:scale-[0.98] relative">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center mb-2" style="background:rgba(56,120,184,0.14); color:#3878b8;"><i data-lucide="flower-2" class="w-5 h-5"></i></div>
+                            <p class="text-xs font-bold text-slate-800">${tD('spa_editor_title')}</p>
+                            <span class="absolute top-3 right-3 text-[10px] font-mono opacity-60">${(hotel.spaServices || []).length}</span>
                         </button>
                     ` : ''}
                     <button onclick="openHotelBuilder('${escAttr(hotelId)}')" class="bg-white p-4 rounded-2xl border shadow-sm hover:shadow-md transition text-left active:scale-[0.98]">
