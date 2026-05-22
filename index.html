@@ -4357,6 +4357,7 @@
             { id: 'booking',     name: 'Booking.com',       icon: 'building',       color: '#003580', placeholder: 'URL del listado' },
             { id: 'airbnb',      name: 'Airbnb',            icon: 'home',           color: '#ff5a5f', placeholder: 'URL del listado' },
             { id: 'expedia',     name: 'Expedia',           icon: 'plane',          color: '#fcc007', placeholder: 'URL del listado' },
+            { id: 'hotels',      name: 'Hotels.com',        icon: 'bed-double',     color: '#d32f2f', placeholder: 'URL del listado' },
             { id: 'google',      name: 'Google Business',   icon: 'map-pin',        color: '#4285f4', placeholder: 'URL del perfil' },
             { id: 'whatsapp',    name: 'WhatsApp Business', icon: 'message-circle', color: '#25d366', placeholder: '+507 ...' }
         ];
@@ -10428,7 +10429,8 @@
         function socialIconSvg(name, size = 18) {
             const d = SOCIAL_ICON_PATHS[name];
             if (!d) return '';
-            return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="currentColor" aria-hidden="true"><path d="${d}"/></svg>`;
+            // display:block evita el desfase de baseline de los SVG inline → siempre centrado en su contenedor flex
+            return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="currentColor" style="display:block;" aria-hidden="true"><path d="${d}"/></svg>`;
         }
         // Icono de una plataforma social: SVG de marca si lo tenemos, sino el icono Lucide del catálogo.
         function platformIconHtml(platformId, size = 18) {
