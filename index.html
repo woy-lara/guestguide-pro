@@ -1933,6 +1933,7 @@
         let tempHotel = {};
         let selectedHotelId = null;
         let activeEditorTab = "basic";
+        let hotelSettingsDraft = null; // clon editable del hotel en la página de Configuración
 
         let tempProvider = {};
 
@@ -2940,6 +2941,27 @@
                 spa_toast_updated: 'Servicio actualizado',
                 spa_toast_deleted: 'Servicio eliminado',
                 spa_toast_toggled: (name, on) => `${name} ${on ? 'disponible' : 'no disponible'}`,
+                nav_settings: 'Configuración',
+                set_page_title: 'Configuración del Hotel',
+                set_page_sub: 'Datos del hotel, contacto del staff y horarios de servicio.',
+                set_section_profile: 'Perfil del hotel',
+                set_section_whatsapp: 'WhatsApp del staff',
+                set_section_hours: 'Horarios de servicio',
+                set_name: 'Nombre del hotel',
+                set_location: 'Ubicación',
+                set_website: 'Sitio web',
+                set_instagram: 'Instagram',
+                set_facebook: 'Facebook',
+                set_logo: 'URL del logo',
+                set_color: 'Color de marca',
+                set_whatsapp: 'Número de WhatsApp',
+                set_whatsapp_hint: 'A este número llegan las órdenes del restaurante y las reservas de spa de tus huéspedes.',
+                set_hours_hint: 'Define cuándo los huéspedes pueden ordenar o reservar cada servicio.',
+                set_hours_room_service: 'Room Service',
+                set_save: 'Guardar cambios',
+                set_saved_title: 'Configuración guardada ✨',
+                set_saved_msg: 'Los cambios se aplicaron correctamente.',
+                set_name_required: 'El nombre del hotel es obligatorio.',
                 mreq_title: 'Solicitudes de Integración',
                 mreq_subtitle: 'Lo que tus hoteles piden — prioriza tu roadmap con datos reales',
                 mreq_total: 'Total',
@@ -3857,6 +3879,27 @@
                 spa_toast_updated: 'Service updated',
                 spa_toast_deleted: 'Service deleted',
                 spa_toast_toggled: (name, on) => `${name} ${on ? 'available' : 'unavailable'}`,
+                nav_settings: 'Settings',
+                set_page_title: 'Hotel Settings',
+                set_page_sub: 'Hotel info, staff contact and service hours.',
+                set_section_profile: 'Hotel profile',
+                set_section_whatsapp: 'Staff WhatsApp',
+                set_section_hours: 'Service hours',
+                set_name: 'Hotel name',
+                set_location: 'Location',
+                set_website: 'Website',
+                set_instagram: 'Instagram',
+                set_facebook: 'Facebook',
+                set_logo: 'Logo URL',
+                set_color: 'Brand color',
+                set_whatsapp: 'WhatsApp number',
+                set_whatsapp_hint: 'Restaurant orders and spa bookings from your guests arrive at this number.',
+                set_hours_hint: 'Define when guests can order or book each service.',
+                set_hours_room_service: 'Room Service',
+                set_save: 'Save changes',
+                set_saved_title: 'Settings saved ✨',
+                set_saved_msg: 'Your changes were applied.',
+                set_name_required: 'Hotel name is required.',
                 mreq_title: 'Integration Requests',
                 mreq_subtitle: 'What your hotels are asking for — prioritize your roadmap with real data',
                 mreq_total: 'Total',
@@ -5718,7 +5761,8 @@
             'module.request':        { label:'Solicitud de integración', icon:'zap',           severity:'info' },
             'module.request_status': { label:'Solicitud actualizada',    icon:'refresh-cw',    severity:'info' },
             'restaurant.menu_update':{ label:'Menú restaurante actualizado', icon:'chef-hat',  severity:'info' },
-            'spa.update':            { label:'Servicio de spa actualizado',  icon:'flower-2',  severity:'info' }
+            'spa.update':            { label:'Servicio de spa actualizado',  icon:'flower-2',  severity:'info' },
+            'hotel.settings_update': { label:'Configuración del hotel actualizada', icon:'settings', severity:'info' }
         };
 
         // Resuelve el label del evento de audit usando i18n; cae al label hardcoded si no existe.
@@ -7735,6 +7779,9 @@
                     <button onclick="switchTab('audit')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'audit' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
                         <i data-lucide="history" class="w-5 h-5"></i> ${tD('nav_activity')}
                     </button>
+                    <button onclick="switchTab('settings')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'settings' ? 'sidebar-item-active' : 'text-slate-500 hover:text-blue-600'}">
+                        <i data-lucide="settings" class="w-5 h-5"></i> ${tD('nav_settings')}
+                    </button>
                     <div class="pt-4 mt-4 border-t border-slate-100">
                         <p class="text-[10px] font-bold text-slate-400 uppercase px-3 mb-2">${tD('nav_concierge_ai')}</p>
                         <button onclick="switchTab('ai_assistant')" class="w-full text-left sidebar-item flex items-center gap-3 p-3 rounded-xl transition-all-300 ${activeTab === 'ai_assistant' ? 'sidebar-item-active' : 'text-indigo-500 hover:text-indigo-600 bg-indigo-50/20'}">
@@ -7821,12 +7868,15 @@
                 else if (activeTab === 'spa_booking') renderSpaBooking(container, saasEditSpaHotelId);
                 else if (activeTab === 'backup') renderBackupView(container);
             } else if (currentRole.startsWith('hotel_')) {
+                // Reset del draft de Settings al salir de esa página (para re-clonar fresco al volver)
+                if (activeTab !== 'settings') hotelSettingsDraft = null;
                 if (activeTab === 'overview') renderHotelOverview(container, currentRole);
                 else if (activeTab === 'stay_services') renderStayServicesPanel(container, currentRole);
                 else if (activeTab === 'modules') renderHotelModules(container, currentRole);
                 else if (activeTab === 'restaurant_menu') renderRestaurantMenu(container, currentRole);
                 else if (activeTab === 'spa_booking') renderSpaBooking(container, currentRole);
                 else if (activeTab === 'finances') renderHotelCharges(container, currentRole);
+                else if (activeTab === 'settings') renderHotelSettings(container, currentRole);
                 else if (activeTab === 'ai_assistant') renderAIAssistantHub(container);
                 else if (activeTab === 'analytics') renderAnalyticsForOwner(container, 'hotel', currentRole);
                 else if (activeTab === 'qr_manager') renderQrManager(container, 'hotel', currentRole);
@@ -10355,6 +10405,143 @@
                             </button>
                         </footer>
                     </div>
+                </div>
+            `;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // ═══════════════════════════════════════════════
+        //  CONFIGURACIÓN DEL HOTELERO (Settings)
+        // ═══════════════════════════════════════════════
+        const SERVICE_HOURS_DEFAULTS = {
+            room_service: { from: '07:00', to: '22:00' },
+            restaurant:   { from: '07:00', to: '22:00' },
+            spa_booking:  { from: '09:00', to: '18:00' }
+        };
+        function ensureServiceHours(hotel) {
+            if (!hotel.serviceHours) hotel.serviceHours = {};
+            ['room_service','restaurant','spa_booking'].forEach(k => {
+                if (!hotel.serviceHours[k]) hotel.serviceHours[k] = { ...SERVICE_HOURS_DEFAULTS[k] };
+            });
+            return hotel.serviceHours;
+        }
+        function initHotelSettings(hotel) {
+            ensureServiceHours(hotel);
+            hotelSettingsDraft = {
+                name: hotel.name || '', location: hotel.location || '',
+                website: hotel.website || '', instagram: hotel.instagram || '', facebook: hotel.facebook || '',
+                colorTheme: hotel.colorTheme || '#6aaa1e', logo: hotel.logo || '',
+                whatsappStaffPhone: hotel.whatsappStaffPhone || '',
+                serviceHours: JSON.parse(JSON.stringify(hotel.serviceHours))
+            };
+        }
+        function updateSettingsField(field, v) { if (hotelSettingsDraft) hotelSettingsDraft[field] = v; }
+        function updateServiceHour(moduleKey, bound, v) {
+            if (hotelSettingsDraft && hotelSettingsDraft.serviceHours[moduleKey]) hotelSettingsDraft.serviceHours[moduleKey][bound] = v;
+        }
+        function saveHotelSettings(hotelId) {
+            const hotel = DATABASE.hotels.find(h => h.id === hotelId);
+            if (!hotel || !hotelSettingsDraft) return;
+            const d = hotelSettingsDraft;
+            if (!d.name || !d.name.trim()) { showToast(tD('toast_error'), tD('set_name_required'), 'error'); return; }
+            Object.assign(hotel, {
+                name: d.name.trim(), location: d.location, website: d.website,
+                instagram: d.instagram, facebook: d.facebook, colorTheme: d.colorTheme,
+                logo: d.logo, whatsappStaffPhone: d.whatsappStaffPhone,
+                serviceHours: JSON.parse(JSON.stringify(d.serviceHours))
+            });
+            logAudit('hotel.settings_update', { type:'hotel', id: hotel.id, name: hotel.name }, { whatsapp: d.whatsappStaffPhone });
+            showToastT('set_saved_title', tD('set_saved_msg'), 'success');
+            renderApp();
+        }
+
+        function renderHotelSettings(target, hotelId) {
+            const hotel = DATABASE.hotels.find(h => h.id === hotelId);
+            if (!hotel) { target.innerHTML = ''; return; }
+            // (Re)inicializar el draft al entrar a la página
+            if (!hotelSettingsDraft) initHotelSettings(hotel);
+            const d = hotelSettingsDraft;
+            const enabled = hotel.enabledModules || [];
+
+            const field = (label, fieldName, value, ph, type='text') => `
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${label}</label>
+                    <input type="${type}" oninput="updateSettingsField('${fieldName}', this.value)" value="${escAttr(value || '')}" placeholder="${escAttr(ph||'')}" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:bg-white" style="border-color:rgba(80,100,55,0.15);">
+                </div>`;
+
+            // Bloque de horarios solo para módulos activos
+            const hoursModules = [
+                { key:'room_service', label: tD('set_hours_room_service'), color:'#c07820', show:true },
+                { key:'restaurant',   label: tD('rm_page_title'),          color:'#d05050', show: enabled.includes('restaurant') },
+                { key:'spa_booking',  label: tD('spa_editor_title'),       color:'#3878b8', show: enabled.includes('spa_booking') }
+            ].filter(m => m.show);
+            const hoursHTML = hoursModules.map(m => {
+                const h = d.serviceHours[m.key] || { from:'', to:'' };
+                return `
+                    <div class="flex items-center gap-3 py-2.5 border-b last:border-b-0" style="border-color:rgba(80,100,55,0.08);">
+                        <span class="inline-flex w-2.5 h-2.5 rounded-full flex-shrink-0" style="background:${m.color};"></span>
+                        <span class="flex-1 text-sm font-semibold text-slate-700 min-w-0 truncate">${m.label}</span>
+                        <input type="time" value="${escAttr(h.from)}" onchange="updateServiceHour('${m.key}','from',this.value)" class="px-2 py-1.5 rounded-lg border bg-slate-50 text-xs" style="border-color:rgba(80,100,55,0.15);">
+                        <span class="text-slate-400 text-xs">–</span>
+                        <input type="time" value="${escAttr(h.to)}" onchange="updateServiceHour('${m.key}','to',this.value)" class="px-2 py-1.5 rounded-lg border bg-slate-50 text-xs" style="border-color:rgba(80,100,55,0.15);">
+                    </div>`;
+            }).join('');
+
+            const card = (titleKey, icon, bodyHTML) => `
+                <div class="bg-white rounded-3xl border shadow-sm overflow-hidden mb-5">
+                    <header class="px-5 py-4 border-b flex items-center gap-2.5" style="border-color:rgba(80,100,55,0.1);">
+                        <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(80,100,55,0.1); color:var(--sidebar-bg);"><i data-lucide="${icon}" class="w-5 h-5"></i></span>
+                        <h3 class="font-bold text-slate-800">${tD(titleKey)}</h3>
+                    </header>
+                    <div class="p-5 space-y-4">${bodyHTML}</div>
+                </div>`;
+
+            target.innerHTML = `
+                <header class="mb-6">
+                    <p class="text-xs font-semibold mb-1" style="color:var(--text-3);">${esc(hotel.name)}</p>
+                    <h2 class="text-2xl md:text-3xl font-bold flex items-center gap-2" style="letter-spacing:-0.03em;">
+                        <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(80,100,55,0.12); color:var(--sidebar-bg);"><i data-lucide="settings" class="w-5 h-5"></i></span>
+                        ${tD('set_page_title')}
+                    </h2>
+                    <p class="text-slate-500 text-sm mt-1">${tD('set_page_sub')}</p>
+                </header>
+
+                ${card('set_section_profile', 'building-2', `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        ${field(tD('set_name'), 'name', d.name, tD('set_name'))}
+                        ${field(tD('set_location'), 'location', d.location, 'Boquete, Chiriquí')}
+                    </div>
+                    ${field(tD('set_website'), 'website', d.website, 'https://...', 'url')}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        ${field(tD('set_instagram'), 'instagram', d.instagram, '@hotel')}
+                        ${field(tD('set_facebook'), 'facebook', d.facebook, 'hotelpage')}
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        ${field(tD('set_logo'), 'logo', d.logo, 'https://...', 'url')}
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('set_color')}</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" value="${escAttr(d.colorTheme)}" oninput="updateSettingsField('colorTheme', this.value)" class="w-12 h-10 rounded-lg border cursor-pointer" style="border-color:rgba(80,100,55,0.15);">
+                                <span class="text-xs font-mono text-slate-500">${esc(d.colorTheme)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `)}
+
+                ${card('set_section_whatsapp', 'message-circle', `
+                    <p class="text-xs text-slate-500 -mt-1">${tD('set_whatsapp_hint')}</p>
+                    ${field(tD('set_whatsapp'), 'whatsappStaffPhone', d.whatsappStaffPhone, '+507 6000 0000', 'tel')}
+                `)}
+
+                ${card('set_section_hours', 'clock', `
+                    <p class="text-xs text-slate-500 -mt-1 mb-2">${tD('set_hours_hint')}</p>
+                    ${hoursHTML}
+                `)}
+
+                <div class="flex justify-end gap-2 sticky bottom-4">
+                    <button onclick="saveHotelSettings('${escAttr(hotelId)}')" class="text-white px-6 py-3 rounded-full text-sm font-bold shadow-lg hover:shadow-xl active:scale-95 transition flex items-center gap-2" style="background:linear-gradient(135deg, var(--accent-hi), var(--accent));">
+                        <i data-lucide="save" class="w-4 h-4"></i>${tD('set_save')}
+                    </button>
                 </div>
             `;
             if (typeof lucide !== 'undefined') lucide.createIcons();
