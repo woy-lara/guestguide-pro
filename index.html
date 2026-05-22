@@ -1173,7 +1173,10 @@
             inset: 0;
             z-index: 100;
             display: flex;
-            align-items: center;
+            /* flex-start + margin:auto en el contenido centra cuando cabe y permite
+               scroll completo cuando el contenido excede la pantalla (evita que la
+               primera tarjeta —SaaS Admin— quede cortada arriba e inalcanzable). */
+            align-items: flex-start;
             justify-content: center;
             background:
                 radial-gradient(circle at 20% 10%, rgba(106,170,30,0.12) 0%, transparent 50%),
@@ -1183,6 +1186,7 @@
             overflow-y: auto;
             padding: 24px;
         }
+        #auth-overlay > #auth-screen-host { margin: auto 0; width: 100%; }
         #auth-overlay.hidden { display: none; }
         .auth-card {
             background: rgba(255,255,255,0.04);
