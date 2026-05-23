@@ -3069,6 +3069,8 @@
                 rm_modal_photo: 'URL de foto',
                 rm_modal_photo_ph: 'https://images.unsplash.com/...',
                 rm_modal_photo_hint: 'Tip: usa Unsplash o Pexels para fotos profesionales gratuitas.',
+                rm_modal_photos: 'Galería de fotos',
+                rm_modal_add_photo: 'Agregar foto',
                 rm_modal_available: 'Disponible ahora',
                 rm_modal_unavailable: 'No disponible',
                 rm_modal_save: 'Guardar',
@@ -4032,6 +4034,8 @@
                 rm_modal_photo: 'Photo URL',
                 rm_modal_photo_ph: 'https://images.unsplash.com/...',
                 rm_modal_photo_hint: 'Tip: use Unsplash or Pexels for free professional photos.',
+                rm_modal_photos: 'Photo gallery',
+                rm_modal_add_photo: 'Add photo',
                 rm_modal_available: 'Available now',
                 rm_modal_unavailable: 'Not available',
                 rm_modal_save: 'Save',
@@ -6929,6 +6933,19 @@
         // Selecciones de modificadores: { [groupId]: [optionId, ...] }
         // Grupos single permiten 1 opción; grupos multiple permiten N
         let menuDetailModifierSelections = {};
+        // Galería de fotos: índice activo en el carrusel del huésped (resetea al cambiar item)
+        let menuDetailPhotoIdx = 0;
+        let spaDetailPhotoIdx = 0;
+
+        // Devuelve siempre un array de fotos para un item (compatible con el campo legacy item.photo).
+        // Prioriza item.photos[] si tiene contenido; sino cae a [item.photo] si existe; sino [].
+        function getItemPhotos(item) {
+            if (item && Array.isArray(item.photos) && item.photos.filter(Boolean).length > 0) return item.photos.filter(Boolean);
+            if (item && item.photo) return [item.photo];
+            return [];
+        }
+        function setMenuDetailPhotoIdx(i) { menuDetailPhotoIdx = i; renderMobilePreview(); }
+        function setSpaDetailPhotoIdx(i)  { spaDetailPhotoIdx  = i; renderMobilePreview(); }
 
         // ─── Helpers para modificadores ───
         function getModifierGroups(item) {
@@ -6982,6 +6999,7 @@
                     menuDetailQty = 1;
                     menuDetailNotes = '';
                     menuDetailModifierSelections = {};
+                    menuDetailPhotoIdx = 0;
                 }
                 selectedMobileMenuItemId = idArg;
             } else if (viewName === 'spa_detail') {
@@ -6989,6 +7007,7 @@
                 if (selectedMobileSpaId !== idArg) {
                     spaBookDay = 'today';
                     spaBookSlot = null;
+                    spaDetailPhotoIdx = 0;
                 }
                 selectedMobileSpaId = idArg;
             } else if (viewName === 'tour_detail') {
@@ -7512,9 +7531,14 @@
                 }).join('');
                 phone.innerHTML = `
                     <div class="absolute inset-0 flex flex-col bg-white" style="border-radius:34px;overflow:hidden;">
-                        <!-- Hero photo (más imponente: 260px) -->
+                        <!-- Hero (carrusel si hay múltiples fotos) -->
                         <div class="relative h-[260px] flex-shrink-0" style="background:${cat.color}22;">
-                            ${item.photo ? `<img src="${escAttr(item.photo)}" class="w-full h-full object-cover" onerror="this.style.display='none';">` : `<div class="w-full h-full flex items-center justify-center"><i data-lucide="image" class="w-16 h-16" style="color:${cat.color}66;"></i></div>`}
+                            ${(() => {
+                                const photos = getItemPhotos(item);
+                                const idx = Math.min(menuDetailPhotoIdx, Math.max(0, photos.length - 1));
+                                if (photos.length === 0) return `<div class="w-full h-full flex items-center justify-center"><i data-lucide="image" class="w-16 h-16" style="color:${cat.color}66;"></i></div>`;
+                                return `<img src="${escAttr(photos[idx])}" class="w-full h-full object-cover" onerror="this.style.display='none';">${photos.length > 1 ? `<div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10 px-2.5 py-1.5 rounded-full" style="background:rgba(0,0,0,0.35); backdrop-filter:blur(4px);">${photos.map((_, i) => `<button onclick="setMenuDetailPhotoIdx(${i})" aria-label="Foto ${i+1}" class="rounded-full transition active:scale-90" style="width:${i===idx?'14px':'6px'}; height:6px; background:${i===idx?'#fff':'rgba(255,255,255,0.55)'};"></button>`).join('')}</div>` : ''}`;
+                            })()}
                             <!-- Gradiente sutil arriba: sólo para legibilidad de los botones flotantes -->
                             <div class="absolute inset-x-0 top-0 h-14 bg-gradient-to-b from-black/30 to-transparent pointer-events-none"></div>
                             <button onclick="setMobileView('menu_list')" class="absolute top-3 left-3 w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center active:scale-95 transition">
@@ -7669,7 +7693,12 @@
                 phone.innerHTML = `
                     <div class="absolute inset-0 flex flex-col bg-white" style="border-radius:34px;overflow:hidden;">
                         <div class="relative h-[240px] flex-shrink-0" style="background:${catCfg.color}22;">
-                            ${item.photo ? `<img src="${escAttr(item.photo)}" class="w-full h-full object-cover" onerror="this.style.display='none';">` : `<div class="w-full h-full flex items-center justify-center"><i data-lucide="${catCfg.icon}" class="w-16 h-16" style="color:${catCfg.color}66;"></i></div>`}
+                            ${(() => {
+                                const photos = getItemPhotos(item);
+                                const idx = Math.min(spaDetailPhotoIdx, Math.max(0, photos.length - 1));
+                                if (photos.length === 0) return `<div class="w-full h-full flex items-center justify-center"><i data-lucide="${catCfg.icon}" class="w-16 h-16" style="color:${catCfg.color}66;"></i></div>`;
+                                return `<img src="${escAttr(photos[idx])}" class="w-full h-full object-cover" onerror="this.style.display='none';">${photos.length > 1 ? `<div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10 px-2.5 py-1.5 rounded-full" style="background:rgba(0,0,0,0.35); backdrop-filter:blur(4px);">${photos.map((_, i) => `<button onclick="setSpaDetailPhotoIdx(${i})" aria-label="Foto ${i+1}" class="rounded-full transition active:scale-90" style="width:${i===idx?'14px':'6px'}; height:6px; background:${i===idx?'#fff':'rgba(255,255,255,0.55)'};"></button>`).join('')}</div>` : ''}`;
+                            })()}
                             <div class="absolute inset-x-0 top-0 h-14 bg-gradient-to-b from-black/30 to-transparent pointer-events-none"></div>
                             <button onclick="setMobileView('spa_list')" class="absolute top-3 left-3 w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center active:scale-95 transition"><i data-lucide="arrow-left" class="w-4 h-4 text-slate-800"></i></button>
                             <span class="absolute top-3 right-3 inline-flex items-center gap-1 px-2 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider bg-white shadow-md" style="color:${catCfg.color};"><i data-lucide="${catCfg.icon}" class="w-3 h-3"></i>${tD('spa_cat_' + catCfg.id)}</span>
@@ -10892,11 +10921,30 @@
             }
             if (itemId) {
                 const it = (hotel.restaurantMenu || []).find(x => x.id === itemId);
-                if (it) rmItemDraft = { ...it };
+                if (it) {
+                    rmItemDraft = { ...it };
+                    rmItemDraft.photos = getItemPhotos(it).slice();  // normalizar a array
+                }
             } else {
-                rmItemDraft = { id:null, category:'breakfast', name:'', price:0, description:'', photo:'', available:true };
+                rmItemDraft = { id:null, category:'breakfast', name:'', price:0, description:'', photo:'', photos:[], available:true };
             }
             renderRmItemModal();
+        }
+        // ─── Helpers para gestionar fotos múltiples del plato (solo saas_admin) ───
+        function addRmPhoto() {
+            if (!rmItemDraft) return;
+            if (!Array.isArray(rmItemDraft.photos)) rmItemDraft.photos = [];
+            rmItemDraft.photos.push('');
+            renderRmItemModal();
+        }
+        function removeRmPhoto(idx) {
+            if (!rmItemDraft || !Array.isArray(rmItemDraft.photos)) return;
+            rmItemDraft.photos.splice(idx, 1);
+            renderRmItemModal();
+        }
+        function updateRmPhoto(idx, url) {
+            if (!rmItemDraft || !Array.isArray(rmItemDraft.photos)) return;
+            rmItemDraft.photos[idx] = url;
         }
         // ─── Editor de modificadores (solo saas_admin, dentro del modal) ───
         function addModifierGroup() {
@@ -10994,6 +11042,10 @@
                 showToast(tD('toast_error'), tD('toast_action_msg'), 'error');
                 return;
             }
+            // Normalizar galería: limpiar URLs vacías y mantener item.photo (legacy) = primera foto
+            const cleanPhotos = (Array.isArray(draft.photos) ? draft.photos : []).map(p => (p||'').trim()).filter(Boolean);
+            draft.photos = cleanPhotos;
+            draft.photo = cleanPhotos[0] || '';
             if (draft.id) {
                 const idx = hotel.restaurantMenu.findIndex(x => x.id === draft.id);
                 if (idx >= 0) {
@@ -11142,8 +11194,17 @@
                     <textarea oninput="updateRmField('description', this.value)" rows="3" placeholder="${escAttr(tD('rm_modal_desc_ph'))}" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:bg-white" style="border-color:rgba(80,100,55,0.15); resize:vertical;">${esc(rmItemDraft.description || '')}</textarea>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('rm_modal_photo')}</label>
-                    <input type="url" oninput="updateRmField('photo', this.value)" value="${escAttr(rmItemDraft.photo || '')}" placeholder="${escAttr(tD('rm_modal_photo_ph'))}" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:bg-white" style="border-color:rgba(80,100,55,0.15);">
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('rm_modal_photos')}</label>
+                    <div class="space-y-1.5">
+                        ${(rmItemDraft.photos || []).map((url, i) => `
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[10px] font-mono text-slate-400 w-5 flex-shrink-0">${i+1}.</span>
+                                <input type="url" oninput="updateRmPhoto(${i}, this.value)" value="${escAttr(url || '')}" placeholder="${escAttr(tD('rm_modal_photo_ph'))}" class="flex-1 min-w-0 px-3 py-2 rounded-lg border bg-slate-50 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:bg-white" style="border-color:rgba(80,100,55,0.15);">
+                                <button onclick="removeRmPhoto(${i})" type="button" class="w-7 h-7 rounded-full text-rose-500 hover:bg-rose-50 flex items-center justify-center transition flex-shrink-0"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+                            </div>
+                        `).join('')}
+                        <button onclick="addRmPhoto()" type="button" class="text-[11px] font-bold text-slate-600 hover:text-slate-900 flex items-center gap-1 px-2 py-1.5 rounded-lg transition"><i data-lucide="plus" class="w-3 h-3"></i>${tD('rm_modal_add_photo')}</button>
+                    </div>
                     <p class="text-[10px] text-slate-400 mt-1">${tD('rm_modal_photo_hint')}</p>
                 </div>
                 <!-- Tags dietéticos / destacados -->
@@ -11645,11 +11706,29 @@
             if (!itemId && !isFullEdit) { showToast(tD('spa_no_create_title'), tD('spa_no_create_msg'), 'info'); return; }
             if (itemId) {
                 const it = (hotel.spaServices || []).find(x => x.id === itemId);
-                if (it) spaItemDraft = { ...it };
+                if (it) {
+                    spaItemDraft = { ...it };
+                    spaItemDraft.photos = getItemPhotos(it).slice();
+                }
             } else {
-                spaItemDraft = { id:null, category:'massage', name:'', price:0, duration:60, description:'', photo:'', available:true };
+                spaItemDraft = { id:null, category:'massage', name:'', price:0, duration:60, description:'', photo:'', photos:[], available:true };
             }
             renderSpaItemModal();
+        }
+        function addSpaPhoto() {
+            if (!spaItemDraft) return;
+            if (!Array.isArray(spaItemDraft.photos)) spaItemDraft.photos = [];
+            spaItemDraft.photos.push('');
+            renderSpaItemModal();
+        }
+        function removeSpaPhoto(idx) {
+            if (!spaItemDraft || !Array.isArray(spaItemDraft.photos)) return;
+            spaItemDraft.photos.splice(idx, 1);
+            renderSpaItemModal();
+        }
+        function updateSpaPhoto(idx, url) {
+            if (!spaItemDraft || !Array.isArray(spaItemDraft.photos)) return;
+            spaItemDraft.photos[idx] = url;
         }
         function closeSpaItemModal() {
             spaItemDraft = null;
@@ -11671,6 +11750,10 @@
             const isFullEdit = currentRole === 'saas_admin';
             const draft = spaItemDraft;
             if (!draft.name || !draft.name.trim()) { showToast(tD('toast_error'), tD('toast_action_msg'), 'error'); return; }
+            // Normalizar galería (mismo patrón que el restaurant)
+            const cleanPhotos = (Array.isArray(draft.photos) ? draft.photos : []).map(p => (p||'').trim()).filter(Boolean);
+            draft.photos = cleanPhotos;
+            draft.photo = cleanPhotos[0] || '';
             if (draft.id) {
                 const idx = hotel.spaServices.findIndex(x => x.id === draft.id);
                 if (idx >= 0) {
@@ -11762,7 +11845,19 @@
                     <div><label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('spa_modal_duration')}</label><div class="flex items-center gap-2 px-3 py-2.5 rounded-xl border bg-slate-50" style="border-color:rgba(56,120,184,0.18);"><i data-lucide="clock" class="w-4 h-4 text-slate-400"></i><input type="number" min="0" step="5" oninput="updateSpaField('duration', this.value)" value="${spaItemDraft.duration || ''}" placeholder="60" class="flex-1 bg-transparent text-sm focus:outline-none"><span class="text-[11px] text-slate-400">min</span></div></div>
                 </div>
                 <div><label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('spa_modal_desc')}</label><textarea oninput="updateSpaField('description', this.value)" rows="3" placeholder="${escAttr(tD('spa_modal_desc_ph'))}" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:bg-white" style="border-color:rgba(56,120,184,0.18); resize:vertical;">${esc(spaItemDraft.description || '')}</textarea></div>
-                <div><label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('spa_modal_photo')}</label><input type="url" oninput="updateSpaField('photo', this.value)" value="${escAttr(spaItemDraft.photo || '')}" placeholder="${escAttr(tD('rm_modal_photo_ph'))}" class="w-full px-3 py-2.5 rounded-xl border bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:bg-white" style="border-color:rgba(56,120,184,0.18);"></div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">${tD('rm_modal_photos')}</label>
+                    <div class="space-y-1.5">
+                        ${(spaItemDraft.photos || []).map((url, i) => `
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[10px] font-mono text-slate-400 w-5 flex-shrink-0">${i+1}.</span>
+                                <input type="url" oninput="updateSpaPhoto(${i}, this.value)" value="${escAttr(url || '')}" placeholder="${escAttr(tD('rm_modal_photo_ph'))}" class="flex-1 min-w-0 px-3 py-2 rounded-lg border bg-slate-50 text-xs focus:outline-none focus:ring-2 focus:ring-blue-200 focus:bg-white" style="border-color:rgba(56,120,184,0.18);">
+                                <button onclick="removeSpaPhoto(${i})" type="button" class="w-7 h-7 rounded-full text-rose-500 hover:bg-rose-50 flex items-center justify-center transition flex-shrink-0"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+                            </div>
+                        `).join('')}
+                        <button onclick="addSpaPhoto()" type="button" class="text-[11px] font-bold text-slate-600 hover:text-slate-900 flex items-center gap-1 px-2 py-1.5 rounded-lg transition"><i data-lucide="plus" class="w-3 h-3"></i>${tD('rm_modal_add_photo')}</button>
+                    </div>
+                </div>
                 <label class="flex items-center gap-3 cursor-pointer"><div class="relative"><input type="checkbox" ${spaItemDraft.available ? 'checked' : ''} onchange="updateSpaField('available', this.checked)" class="sr-only peer"><div class="w-11 h-6 bg-slate-200 peer-checked:bg-emerald-500 rounded-full transition relative"><span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full" style="transition:transform 0.2s ease; transform:${spaItemDraft.available ? 'translateX(20px)' : 'translateX(0)'};"></span></div></div><span class="text-sm font-semibold ${spaItemDraft.available ? 'text-emerald-700' : 'text-slate-500'}">${spaItemDraft.available ? tD('spa_modal_available') : tD('spa_modal_unavailable')}</span></label>
             `;
             host.innerHTML = `
