@@ -4412,14 +4412,19 @@
             { id: 'whatsapp',    name: 'WhatsApp Business', icon: 'message-circle', color: '#25d366', placeholder: '+507 ...' }
         ];
 
-        // Migra campos antiguos al array socials
+        // Migra campos antiguos al array socials. Si ya tiene contenido, respeta lo que hay.
         function ensureSocials(T) {
-            if (T.socials && Array.isArray(T.socials)) return;
+            if (T.socials && Array.isArray(T.socials) && T.socials.length > 0) return;
             T.socials = [];
             if (T.website)   T.socials.push({ platform: 'website',   handle: T.website });
             if (T.instagram) T.socials.push({ platform: 'instagram', handle: T.instagram });
             if (T.facebook)  T.socials.push({ platform: 'facebook',  handle: T.facebook });
             if (T.tiktok)    T.socials.push({ platform: 'tiktok',    handle: T.tiktok });
+        }
+        // Ejecuta ensureSocials en cada hotel al boot — así "Síguenos" se ve poblado
+        // sin necesidad de abrir el Hotel Builder primero.
+        function ensureAllHotelsSocials() {
+            DATABASE.hotels.forEach(h => ensureSocials(h));
         }
 
         function addSocialAccount(platformId) {
@@ -14443,7 +14448,7 @@
         ];
 
         function exportDatabaseJSON() {
-            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus(); ensureSpaServices();
+            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus(); ensureSpaServices(); ensureAllHotelsSocials();
             const payload = {
                 app: BACKUP_APP,
                 version: BACKUP_VERSION,
@@ -14517,7 +14522,7 @@
             const stats = importPreview.stats || {};
             importPreview = null;
             // re-bootstrap arrays defensivamente
-            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus(); ensureSpaServices();
+            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus(); ensureSpaServices(); ensureAllHotelsSocials();
             logAudit('backup.restore', { type:'system', id:'backup', name:'Backup restaurado' }, { before, after: stats });
             renderApp();
             showToast(tD('toast_backup_restored'), `${stats.hotels||0} ${dashLang==='en'?'hotels':'hoteles'}, ${stats.providers||0} ${dashLang==='en'?'providers applied':'proveedores aplicados'}`, 'success');
@@ -15269,7 +15274,7 @@
         // Inicialización
         window.onload = function() {
             applyTheme();   // set data-theme on html before anything renders
-            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus(); ensureSpaServices();
+            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus(); ensureSpaServices(); ensureAllHotelsSocials();
             const isAuthed = initAuthFlow();   // returns true if already logged in
             if (isAuthed) {
                 renderApp();
