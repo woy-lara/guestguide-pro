@@ -2007,7 +2007,8 @@
                 today: 'Hoy',
                 tomorrow: 'Mañana',
                 pickTimePrompt: 'Selecciona un horario para continuar.',
-                pickTimeShort: 'Elige un horario'
+                pickTimeShort: 'Elige un horario',
+                closedOpensAt: 'Cerrado · abre'
             },
             en: {
                 hello: 'Hi',
@@ -2062,7 +2063,8 @@
                 today: 'Today',
                 tomorrow: 'Tomorrow',
                 pickTimePrompt: 'Select a time to continue.',
-                pickTimeShort: 'Choose a time'
+                pickTimeShort: 'Choose a time',
+                closedOpensAt: 'Closed · opens'
             }
         };
         function tM(key, ...args) {
@@ -7472,7 +7474,8 @@
                 const notesLen = (menuDetailNotes || '').length;
                 const modGroups = getModifierGroups(item);
                 const selectionValid = isModifierSelectionValid(item, menuDetailModifierSelections);
-                const canOrder = item.available && selectionValid;
+                const restaurantOpen = isServiceOpenNow(tempHotel, 'restaurant');
+                const canOrder = item.available && selectionValid && restaurantOpen;
 
                 // Render de cada grupo de modificadores (radios/checkboxes)
                 const modifierGroupsHTML = modGroups.length === 0 ? '' : modGroups.map(g => {
@@ -7601,8 +7604,8 @@
                                 <i data-lucide="arrow-left" class="w-4 h-4 text-slate-700"></i>
                             </button>
                             <button onclick="${canOrder?`simulateMenuOrder('${escAttr(item.id)}')`:''}" ${!canOrder?'disabled':''} class="flex-1 rounded-full text-white text-[12px] font-extrabold flex items-center justify-center gap-2 active:scale-95 transition ${canOrder?'':'opacity-50 cursor-not-allowed'}" style="background:linear-gradient(135deg,#d05050,#a83333);box-shadow:0 6px 16px rgba(208,80,80,0.35);">
-                                <i data-lucide="${item.available?(selectionValid?'shopping-bag':'alert-circle'):'lock'}" class="w-4 h-4"></i>
-                                ${!item.available ? (mobileLang==='en'?'Unavailable':'No disponible') : (!selectionValid ? tM('completeSelection') : (mobileLang==='en'?`Order ${qty>1?qty+'× ':''}· $${lineTotal.toFixed(2)}`:`Ordenar ${qty>1?qty+'× ':''}· $${lineTotal.toFixed(2)}`))}
+                                <i data-lucide="${!item.available?'lock':(!restaurantOpen?'clock':(selectionValid?'shopping-bag':'alert-circle'))}" class="w-4 h-4"></i>
+                                ${!item.available ? (mobileLang==='en'?'Unavailable':'No disponible') : (!restaurantOpen ? `${tM('closedOpensAt')} ${serviceOpensAt(tempHotel,'restaurant')}` : (!selectionValid ? tM('completeSelection') : (mobileLang==='en'?`Order ${qty>1?qty+'× ':''}· $${lineTotal.toFixed(2)}`:`Ordenar ${qty>1?qty+'× ':''}· $${lineTotal.toFixed(2)}`)))}
                             </button>
                         </div>
                     </div>
@@ -7653,7 +7656,8 @@
                 const item = (tempHotel.spaServices || []).find(x => x.id === selectedMobileSpaId);
                 if (!item) { mobileViewState = 'spa_list'; renderMobilePreview(); return; }
                 const catCfg = SPA_CATEGORIES.find(c => c.id === item.category) || SPA_CATEGORIES[0];
-                const canBook = item.available && !!spaBookSlot;
+                const spaOpen = isServiceOpenNow(tempHotel, 'spa_booking');
+                const canBook = item.available && !!spaBookSlot && spaOpen;
                 const slotsHTML = SPA_TIME_SLOTS.map(slot => {
                     const on = spaBookSlot === slot;
                     return `<button onclick="setSpaBookSlot('${slot}')" class="px-2 py-2 rounded-xl text-[11px] font-bold border transition active:scale-95" style="background:${on?'#3878b8':'#fff'}; color:${on?'#fff':'#475569'}; border-color:${on?'#3878b8':'rgba(0,0,0,0.1)'};">${slot}</button>`;
@@ -7690,8 +7694,8 @@
                         <div class="p-3 border-t bg-white flex gap-2" style="border-color:rgba(0,0,0,0.06);">
                             <button onclick="setMobileView('spa_list')" class="w-11 h-11 rounded-full bg-slate-100 flex items-center justify-center active:scale-95 transition"><i data-lucide="arrow-left" class="w-4 h-4 text-slate-700"></i></button>
                             <button onclick="${canBook?`simulateSpaBooking('${escAttr(item.id)}')`:''}" ${!canBook?'disabled':''} class="flex-1 rounded-full text-white text-[12px] font-extrabold flex items-center justify-center gap-2 active:scale-95 transition ${canBook?'':'opacity-50 cursor-not-allowed'}" style="background:linear-gradient(135deg,#3878b8,#2a5e94);box-shadow:0 6px 16px rgba(56,120,184,0.35);">
-                                <i data-lucide="${canBook?'calendar-check':'calendar'}" class="w-4 h-4"></i>
-                                ${!item.available ? (mobileLang==='en'?'Unavailable':'No disponible') : (!spaBookSlot ? tM('pickTimeShort') : `${tM('book')} · ${spaBookSlot}`)}
+                                <i data-lucide="${!item.available?'lock':(!spaOpen?'clock':(canBook?'calendar-check':'calendar'))}" class="w-4 h-4"></i>
+                                ${!item.available ? (mobileLang==='en'?'Unavailable':'No disponible') : (!spaOpen ? `${tM('closedOpensAt')} ${serviceOpensAt(tempHotel,'spa_booking')}` : (!spaBookSlot ? tM('pickTimeShort') : `${tM('book')} · ${spaBookSlot}`))}
                             </button>
                         </div>
                     </div>`;
@@ -10520,6 +10524,24 @@
                 if (!hotel.serviceHours[k]) hotel.serviceHours[k] = { ...SERVICE_HOURS_DEFAULTS[k] };
             });
             return hotel.serviceHours;
+        }
+        // Checa si un servicio del hotel está abierto AHORA según los horarios configurados.
+        // Si no hay horarios definidos, asume abierto (no bloquear por falta de config).
+        function isServiceOpenNow(hotel, moduleKey, now = new Date()) {
+            const h = hotel && hotel.serviceHours && hotel.serviceHours[moduleKey];
+            if (!h || !h.from || !h.to) return true;
+            const cur = now.getHours() * 60 + now.getMinutes();
+            const [fh, fm] = h.from.split(':').map(Number);
+            const [th, tm] = h.to.split(':').map(Number);
+            const from = fh * 60 + fm, to = th * 60 + tm;
+            if (from <= to) return cur >= from && cur < to;       // mismo día
+            return cur >= from || cur < to;                       // cruza medianoche
+        }
+        function serviceOpensAt(hotel, moduleKey) {
+            return hotel?.serviceHours?.[moduleKey]?.from || '';
+        }
+        function ensureAllHotelsServiceHours() {
+            DATABASE.hotels.forEach(h => ensureServiceHours(h));
         }
         function initHotelSettings(hotel) {
             ensureServiceHours(hotel);
@@ -14448,7 +14470,7 @@
         ];
 
         function exportDatabaseJSON() {
-            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus(); ensureSpaServices(); ensureAllHotelsSocials();
+            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus(); ensureSpaServices(); ensureAllHotelsSocials(); ensureAllHotelsServiceHours();
             const payload = {
                 app: BACKUP_APP,
                 version: BACKUP_VERSION,
@@ -14522,7 +14544,7 @@
             const stats = importPreview.stats || {};
             importPreview = null;
             // re-bootstrap arrays defensivamente
-            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus(); ensureSpaServices(); ensureAllHotelsSocials();
+            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus(); ensureSpaServices(); ensureAllHotelsSocials(); ensureAllHotelsServiceHours();
             logAudit('backup.restore', { type:'system', id:'backup', name:'Backup restaurado' }, { before, after: stats });
             renderApp();
             showToast(tD('toast_backup_restored'), `${stats.hotels||0} ${dashLang==='en'?'hotels':'hoteles'}, ${stats.providers||0} ${dashLang==='en'?'providers applied':'proveedores aplicados'}`, 'success');
@@ -15274,7 +15296,7 @@
         // Inicialización
         window.onload = function() {
             applyTheme();   // set data-theme on html before anything renders
-            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus(); ensureSpaServices(); ensureAllHotelsSocials();
+            ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus(); ensureSpaServices(); ensureAllHotelsSocials(); ensureAllHotelsServiceHours();
             const isAuthed = initAuthFlow();   // returns true if already logged in
             if (isAuthed) {
                 renderApp();
