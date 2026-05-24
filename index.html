@@ -150,6 +150,55 @@
         html[data-theme="dark"] ::-webkit-scrollbar-track { background: var(--bg-elevated); }
         html[data-theme="dark"] ::-webkit-scrollbar-thumb { background: rgba(200,220,180,0.18); }
 
+        /* Price tag — sage green in light, brighter lime in dark for legibility on dark cards */
+        .gg-price { color: #3d7710; }
+        html[data-theme="dark"] .gg-price { color: #b8e85a !important; }
+
+        /* Guest-facing preview always renders in light theme — ignore gg_theme */
+        html[data-theme="dark"] .phone-container {
+            --sidebar-bg:   #1e2a18;
+            --sidebar-hi:   #283520;
+            --sidebar-text: #c8d4b8;
+            --sidebar-muted:#6e7f60;
+            --bg-main:      #edf2e7;
+            --bg-card:      #ffffff;
+            --bg-elevated:  #e4ead8;
+            --bg-surface:   #dce4ce;
+            --border:       rgba(80,100,55,0.13);
+            --border-hi:    rgba(100,160,50,0.38);
+            --accent:       #6aaa1e;
+            --accent-hi:    #82cc28;
+            --accent-dim:   rgba(106,170,30,0.1);
+            --text:         #1a2214;
+            --text-2:       #5a6b4a;
+            --text-3:       #95a882;
+            --emerald:      #2e9e6a;
+            --rose:         #d05050;
+            --amber:        #c07820;
+            --violet:       #7060c8;
+            --blue:         #3878b8;
+            color-scheme: light;
+        }
+        html[data-theme="dark"] .phone-container .bg-white { background: #ffffff !important; color: #1a2214 !important; }
+        html[data-theme="dark"] .phone-container .bg-slate-50 { background: #f8fafc !important; }
+        html[data-theme="dark"] .phone-container .bg-slate-100 { background: #f1f5f9 !important; }
+        html[data-theme="dark"] .phone-container .text-slate-900,
+        html[data-theme="dark"] .phone-container .text-slate-800 { color: #0f172a !important; }
+        html[data-theme="dark"] .phone-container .text-slate-700,
+        html[data-theme="dark"] .phone-container .text-slate-600,
+        html[data-theme="dark"] .phone-container .text-slate-500 { color: #475569 !important; }
+        html[data-theme="dark"] .phone-container .text-slate-400,
+        html[data-theme="dark"] .phone-container .text-slate-300 { color: #94a3b8 !important; }
+        html[data-theme="dark"] .phone-container .border,
+        html[data-theme="dark"] .phone-container .border-slate-100,
+        html[data-theme="dark"] .phone-container .border-slate-200 { border-color: rgba(0,0,0,0.08) !important; }
+        html[data-theme="dark"] .phone-container input,
+        html[data-theme="dark"] .phone-container textarea,
+        html[data-theme="dark"] .phone-container select { background: #ffffff !important; color: #1a2214 !important; border-color: rgba(0,0,0,0.1) !important; }
+        html[data-theme="dark"] .phone-container .shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.08) !important; }
+        html[data-theme="dark"] .phone-container .shadow,
+        html[data-theme="dark"] .phone-container .shadow-md { box-shadow: 0 4px 14px rgba(0,0,0,0.10) !important; }
+
         *, *::before, *::after { box-sizing: border-box; }
 
         body {
@@ -1189,7 +1238,7 @@
             overflow-y: auto;
             padding: 24px;
         }
-        #auth-overlay > #auth-screen-host { margin: auto 0; width: 100%; }
+        #auth-overlay > #auth-screen-host { margin: auto 0; width: 100%; display: flex; flex-direction: column; align-items: center; }
         #auth-overlay.hidden { display: none; }
         .auth-card {
             background: rgba(255,255,255,0.04);
@@ -1831,7 +1880,13 @@
                     experiences: ["prov_1", "prov_2", "prov_3"], pmsConnected: false, pmsType: "none", pmsKey: "", pmsGuests: [
                         { room: "Villa 3", guest: "Elena Pinto",   status: "In-house", email: "elena@ejemplo.com" }
                     ],
-                    enabledModules: ['room_service', 'maintenance', 'amenities', 'restaurant']
+                    enabledModules: ['room_service', 'maintenance', 'amenities', 'restaurant'],
+                    socials: [
+                        { platform: 'website',   handle: 'https://losmolinoshotel.com' },
+                        { platform: 'instagram', handle: 'haciendalosmolinos' },
+                        { platform: 'facebook',  handle: 'https://facebook.com/haciendalosmolinos' },
+                        { platform: 'youtube',   handle: 'https://youtube.com/@haciendalosmolinos' }
+                    ]
                 }
             ],
             potentialHotels: [
@@ -4416,7 +4471,7 @@
                     <div class="bg-white rounded-3xl shadow-2xl w-full" style="max-width:600px; margin-top:40px;">
                         <header class="px-6 py-5 border-b flex items-center justify-between" style="border-color:rgba(80,100,55,0.1);">
                             <div class="flex items-center gap-3">
-                                <div class="w-11 h-11 rounded-2xl flex items-center justify-center" style="background:rgba(80,100,55,0.12); color:var(--sidebar-bg);">
+                                <div class="w-11 h-11 rounded-2xl flex items-center justify-center" style="background:rgba(80,100,55,0.12); color:var(--text);">
                                     <i data-lucide="key-round" class="w-5 h-5"></i>
                                 </div>
                                 <div>
@@ -10529,7 +10584,7 @@
                     </button>
                     ${(hotel.enabledModules || []).includes('restaurant') ? `
                         <button onclick="switchTab('restaurant_menu')" class="bg-white p-4 rounded-2xl border shadow-sm hover:shadow-md transition text-left active:scale-[0.98] relative">
-                            <div class="w-9 h-9 rounded-xl flex items-center justify-center mb-2" style="background:rgba(80,100,55,0.14); color:var(--sidebar-bg);"><i data-lucide="chef-hat" class="w-5 h-5"></i></div>
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center mb-2" style="background:rgba(80,100,55,0.14); color:var(--text);"><i data-lucide="chef-hat" class="w-5 h-5"></i></div>
                             <p class="text-xs font-bold text-slate-800">${tD('rm_page_title')}</p>
                             <span class="absolute top-3 right-3 text-[10px] font-mono opacity-60">${(hotel.restaurantMenu || []).length}</span>
                         </button>
@@ -10894,7 +10949,7 @@
             const card = (titleKey, icon, bodyHTML) => `
                 <div class="bg-white rounded-3xl border shadow-sm overflow-hidden mb-5">
                     <header class="px-5 py-4 border-b flex items-center gap-2.5" style="border-color:rgba(80,100,55,0.1);">
-                        <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(80,100,55,0.1); color:var(--sidebar-bg);"><i data-lucide="${icon}" class="w-5 h-5"></i></span>
+                        <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(80,100,55,0.1); color:var(--text);"><i data-lucide="${icon}" class="w-5 h-5"></i></span>
                         <h3 class="font-bold text-slate-800">${tD(titleKey)}</h3>
                     </header>
                     <div class="p-5 space-y-4">${bodyHTML}</div>
@@ -10904,7 +10959,7 @@
                 <header class="mb-6">
                     <p class="text-xs font-semibold mb-1" style="color:var(--text-3);">${esc(hotel.name)}</p>
                     <h2 class="text-2xl md:text-3xl font-bold flex items-center gap-2" style="letter-spacing:-0.03em;">
-                        <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(80,100,55,0.12); color:var(--sidebar-bg);"><i data-lucide="settings" class="w-5 h-5"></i></span>
+                        <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(80,100,55,0.12); color:var(--text);"><i data-lucide="settings" class="w-5 h-5"></i></span>
                         ${tD('set_page_title')}
                     </h2>
                     <p class="text-slate-500 text-sm mt-1">${tD('set_page_sub')}</p>
@@ -11359,7 +11414,7 @@
             // Bloque restringido para hotelero — solo precio + disponibilidad
             const restrictedFieldsHTML = `
                 <div class="rounded-2xl p-3 mb-1 border flex items-start gap-2" style="background:rgba(80,100,55,0.04); border-color:rgba(80,100,55,0.15);">
-                    <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0" style="color:var(--sidebar-bg);"></i>
+                    <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0" style="color:var(--text);"></i>
                     <p class="text-[11px] text-slate-600 leading-relaxed">${tD('rm_modal_restricted_hint')}</p>
                 </div>
                 <!-- Foto preview (read-only) -->
@@ -11555,7 +11610,7 @@
                     <div class="bg-white rounded-3xl shadow-2xl w-full" style="max-width:540px; margin-top:60px;">
                         <header class="px-6 py-5 border-b flex items-center justify-between" style="border-color:rgba(80,100,55,0.1);">
                             <div class="flex items-center gap-3">
-                                <div class="w-11 h-11 rounded-2xl flex items-center justify-center" style="background:rgba(80,100,55,0.14); color:var(--sidebar-bg);">
+                                <div class="w-11 h-11 rounded-2xl flex items-center justify-center" style="background:rgba(80,100,55,0.14); color:var(--text);">
                                     <i data-lucide="${isFullEdit ? 'chef-hat' : 'tag'}" class="w-5 h-5"></i>
                                 </div>
                                 <div>
@@ -11619,7 +11674,7 @@
                                     <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">${esc(h.location || '')}</p>
                                     <h3 class="text-base font-bold text-slate-800 leading-tight truncate">${esc(h.name)}</h3>
                                 </div>
-                                <span class="inline-flex w-10 h-10 rounded-xl items-center justify-center flex-shrink-0" style="background:rgba(80,100,55,0.14);color:var(--sidebar-bg);">
+                                <span class="inline-flex w-10 h-10 rounded-xl items-center justify-center flex-shrink-0" style="background:rgba(80,100,55,0.14);color:var(--text);">
                                     <i data-lucide="chef-hat" class="w-5 h-5"></i>
                                 </span>
                             </div>
@@ -11653,7 +11708,7 @@
                     <div class="flex items-start justify-between flex-wrap gap-3">
                         <div>
                             <h2 class="text-2xl md:text-3xl font-bold flex items-center gap-2" style="letter-spacing:-0.03em;">
-                                <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(80,100,55,0.14); color:var(--sidebar-bg);"><i data-lucide="chef-hat" class="w-5 h-5"></i></span>
+                                <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(80,100,55,0.14); color:var(--text);"><i data-lucide="chef-hat" class="w-5 h-5"></i></span>
                                 ${tD('srm_page_title')}
                             </h2>
                             <p class="text-slate-500 text-sm mt-1">${tD('srm_page_sub')}</p>
@@ -11669,7 +11724,7 @@
                 <!-- Banner explicativo del modelo de negocio -->
                 <div class="rounded-3xl p-5 mb-6 border" style="background:linear-gradient(135deg,rgba(80,100,55,0.06),rgba(208,80,80,0.06)); border-color:rgba(80,100,55,0.18);">
                     <div class="flex items-start gap-3">
-                        <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center flex-shrink-0" style="background:rgba(80,100,55,0.15); color:var(--sidebar-bg);">
+                        <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center flex-shrink-0" style="background:rgba(80,100,55,0.15); color:var(--text);">
                             <i data-lucide="shield-check" class="w-5 h-5"></i>
                         </span>
                         <div class="flex-1 min-w-0">
@@ -11733,7 +11788,7 @@
             // Banner sólo para hotelero — explica qué puede y qué no puede hacer
             const restrictedBanner = isFullEdit ? '' : `
                 <div class="rounded-3xl p-4 mb-5 border flex items-start gap-3" style="background:linear-gradient(135deg,rgba(80,100,55,0.06),rgba(208,80,80,0.06)); border-color:rgba(80,100,55,0.18);">
-                    <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center flex-shrink-0" style="background:rgba(80,100,55,0.15); color:var(--sidebar-bg);">
+                    <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center flex-shrink-0" style="background:rgba(80,100,55,0.15); color:var(--text);">
                         <i data-lucide="lock" class="w-5 h-5"></i>
                     </span>
                     <div class="flex-1 min-w-0">
@@ -11748,7 +11803,7 @@
                     <div class="flex-1 min-w-0">
                         <p class="text-xs font-semibold mb-1" style="color:var(--text-3);">${esc(hotel.name)}</p>
                         <h2 class="text-2xl md:text-3xl font-bold flex items-center gap-2" style="letter-spacing:-0.03em;">
-                            <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(80,100,55,0.14); color:var(--sidebar-bg);"><i data-lucide="chef-hat" class="w-5 h-5"></i></span>
+                            <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(80,100,55,0.14); color:var(--text);"><i data-lucide="chef-hat" class="w-5 h-5"></i></span>
                             ${tD('rm_page_title')}
                         </h2>
                         <p class="text-slate-500 text-sm mt-1">${tD('rm_page_sub')} · <span class="font-semibold">${tD('rm_count_items', totalItems)}</span> · ${tD('rm_count_available', availableNow)}</p>
@@ -11803,7 +11858,7 @@
                                     <div class="p-4">
                                         <div class="flex items-start justify-between gap-2 mb-2">
                                             <h4 class="font-bold text-slate-800 text-sm leading-tight">${esc(item.name)}</h4>
-                                            <span class="font-bold text-base whitespace-nowrap" style="color:var(--sidebar-bg);">$${(item.price || 0).toFixed(2)}</span>
+                                            <span class="gg-price font-bold text-base whitespace-nowrap">$${(item.price || 0).toFixed(2)}</span>
                                         </div>
                                         ${(Array.isArray(item.tags) && item.tags.length) || (item.prepTime > 0) || getModifierGroups(item).length ? `
                                             <div class="flex flex-wrap items-center gap-1.5 mb-2">
@@ -12189,7 +12244,7 @@
                                     <div class="p-4">
                                         <div class="flex items-start justify-between gap-2 mb-1">
                                             <h4 class="font-bold text-slate-800 text-sm leading-tight">${esc(item.name)}</h4>
-                                            <span class="font-bold text-base whitespace-nowrap" style="color:#3878b8;">$${(item.price || 0).toFixed(2)}</span>
+                                            <span class="font-bold text-base whitespace-nowrap" style="color:var(--blue);">$${(item.price || 0).toFixed(2)}</span>
                                         </div>
                                         <p class="text-[11px] text-slate-400 mb-2 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i>${item.duration || 0} min</p>
                                         <p class="text-xs text-slate-500 line-clamp-2 mb-3 min-h-[32px]">${esc(item.description || '')}</p>
@@ -14969,7 +15024,7 @@
             target.innerHTML = `
                 <header class="mb-6">
                     <h2 class="text-2xl md:text-3xl font-bold flex items-center gap-2" style="letter-spacing:-0.03em;">
-                        <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(80,100,55,0.12); color:var(--sidebar-bg);"><i data-lucide="sunrise" class="w-5 h-5"></i></span>
+                        <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(80,100,55,0.12); color:var(--text);"><i data-lucide="sunrise" class="w-5 h-5"></i></span>
                         ${tD('dr_title')}
                     </h2>
                     <p class="text-slate-500 text-sm mt-1">${tD('dr_list_sub')} · <span class="font-semibold capitalize">${esc(todayLabel)}</span></p>
@@ -15025,7 +15080,7 @@
                     ${showBack ? `<button onclick="backToDailyReportList()" class="bg-white border text-slate-700 px-4 py-2 rounded-full text-sm font-semibold shadow-sm hover:shadow active:scale-95 transition inline-flex items-center gap-2 mb-3"><i data-lucide="arrow-left" class="w-4 h-4"></i>${tD('dr_back_to_hotels')}</button>` : ''}
                     <p class="text-xs font-semibold mb-1" style="color:var(--text-3);">${esc(hotel.name)}</p>
                     <h2 class="text-2xl md:text-3xl font-bold flex items-center gap-2" style="letter-spacing:-0.03em;">
-                        <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(80,100,55,0.12); color:var(--sidebar-bg);"><i data-lucide="sunrise" class="w-5 h-5"></i></span>
+                        <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(80,100,55,0.12); color:var(--text);"><i data-lucide="sunrise" class="w-5 h-5"></i></span>
                         ${tD('dr_title')}
                     </h2>
                     <p class="text-slate-500 text-sm mt-1">${tD('dr_subtitle')} · <span class="font-semibold capitalize">${esc(todayLabel)}</span></p>
