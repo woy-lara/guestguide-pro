@@ -7786,28 +7786,49 @@
                                     </div>
                                     <p class="text-[11px] font-bold text-slate-700">${mobileLang==='en'?'No dishes in this category':'Sin platos en esta categoría'}</p>
                                 </div>
-                            ` : `<div class="grid grid-cols-2 gap-2.5">
+                            ` : `<div class="space-y-3">
                                 ${visibleItems.map(it => {
                                     const catCfg = categories.find(c => c.id === it.category) || categories[0];
+                                    const hasPhoto = !!it.photo;
+                                    const tagsList = Array.isArray(it.tags) ? it.tags.slice(0,2) : [];
+                                    const modCount = getModifierGroups(it).length;
+                                    const prep = it.prepTime || 0;
+                                    const hasMeta = prep > 0 || modCount > 0 || tagsList.length > 0;
                                     return `
-                                        <button onclick="setMobileView('menu_detail', '${escAttr(it.id)}')" class="bg-white rounded-2xl overflow-hidden shadow-sm active:scale-[0.98] transition text-left flex flex-col ${it.available?'':'opacity-50'}" style="box-shadow:0 2px 8px rgba(20,30,15,0.06);">
-                                            <!-- Hero photo (square) -->
-                                            <div class="relative w-full" style="aspect-ratio:1/1;background:${catCfg.color}15;">
-                                                ${it.photo ? `<img src="${escAttr(it.photo)}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none';">` : `<div class="absolute inset-0 flex items-center justify-center"><i data-lucide="image" class="w-8 h-8" style="color:${catCfg.color}66;"></i></div>`}
-                                                ${!it.available ? `<div class="absolute inset-0 bg-black/50 flex items-center justify-center"><span class="text-[9px] font-bold text-white uppercase tracking-wide">${mobileLang==='en'?'N/A':'No disp.'}</span></div>` : ''}
-                                                <!-- Category chip floating top-left -->
-                                                <div class="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[8px] font-bold text-white" style="background:${catCfg.color};box-shadow:0 2px 6px rgba(0,0,0,0.18);">${esc(catCfg.label)}</div>
-                                                ${getModifierGroups(it).length ? `<div class="absolute top-2 right-2 w-5 h-5 rounded-full bg-white/95 flex items-center justify-center" title="${mobileLang==='en'?'customizable':'personalizable'}" style="box-shadow:0 2px 6px rgba(0,0,0,0.15);"><i data-lucide="sliders-horizontal" class="w-2.5 h-2.5 text-slate-600"></i></div>` : ''}
+                                        <button onclick="setMobileView('menu_detail', '${escAttr(it.id)}')" class="w-full text-left relative overflow-hidden rounded-3xl active:scale-[0.99] transition block ${it.available?'':'opacity-60'}" style="aspect-ratio:4/5;box-shadow:0 6px 20px rgba(20,30,15,0.12);">
+                                            <!-- Background: photo or category gradient -->
+                                            ${hasPhoto
+                                                ? `<img src="${escAttr(it.photo)}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,${catCfg.color},${catCfg.color}cc)';">`
+                                                : `<div class="absolute inset-0" style="background:linear-gradient(135deg,${catCfg.color},${catCfg.color}cc);"><div class="absolute inset-0 flex items-center justify-center"><i data-lucide="utensils" class="w-16 h-16 text-white/30"></i></div></div>`}
+                                            <!-- Dark gradient overlay for legibility on bottom -->
+                                            <div class="absolute inset-0" style="background:linear-gradient(to bottom, transparent 0%, transparent 35%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.65) 78%, rgba(0,0,0,0.92) 100%);"></div>
+                                            <!-- Category pill top-left -->
+                                            <div class="absolute top-4 left-4 px-3.5 py-1.5 rounded-full text-[10px] font-extrabold text-white uppercase tracking-wider" style="background:rgba(15,20,12,0.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);">${esc(catCfg.label)}</div>
+                                            <!-- Action circle top-right -->
+                                            <div class="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center" style="background:rgba(255,255,255,0.22);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);">
+                                                <i data-lucide="${modCount?'sliders-horizontal':'plus'}" class="w-4 h-4 text-white"></i>
                                             </div>
-                                            <!-- Info below -->
-                                            <div class="p-2.5 flex-1 flex flex-col">
-                                                <p class="text-[11px] font-extrabold text-slate-900 leading-tight" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:28px;">${esc(it.name)}</p>
-                                                <div class="flex items-end justify-between mt-1.5 flex-1">
-                                                    <p class="text-[14px] font-extrabold leading-none" style="color:#1e2a18;">$${(it.price||0).toFixed(2)}</p>
-                                                    <div class="w-7 h-7 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,#6aaa1e,#3d7710);box-shadow:0 2px 6px rgba(61,119,16,0.35);">
-                                                        <i data-lucide="plus" class="w-3.5 h-3.5 text-white"></i>
-                                                    </div>
+                                            <!-- Unavailable veil -->
+                                            ${!it.available ? `<div class="absolute inset-0 bg-black/55 flex items-center justify-center"><span class="text-[11px] font-extrabold text-white uppercase tracking-wider bg-black/70 px-4 py-1.5 rounded-full">${mobileLang==='en'?'Unavailable':'No disponible'}</span></div>` : ''}
+                                            <!-- Info floating bottom -->
+                                            <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
+                                                <div class="flex items-baseline gap-1.5 mb-0.5">
+                                                    <p class="text-[28px] font-extrabold leading-none" style="letter-spacing:-0.025em;">$${(it.price||0).toFixed(2)}</p>
+                                                    <span class="text-[12px] text-white/65 font-medium">${mobileLang==='en'?'/dish':'/plato'}</span>
                                                 </div>
+                                                <h3 class="text-[19px] font-extrabold leading-tight mt-1.5" style="letter-spacing:-0.015em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${esc(it.name)}</h3>
+                                                ${it.description ? `<p class="text-[11.5px] text-white/75 mt-1 leading-snug" style="display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;">${esc(it.description)}</p>` : ''}
+                                                ${hasMeta ? `
+                                                    <div class="h-px my-2.5" style="background:rgba(255,255,255,0.20);"></div>
+                                                    <div class="flex items-center flex-wrap gap-x-4 gap-y-1 text-[11px] text-white/90 font-semibold">
+                                                        ${prep > 0 ? `<span class="inline-flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i>${prep} min</span>` : ''}
+                                                        ${modCount > 0 ? `<span class="inline-flex items-center gap-1.5"><i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>${modCount} ${mobileLang==='en'?(modCount===1?'option':'options'):(modCount===1?'opción':'opciones')}</span>` : ''}
+                                                        ${tagsList.map(tid => {
+                                                            const tag = RM_TAGS.find(t => t.id === tid); if (!tag) return '';
+                                                            return `<span class="inline-flex items-center gap-1.5"><i data-lucide="${tag.icon}" class="w-3.5 h-3.5"></i>${rmTagLabel(tag, mobileLang)}</span>`;
+                                                        }).join('')}
+                                                    </div>
+                                                ` : ''}
                                             </div>
                                         </button>
                                     `;
