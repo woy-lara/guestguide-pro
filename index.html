@@ -597,6 +597,23 @@
         .shadow-xl  { box-shadow: 0 10px 36px rgba(40,60,20,0.14) !important; }
         .shadow-2xl { box-shadow: 0 18px 52px rgba(40,60,20,0.18) !important; }
 
+        /* ─── Modo público "kiosk" del menú (URL ?menu=hotel_X) ─── */
+        /* Cuando body.public-menu-mode está activo: ocultar todo el chrome del dashboard y mostrar el menú a pantalla completa. */
+        body.public-menu-mode #top-banner,
+        body.public-menu-mode #auth-overlay,
+        body.public-menu-mode > div.flex.flex-1,
+        body.public-menu-mode #whatsapp-simulator-popup { display: none !important; }
+        /* El toast SÍ debe verse en modo público (confirma la orden al huésped) */
+        body.public-menu-mode #notification-toast { z-index: 200; }
+        body.public-menu-mode { overflow: hidden; }
+        #public-menu-host {
+            position: fixed; inset: 0; z-index: 100;
+            background: #faf7f2;
+            overflow: hidden;
+        }
+        /* Quitar el border-radius del "phone" cuando se renderiza en modo kiosk */
+        #public-menu-host > div { border-radius: 0 !important; }
+
         /* ─── Toast ─── */
         #notification-toast {
             background: var(--sidebar-bg) !important;
@@ -4205,6 +4222,34 @@
         let authState = 'login';   // 'login' | 'magic_sent' | 'role_select' | 'authenticated'
         let authEmail = '';
 
+        // ═══════════════════════════════════════════════
+        //  MODO PÚBLICO DEL MENÚ (URL ?menu=hotel_X)
+        //  Vista standalone que el huésped abre desde su celular (QR en habitación).
+        //  Sin sidebar, sin banner, sin login — solo el menú navegable.
+        //  Reusa la lógica de renderMobilePreview con un host a pantalla completa.
+        // ═══════════════════════════════════════════════
+        function initPublicMenuMode(hotelId) {
+            const hotel = DATABASE.hotels.find(h => h.id === hotelId);
+            if (!hotel) return false;
+            document.body.classList.add('public-menu-mode');
+            // Forzar tema claro — el huésped NUNCA debe ver modo oscuro
+            document.documentElement.setAttribute('data-theme', 'light');
+            // Crear container full-screen
+            let host = document.getElementById('public-menu-host');
+            if (!host) {
+                host = document.createElement('div');
+                host.id = 'public-menu-host';
+                document.body.appendChild(host);
+            }
+            // Setup datos
+            tempHotel = hotel;
+            mobileViewState = 'menu_list';
+            menuListFilter = 'all';
+            // Renderizar el menú (la misma lógica del phone preview, pero full screen)
+            renderMobilePreview(host);
+            return true;
+        }
+
         function initAuthFlow() {
             // Magic access link: ?as=role_id → auto-login directo (para QR/enlace compartido)
             try {
@@ -7289,6 +7334,8 @@
         }
 
         function setMobileView(viewName, idArg = null) {
+            // En modo público "kiosk" del menú no existe 'home' — redirigir a menu_list
+            if (document.body.classList.contains('public-menu-mode') && viewName === 'home') viewName = 'menu_list';
             mobileViewState = viewName;
             if (viewName === 'menu_detail') {
                 // Reset draft cuando se abre un plato nuevo
@@ -7374,10 +7421,11 @@
             }
             const modsBlock = modLines.length > 0 ? `\n${modLines.join('\n')}` : '';
             const msg = `🍽️ Nueva orden\n${guest} (Hab. ${room})\n${qty}× ${item.name} · $${lineTotal.toFixed(2)}${modsBlock}${notesLine}`;
-            // Simulate
+            // Simulate WhatsApp al staff (oculto en modo público, visible solo dentro del dashboard)
             showWhatsAppSimulation(msg, phone);
-            // Return to home
-            setTimeout(() => setMobileView('home'), 300);
+            // En modo público volver a la lista del menú; dentro del dashboard volver al home del preview
+            const isPublic = document.body.classList.contains('public-menu-mode');
+            setTimeout(() => setMobileView(isPublic ? 'menu_list' : 'home'), 300);
             // Toast (incluye cantidad si > 1)
             const qtyPrefix = qty > 1 ? `${qty}× ` : '';
             showToast(
@@ -7392,7 +7440,9 @@
         }
 
         function renderMobilePreview(hostElement = null) {
-            const phone = hostElement || document.getElementById('guest-phone-preview'); if (!phone) return;
+            // Fallback: dentro del dashboard usa #guest-phone-preview; en modo público kiosk usa #public-menu-host.
+            const phone = hostElement || document.getElementById('guest-phone-preview') || document.getElementById('public-menu-host');
+            if (!phone) return;
             const hc = tempHotel.colorTheme || '#6aaa1e';
             const bg = getCoverUrl(tempHotel.coverPreset, tempHotel.coverCustomUrl);
             const logoMarkup = tempHotel.logo ? `<img src="${tempHotel.logo}" class="w-9 h-9 rounded-full object-cover">` : `<div class="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold" style="background:${hc};">HT</div>`;
@@ -15690,6 +15740,11 @@
         window.onload = function() {
             applyTheme();   // set data-theme on html before anything renders
             ensureQrCodes(); ensureAnalytics(); ensureAuditLog(); ensureHotelModules(); ensureModuleRequestsSeed(); ensureRestaurantMenus(); ensureSpaServices(); ensureAllHotelsSocials(); ensureAllHotelsServiceHours();
+            // ?menu=hotel_X → vista pública del menú (huésped). Salir del flujo normal.
+            try {
+                const menuHotelId = new URLSearchParams(location.search).get('menu');
+                if (menuHotelId && initPublicMenuMode(menuHotelId)) return;
+            } catch(e) {}
             const isAuthed = initAuthFlow();   // returns true if already logged in
             if (isAuthed) {
                 renderApp();
