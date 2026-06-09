@@ -7778,46 +7778,42 @@
                                 return `<button onclick="setMenuListFilter('${c.id}')" class="px-3 py-1 rounded-full text-[10px] font-bold transition flex-shrink-0" style="${isActive?`background:${c.color};color:white;`:'background:#f3f4f6;color:#475569;'}">${esc(c.label)}</button>`;
                             }).join('')}
                         </div>
-                        <!-- Items list -->
-                        <div class="flex-1 overflow-y-auto px-3 py-3 space-y-2.5" style="background:#faf7f2;">
+                        <!-- Items grid (2 cols, hero photo on top) -->
+                        <div class="flex-1 overflow-y-auto px-3 py-3" style="background:#faf7f2;">
                             ${visibleItems.length === 0 ? `
                                 <div class="text-center py-12">
-                                    <div class="w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center" style="background:rgba(208,80,80,0.1);">
+                                    <div class="w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center" style="background:rgba(106,170,30,0.12);">
                                         <i data-lucide="utensils-crossed" class="w-6 h-6" style="color:#3d7710;"></i>
                                     </div>
                                     <p class="text-[11px] font-bold text-slate-700">${mobileLang==='en'?'No dishes in this category':'Sin platos en esta categoría'}</p>
                                 </div>
-                            ` : visibleItems.map(it => {
-                                const catCfg = categories.find(c => c.id === it.category) || categories[0];
-                                return `
-                                    <button onclick="setMobileView('menu_detail', '${escAttr(it.id)}')" class="w-full bg-white rounded-2xl overflow-hidden shadow-sm flex gap-2.5 active:scale-[0.98] transition text-left ${it.available?'':'opacity-50'}">
-                                        <div class="w-[88px] h-[88px] flex-shrink-0 relative" style="background:${catCfg.color}15;">
-                                            ${it.photo ? `<img src="${escAttr(it.photo)}" class="w-full h-full object-cover" onerror="this.style.display='none';">` : `<div class="w-full h-full flex items-center justify-center"><i data-lucide="image" class="w-6 h-6" style="color:${catCfg.color}66;"></i></div>`}
-                                            ${!it.available ? `<div class="absolute inset-0 bg-black/50 flex items-center justify-center"><span class="text-[8px] font-bold text-white uppercase">${mobileLang==='en'?'N/A':'No disp.'}</span></div>` : ''}
-                                        </div>
-                                        <div class="flex-1 min-w-0 p-2.5 flex flex-col justify-between">
-                                            <div>
-                                                <p class="text-[11px] font-extrabold text-slate-900 leading-tight" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${esc(it.name)}</p>
-                                                ${(Array.isArray(it.tags) && it.tags.length) ? `
-                                                    <div class="flex flex-wrap gap-1 mt-1">
-                                                        ${it.tags.slice(0,2).map(tid => {
-                                                            const tag = RM_TAGS.find(t => t.id === tid); if (!tag) return '';
-                                                            return `<span class="inline-flex items-center gap-0.5 text-[8px] font-bold px-1.5 py-0.5 rounded-full" style="background:${tag.color}1a;color:${tag.color};"><i data-lucide="${tag.icon}" class="w-2 h-2"></i>${rmTagLabel(tag, mobileLang)}</span>`;
-                                                        }).join('')}
+                            ` : `<div class="grid grid-cols-2 gap-2.5">
+                                ${visibleItems.map(it => {
+                                    const catCfg = categories.find(c => c.id === it.category) || categories[0];
+                                    return `
+                                        <button onclick="setMobileView('menu_detail', '${escAttr(it.id)}')" class="bg-white rounded-2xl overflow-hidden shadow-sm active:scale-[0.98] transition text-left flex flex-col ${it.available?'':'opacity-50'}" style="box-shadow:0 2px 8px rgba(20,30,15,0.06);">
+                                            <!-- Hero photo (square) -->
+                                            <div class="relative w-full" style="aspect-ratio:1/1;background:${catCfg.color}15;">
+                                                ${it.photo ? `<img src="${escAttr(it.photo)}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none';">` : `<div class="absolute inset-0 flex items-center justify-center"><i data-lucide="image" class="w-8 h-8" style="color:${catCfg.color}66;"></i></div>`}
+                                                ${!it.available ? `<div class="absolute inset-0 bg-black/50 flex items-center justify-center"><span class="text-[9px] font-bold text-white uppercase tracking-wide">${mobileLang==='en'?'N/A':'No disp.'}</span></div>` : ''}
+                                                <!-- Category chip floating top-left -->
+                                                <div class="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[8px] font-bold text-white" style="background:${catCfg.color};box-shadow:0 2px 6px rgba(0,0,0,0.18);">${esc(catCfg.label)}</div>
+                                                ${getModifierGroups(it).length ? `<div class="absolute top-2 right-2 w-5 h-5 rounded-full bg-white/95 flex items-center justify-center" title="${mobileLang==='en'?'customizable':'personalizable'}" style="box-shadow:0 2px 6px rgba(0,0,0,0.15);"><i data-lucide="sliders-horizontal" class="w-2.5 h-2.5 text-slate-600"></i></div>` : ''}
+                                            </div>
+                                            <!-- Info below -->
+                                            <div class="p-2.5 flex-1 flex flex-col">
+                                                <p class="text-[11px] font-extrabold text-slate-900 leading-tight" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:28px;">${esc(it.name)}</p>
+                                                <div class="flex items-end justify-between mt-1.5 flex-1">
+                                                    <p class="text-[14px] font-extrabold leading-none" style="color:#1e2a18;">$${(it.price||0).toFixed(2)}</p>
+                                                    <div class="w-7 h-7 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,#6aaa1e,#3d7710);box-shadow:0 2px 6px rgba(61,119,16,0.35);">
+                                                        <i data-lucide="plus" class="w-3.5 h-3.5 text-white"></i>
                                                     </div>
-                                                ` : `<p class="text-[9px] text-slate-500 mt-0.5 leading-tight" style="display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;">${esc(it.description || '')}</p>`}
-                                            </div>
-                                            <div class="flex items-center justify-between">
-                                                <div class="flex items-center gap-1.5">
-                                                    <p class="text-[12px] font-extrabold" style="color:#1e2a18;">$${(it.price||0).toFixed(2)}</p>
-                                                    ${getModifierGroups(it).length ? `<span class="inline-flex items-center gap-0.5 text-[8px] font-semibold text-slate-400"><i data-lucide="sliders-horizontal" class="w-2.5 h-2.5"></i>${mobileLang==='en'?'customizable':'personalizable'}</span>` : ''}
                                                 </div>
-                                                <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400"></i>
                                             </div>
-                                        </div>
-                                    </button>
-                                `;
-                            }).join('')}
+                                        </button>
+                                    `;
+                                }).join('')}
+                            </div>`}
                         </div>
                     </div>
                 `;
