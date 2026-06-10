@@ -1284,18 +1284,21 @@
         .auth-title { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 6px; color: #ffffff; }
         .auth-sub { font-size: 14px; color: #95a882; margin-bottom: 28px; }
         .auth-label { display: block; font-size: 12px; font-weight: 600; color: #c8d4b8; margin-bottom: 8px; letter-spacing: 0.02em; }
-        .auth-input {
-            width: 100%; padding: 14px 16px;
-            background: rgba(0,0,0,0.25); border: 1px solid rgba(200,220,180,0.18);
-            border-radius: 14px; color: #ffffff; font-size: 15px;
+        /* input.auth-input con !important: la regla global de inputs (background:#fff !important)
+           pisaba este diseño y el texto quedaba ilegible (claro sobre blanco). */
+        input.auth-input {
+            width: 100%; padding: 14px 16px !important;
+            background: rgba(0,0,0,0.25) !important; border: 1px solid rgba(200,220,180,0.18) !important;
+            border-radius: 14px !important; color: #ffffff !important; font-size: 15px !important;
             transition: all 0.2s;
         }
-        .auth-input:focus {
-            outline: none; border-color: #82cc28;
-            background: rgba(0,0,0,0.35);
-            box-shadow: 0 0 0 4px rgba(130,204,40,0.12);
+        input.auth-input:focus {
+            outline: none !important; border-color: #82cc28 !important;
+            background: rgba(0,0,0,0.35) !important;
+            box-shadow: 0 0 0 4px rgba(130,204,40,0.12) !important;
         }
-        .auth-input::placeholder { color: #6e7f60; }
+        input.auth-input:hover:not(:focus) { border-color: rgba(200,220,180,0.32) !important; }
+        input.auth-input::placeholder { color: #8a9a7b !important; }
         .auth-btn-primary {
             width: 100%; padding: 14px 20px;
             background: linear-gradient(135deg, #82cc28 0%, #6aaa1e 100%);
@@ -4478,7 +4481,6 @@
                         <h2 class="auth-title">${tD('auth_notfound_title')}</h2>
                         <p class="auth-sub">${tD('auth_notfound_msg', esc(authEmail))}</p>
                         <button onclick="setAuthState('login')" class="auth-btn-primary" style="margin-top:8px;">
-                            <i data-lucide="arrow-left" class="w-4 h-4"></i>
                             ${tD('auth_back')}
                         </button>
                         <button onclick="setAuthState('admin_key')" class="auth-btn-ghost" style="margin-top:12px; font-size:12px;">${tD('auth_admin_link')}</button>
