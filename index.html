@@ -1041,6 +1041,10 @@
             .invoice-modal-overlay .no-print { flex-wrap: wrap !important; gap: 8px !important; padding: 12px !important; }
             .invoice-modal-overlay .no-print > div { width: 100%; }
             .qr-scan-modal-card { max-height: 95vh !important; border-radius: 18px !important; }
+            /* Fila de acciones de las cards de hotel: en móvil "Editar" toma su
+               línea completa y los iconos fluyen debajo (antes el último se cortaba). */
+            .gg-card-actions { flex-wrap: wrap; }
+            .gg-card-actions > button:first-child { flex: 1 1 100%; }
         }
 
         /* ─────────────────────────────────────────
@@ -3044,7 +3048,7 @@
                 spa_editor_sub: 'Servicios de bienestar reservables por el huésped',
                 spa_count_services: (n) => `${n} servicios`,
                 spa_count_available: (n) => `${n} disponibles`,
-                spa_back_to_list: '← Volver a Spas',
+                spa_back_to_list: 'Volver a Spas',
                 spa_add: 'Añadir servicio',
                 spa_restricted_title: 'Solo puedes editar precios y disponibilidad',
                 spa_restricted_body: 'Para añadir, eliminar o modificar servicios (nombre, foto, duración, descripción), solicita un cambio mayor a Plan Ok. Te respondemos en 24h.',
@@ -3153,7 +3157,7 @@
                 mod_btn_configure: 'Configurar',
                 rm_page_title: 'Menú del Restaurante',
                 rm_page_sub: 'Gestiona los platos visibles en la app del huésped',
-                rm_back_to_modules: '← Volver a Módulos',
+                rm_back_to_modules: 'Volver a Módulos',
                 rm_add_item: 'Añadir plato',
                 rm_filter_all: 'Todos',
                 rm_filter_breakfast: 'Desayuno',
@@ -3165,7 +3169,7 @@
                 rm_empty_sub: 'Añade tu primer plato para que los huéspedes puedan ordenar desde su habitación.',
                 rm_empty_sub_restricted: 'Tu menú aún no está listo. Plan Ok lo prepara — solicita la creación cuando estés listo.',
                 rm_empty_cta: 'Añadir mi primer plato',
-                rm_back_to_menus: '← Volver a Menús',
+                rm_back_to_menus: 'Volver a Menús',
                 rm_request_change: 'Solicitar cambio mayor',
                 rm_restricted_title: 'Solo puedes editar precios y disponibilidad',
                 rm_restricted_body: 'Para añadir, eliminar o modificar platos (nombre, foto, descripción, categoría), solicita un cambio mayor a Plan Ok. Te respondemos en 24h.',
@@ -4046,7 +4050,7 @@
                 spa_editor_sub: 'Wellness services bookable by the guest',
                 spa_count_services: (n) => `${n} services`,
                 spa_count_available: (n) => `${n} available`,
-                spa_back_to_list: '← Back to Spas',
+                spa_back_to_list: 'Back to Spas',
                 spa_add: 'Add service',
                 spa_restricted_title: 'You can only edit prices and availability',
                 spa_restricted_body: 'To add, remove or modify services (name, photo, duration, description), request a major change to Plan Ok. We respond within 24h.',
@@ -4155,7 +4159,7 @@
                 mod_btn_configure: 'Configure',
                 rm_page_title: 'Restaurant Menu',
                 rm_page_sub: 'Manage dishes visible in the guest app',
-                rm_back_to_modules: '← Back to Modules',
+                rm_back_to_modules: 'Back to Modules',
                 rm_add_item: 'Add dish',
                 rm_filter_all: 'All',
                 rm_filter_breakfast: 'Breakfast',
@@ -4167,7 +4171,7 @@
                 rm_empty_sub: 'Add your first dish so guests can order from their room.',
                 rm_empty_sub_restricted: 'Your menu is not ready yet. Plan Ok builds it for you — request creation when ready.',
                 rm_empty_cta: 'Add my first dish',
-                rm_back_to_menus: '← Back to Menus',
+                rm_back_to_menus: 'Back to Menus',
                 rm_request_change: 'Request major change',
                 rm_restricted_title: 'You can only edit prices and availability',
                 rm_restricted_body: 'To add, remove or modify dishes (name, photo, description, category), request a major change to Plan Ok. We respond within 24h.',
@@ -7088,20 +7092,35 @@
             renderApp();
         }
         function getBreadcrumbLabel() {
+            const map = {
+                overview: 'Resumen', hotels: 'Hoteles', hotel_builder: 'Editor de Hotel',
+                providers: 'Proveedores', provider_builder: 'Editor de Tour',
+                stay_services: 'Peticiones', finances: 'Finanzas',
+                scanner: 'Escáner QR', ai_assistant: 'Asistente IA',
+                analytics: 'Analytics', daily_report: 'Reporte del Día', audit: 'Actividad',
+                module_requests: 'Solicitudes', modules: 'Módulos',
+                restaurant_menus: 'Menús', restaurant_menu: 'Menú del Restaurante',
+                spa_services_admin: 'Spas', spa_booking: 'Reservas de Spa',
+                backup: 'Backup', qr_manager: 'Mis QRs', settings: 'Configuración'
+            };
             const labelFor = (s) => {
                 if (!s) return '';
-                if (s.role && s.role.startsWith('hotel_'))  return DATABASE.hotels.find(h=>h.id===s.role)?.name || 'Hotel';
-                if (s.role && s.role.startsWith('prov_'))   return DATABASE.providers.find(p=>p.id===s.role)?.name || 'Proveedor';
-                const map = {
-                    overview: 'Resumen', hotels: 'Hoteles', hotel_builder: 'Editor de Hotel',
-                    providers: 'Proveedores', provider_builder: 'Editor de Tour',
-                    stay_services: 'Peticiones', finances: 'Finanzas',
-                    scanner: 'Escáner QR', ai_assistant: 'Asistente IA'
-                };
-                return map[s.tab] || s.tab || 'Inicio';
+                const tabLabel = map[s.tab];
+                // Dentro de un hotel/proveedor: el nombre solo identifica el overview;
+                // las demás tabs usan su propio nombre (antes salía "Hotel X > Hotel X").
+                if (s.role && s.role.startsWith('hotel_')) {
+                    const hName = DATABASE.hotels.find(h=>h.id===s.role)?.name || 'Hotel';
+                    return (s.tab && s.tab !== 'overview' && tabLabel) ? tabLabel : hName;
+                }
+                if (s.role && s.role.startsWith('prov_')) {
+                    const pName = DATABASE.providers.find(p=>p.id===s.role)?.name || 'Proveedor';
+                    return (s.tab && s.tab !== 'overview' && s.tab !== 'scanner' && tabLabel) ? tabLabel : pName;
+                }
+                return tabLabel || s.tab || 'Inicio';
             };
             const cur  = labelFor(snapshotState());
-            const prev = navStack.length ? labelFor(navStack[navStack.length - 1]) : null;
+            let prev = navStack.length ? labelFor(navStack[navStack.length - 1]) : null;
+            if (prev === cur) prev = null;   // nunca mostrar "X > X"
             return { cur, prev };
         }
         function renderBackButton() {
@@ -10372,7 +10391,7 @@
                                     </div>
                                     <!-- Contenido -->
                                     <div class="gg-mhc-body flex-1 min-w-0">
-                                        <h4 class="gg-mhc-name font-bold text-slate-800 truncate" style="font-size:1.1rem;letter-spacing:-0.015em;line-height:1.3;">${h.name}</h4>
+                                        <h4 class="gg-mhc-name font-bold text-slate-800" style="font-size:1.1rem;letter-spacing:-0.015em;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${esc(h.name)}</h4>
                                         <p class="text-xs text-slate-400 mt-1.5 truncate flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3"></i>${h.location || tD('no_location')}</p>
                                         <p class="text-xs text-slate-500 mt-1.5">${tD('reservas_this_month', count)}</p>
                                     </div>
@@ -10674,7 +10693,7 @@
                             </button>
                             <div class="relative flex-1">
                                 <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                                <input type="text" oninput="setHotelsSearch(this.value)" value="${hotelsListSearch}" placeholder="${tD('hl_search')}" class="w-full bg-white border rounded-full pl-10 pr-3 py-2.5 text-sm shadow-sm">
+                                <input type="text" oninput="setHotelsSearch(this.value)" value="${hotelsListSearch}" placeholder="${tD('hl_search')}" class="input-has-icon w-full bg-white border rounded-full pr-3 py-2.5 text-sm shadow-sm">
                             </div>
                         </div>
                     </div>
@@ -10740,7 +10759,7 @@
                                     </div>
 
                                     <!-- Acciones balanceadas -->
-                                    <div class="flex items-center gap-2 pt-4 border-t border-slate-100 mt-auto">
+                                    <div class="gg-card-actions flex items-center gap-2 pt-4 border-t border-slate-100 mt-auto">
                                         <button onclick="openHotelBuilder('${h.id}')" class="flex-1 px-5 py-2.5 rounded-full text-white text-sm font-semibold active:scale-95 transition flex items-center justify-center gap-1.5 shadow-sm" style="background:#1a2214;">
                                             <i data-lucide="pencil" class="w-3.5 h-3.5"></i>${tD('hl_btn_edit')}
                                         </button>
@@ -11384,8 +11403,11 @@
                     // Active module card with toggle (and optional Configurar button if configurable + enabled)
                     const itemsCountForRestaurant = mod.id === 'restaurant' ? (hotel.restaurantMenu || []).length : null;
                     const displayCount = itemsCountForRestaurant != null ? tD('rm_count_items', itemsCountForRestaurant) : (count != null ? count + ' pedidos' : '');
-                    const configurableBtn = (mod.configurable && enabledNow && mod.id === 'restaurant') ? `
-                        <button onclick="switchTab('restaurant_menu')" class="mt-3 w-full px-3 py-2 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 text-white shadow-sm hover:shadow active:scale-95 transition" style="background:${mod.color};">
+                    // Cada módulo configurable rutea a su propio editor
+                    const configTabFor = { restaurant: 'restaurant_menu', spa_booking: 'spa_booking' };
+                    const configTab = configTabFor[mod.id];
+                    const configurableBtn = (mod.configurable && enabledNow && configTab) ? `
+                        <button onclick="switchTab('${configTab}')" class="mt-3 w-full px-3 py-2 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 text-white shadow-sm hover:shadow active:scale-95 transition" style="background:${mod.color};">
                             <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
                             ${tD('mod_btn_configure')}
                         </button>
@@ -14454,7 +14476,7 @@
                             </button>
                             <div class="relative flex-1">
                                 <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                                <input type="text" oninput="setProvidersSearch(this.value)" value="${providersListSearch}" placeholder="${tD('pl_search')}" class="w-full bg-white border rounded-full pl-10 pr-3 py-2.5 text-sm shadow-sm">
+                                <input type="text" oninput="setProvidersSearch(this.value)" value="${providersListSearch}" placeholder="${tD('pl_search')}" class="input-has-icon w-full bg-white border rounded-full pr-3 py-2.5 text-sm shadow-sm">
                             </div>
                         </div>
                     </div>
@@ -15351,7 +15373,8 @@
         // saas_admin: lista de hoteles (clic en uno → su reporte). Cada card muestra estado resumido.
         function renderDailyReportList(target) {
             const locale = dashLang === 'en' ? 'en-US' : 'es-ES';
-            const todayLabel = new Date().toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
+            const todayLabelRaw = new Date().toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
+            const todayLabel = todayLabelRaw.charAt(0).toUpperCase() + todayLabelRaw.slice(1);   // solo 1ª letra — 'Miércoles, 10 de junio'
             const cards = DATABASE.hotels.map(h => {
                 const rep = computeHotelReport(h.id);
                 const logo = h.logo
@@ -15377,7 +15400,7 @@
                         <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(80,100,55,0.12); color:var(--text);"><i data-lucide="sunrise" class="w-5 h-5"></i></span>
                         ${tD('dr_title')}
                     </h2>
-                    <p class="text-slate-500 text-sm mt-1">${tD('dr_list_sub')} · <span class="font-semibold capitalize">${esc(todayLabel)}</span></p>
+                    <p class="text-slate-500 text-sm mt-1">${tD('dr_list_sub')} · <span class="font-semibold">${esc(todayLabel)}</span></p>
                 </header>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${cards}</div>
             `;
@@ -15389,7 +15412,8 @@
             const rep = computeHotelReport(hotelId);
             if (!rep) { target.innerHTML = ''; return; }
             const locale = dashLang === 'en' ? 'en-US' : 'es-ES';
-            const todayLabel = new Date().toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
+            const todayLabelRaw = new Date().toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
+            const todayLabel = todayLabelRaw.charAt(0).toUpperCase() + todayLabelRaw.slice(1);   // solo 1ª letra — 'Miércoles, 10 de junio'
             const { hotel, offDishes, offSpa, totalOff, recentChanges, scans, views, vouchers } = rep;
 
             const kpi = (icon, color, value, label, extraClass = '') => `
@@ -15433,7 +15457,7 @@
                         <span class="inline-flex w-9 h-9 rounded-xl items-center justify-center" style="background:rgba(80,100,55,0.12); color:var(--text);"><i data-lucide="sunrise" class="w-5 h-5"></i></span>
                         ${tD('dr_title')}
                     </h2>
-                    <p class="text-slate-500 text-sm mt-1">${tD('dr_subtitle')} · <span class="font-semibold capitalize">${esc(todayLabel)}</span></p>
+                    <p class="text-slate-500 text-sm mt-1">${tD('dr_subtitle')} · <span class="font-semibold">${esc(todayLabel)}</span></p>
                 </header>
 
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
