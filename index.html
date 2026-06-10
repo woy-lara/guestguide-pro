@@ -623,6 +623,25 @@
         #toast-title   { color: #eaf2d8 !important; }
         #toast-message { color: #a0b088 !important; }
 
+        /* ─── Panel de notificaciones ───
+           Filas redondeadas tipo tarjeta, tinte sage para no-leídas y hover
+           theme-aware. (Antes: borde azul + tinte Tailwind que no flipaba
+           en dark y dejaba el panel gris ilegible.) */
+        .notif-item { border-radius: 14px; transition: background 0.12s ease; }
+        .notif-item:hover { background: rgba(80,100,55,0.08); }
+        .notif-item.unread { background: rgba(106,170,30,0.08); }
+        .notif-item.unread:hover { background: rgba(106,170,30,0.14); }
+        html[data-theme="dark"] .notif-item:hover { background: rgba(200,220,180,0.07); }
+        html[data-theme="dark"] .notif-item.unread { background: rgba(130,204,40,0.10); }
+        html[data-theme="dark"] .notif-item.unread:hover { background: rgba(130,204,40,0.16); }
+        .notif-dot { width: 8px; height: 8px; border-radius: 999px; background: #6aaa1e; box-shadow: 0 0 0 3px rgba(106,170,30,0.18); }
+        html[data-theme="dark"] .notif-dot { background: #a8d860; box-shadow: 0 0 0 3px rgba(168,216,96,0.16); }
+        .notif-link { color: #3d7710; font-weight: 700; }
+        .notif-link:hover { color: #2c570b; }
+        html[data-theme="dark"] .notif-link { color: #b8e85a; }
+        html[data-theme="dark"] .notif-link:hover { color: #d0f28a; }
+        html[data-theme="dark"] #notif-panel { border-color: rgba(200,220,180,0.14) !important; }
+
         /* ─── WhatsApp popup ─── */
         #whatsapp-simulator-popup {
             background: var(--bg-card)  !important;
@@ -786,7 +805,10 @@
         .tour-tooltip h4 { font-weight: 800; font-size: 14px; color: #0f172a; margin-bottom: 4px; }
         .tour-tooltip p { font-size: 12px; color: #475569; line-height: 1.5; }
         .tour-tooltip .tour-step { font-size: 10px; font-weight: 700; color: #818cf8; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
-        .tour-tooltip .tour-actions { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; gap: 8px; }
+        /* Los botones nunca se parten en dos líneas: nowrap + sin shrink.
+           Si no cabe todo, los dots saltan de línea completos (flex-wrap). */
+        .tour-tooltip .tour-actions { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; gap: 8px; flex-wrap: wrap; }
+        .tour-tooltip .tour-actions button { white-space: nowrap; flex-shrink: 0; }
         .tour-tooltip .tour-progress { display: flex; gap: 4px; }
         .tour-tooltip .tour-progress span { width: 6px; height: 6px; border-radius: 999px; background: #e2e8f0; }
         .tour-tooltip .tour-progress span.is-active { background: #818cf8; width: 18px; }
@@ -6299,11 +6321,11 @@
                         <p class="text-[10px] text-slate-500">${items.filter(i=>!i.read).length} ${unreadStr} · ${items.length} ${totalStr}</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        ${items.length > 0 ? `<button onclick="markAllNotifsRead()" class="text-[10px] font-semibold text-blue-600 hover:text-blue-800">${tD('notif_mark_all')}</button>` : ''}
+                        ${items.length > 0 ? `<button onclick="markAllNotifsRead()" class="notif-link text-[10px]">${tD('notif_mark_all')}</button>` : ''}
                         <button onclick="closeNotifPanel()" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-4 h-4"></i></button>
                     </div>
                 </div>
-                <div class="flex-1 overflow-y-auto">
+                <div class="flex-1 overflow-y-auto px-2 py-2 space-y-0.5">
                     ${items.length === 0 ? `
                         <div class="p-8 text-center">
                             <div class="w-12 h-12 mx-auto rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mb-3">
@@ -6314,22 +6336,24 @@
                         </div>
                     ` : items.map(n => `
                         <button onclick="handleNotifClick('${n.id}')"
-                                class="w-full text-left flex items-start gap-3 p-3.5 hover:bg-slate-50 transition border-l-2 ${n.read ? 'border-transparent' : 'border-blue-500'} ${n.read ? '' : 'bg-blue-50/30'}">
-                            <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background:${n.color}1a;color:${n.color};">
+                                class="notif-item ${n.read ? '' : 'unread'} w-full text-left flex items-start gap-3 px-3 py-3">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:${n.color}1a;color:${n.color};">
                                 <i data-lucide="${n.icon}" class="w-4 h-4"></i>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-xs font-bold text-slate-800 truncate">${esc(n.title)}</p>
-                                <p class="text-[11px] text-slate-500 truncate">${esc(n.body)}</p>
-                                <p class="text-[10px] text-slate-400 mt-1 font-mono">${timeAgo(n.ts)}</p>
+                                <div class="flex items-baseline justify-between gap-2">
+                                    <p class="text-xs font-bold text-slate-800 truncate">${esc(n.title)}</p>
+                                    <span class="text-[10px] text-slate-400 flex-shrink-0">${timeAgo(n.ts)}</span>
+                                </div>
+                                <p class="text-[11px] text-slate-500 truncate mt-0.5">${esc(n.body)}</p>
                             </div>
-                            ${!n.read ? `<span class="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0 mt-1.5"></span>` : ''}
+                            ${!n.read ? `<span class="notif-dot flex-shrink-0 mt-2"></span>` : ''}
                         </button>
                     `).join('')}
                 </div>
                 ${items.length > 0 ? `
                     <div class="border-t px-4 py-2.5 text-center" style="border-color:rgba(80,100,55,0.1);">
-                        <button onclick="closeNotifPanel(); switchTab('audit');" class="text-[11px] font-bold text-blue-600 hover:text-blue-800">${tD('notif_view_all')}</button>
+                        <button onclick="closeNotifPanel(); switchTab('audit');" class="notif-link text-[11px]">${tD('notif_view_all')}</button>
                     </div>
                 ` : ''}
             `;
@@ -7373,11 +7397,15 @@
         }
 
         // ─── Theme (light/dark) ───
+        // El app SIEMPRE arranca en claro, salvo que el usuario haya tocado el
+        // toggle explícitamente (gg_theme_user_set). Ya no auto-detectamos el
+        // modo oscuro del sistema — confundía: la gente entraba y veía todo negro.
         let appTheme = (() => {
             try {
+                const userSet = localStorage.getItem('gg_theme_user_set') === 'true';
                 const saved = localStorage.getItem('gg_theme');
-                if (saved === 'light' || saved === 'dark') return saved;
-                return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                if (userSet && (saved === 'light' || saved === 'dark')) return saved;
+                return 'light';
             } catch(e) { return 'light'; }
         })();
         function applyTheme() {
@@ -7390,7 +7418,10 @@
         }
         function toggleTheme() {
             appTheme = (appTheme === 'dark') ? 'light' : 'dark';
-            try { localStorage.setItem('gg_theme', appTheme); } catch(e) {}
+            try {
+                localStorage.setItem('gg_theme', appTheme);
+                localStorage.setItem('gg_theme_user_set', 'true');
+            } catch(e) {}
             applyTheme();
             // Re-render to refresh inline-styled elements
             if (typeof renderApp === 'function' && document.getElementById('dynamic-view-container')) {
